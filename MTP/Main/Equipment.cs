@@ -590,8 +590,8 @@ namespace ACO2_App._0
             }
         }
         #endregion
-        //nam
-        //duc
+
+        
         #region Update
         //T:Update
         public async void Update()
