@@ -1,0 +1,366 @@
+﻿<UserControl
+    x:Class="ACO2.Views.Home.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ACO2.Views.Home"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <Border
+            Padding="5"
+            Background="#cfd5e5"
+            CornerRadius="5">
+            <Border CornerRadius="5">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="#fefefe" />
+                        <GradientStop Offset="0" Color="#ededef" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="250" />
+                    </Grid.ColumnDefinitions>
+                    <!--  MONITOR  -->
+                    <Border
+                        Grid.Column="0"
+                        Background="White"
+                        CornerRadius="0 0 0 0">
+                        <Grid x:Name="grdMain" />
+                    </Border>
+                    <Border
+                        Grid.Column="1"
+                        BorderBrush="AliceBlue"
+                        BorderThickness="2"
+                        CornerRadius="3" />
+                    <!--  STATE  -->
+                    <Border
+                        Grid.Column="2"
+                        Background="White"
+                        CornerRadius="0 30 30 0">
+                        <StackPanel>
+                            <Grid Margin="10,20,0,0">
+                                <TextBox
+                                    x:Name="txtMachineName"
+                                    Height="40"
+                                    Margin="10,0,0,0"
+                                    FontSize="30"
+                                    Style="{StaticResource ModernTextBox}"
+                                    TextAlignment="Center" />
+                            </Grid>
+                            <Border
+                                Margin="20,5"
+                                BorderBrush="AliceBlue"
+                                BorderThickness="2"
+                                CornerRadius="3" />
+                            <Grid Height="30" Margin="5,10,5,0">
+                                <StackPanel Height="30" Orientation="Vertical">
+                                    <Border
+                                        Height="30"
+                                        Background="AliceBlue"
+                                        BorderBrush="#FFC5BFBF"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Border
+                                                x:Name="tblState"
+                                                Grid.Column="1"
+                                                Background="Green"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    x:Name="txtState"
+                                                    Width="120"
+                                                    Margin="5,0,0,0"
+                                                    FontSize="20"
+                                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                                    Text="AUTO"
+                                                    TextAlignment="Center" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="5,5,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <Border
+                                        Background="AliceBlue"
+                                        BorderBrush="#FFC5BFBF"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="Availability : " />
+                                            <Border
+                                                x:Name="tblAvailability"
+                                                Grid.Column="1"
+                                                Width="120"
+                                                Background="Green"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    x:Name="txtAvailability"
+                                                    Width="120"
+                                                    Margin="5,0,0,0"
+                                                    FontSize="20"
+                                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                                    Text="Up"
+                                                    TextAlignment="Left" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="5,3,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <Border
+                                        Background="AliceBlue"
+                                        BorderBrush="#FFC5BFBF"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="Interlock : " />
+                                            <Border
+                                                x:Name="tblInterlock"
+                                                Grid.Column="1"
+                                                Width="120"
+                                                Background="Green"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    x:Name="txtInterlock"
+                                                    Width="120"
+                                                    Margin="5,0,0,0"
+                                                    FontSize="20"
+                                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                                    Text="Off"
+                                                    TextAlignment="Left" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="5,3,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <Border
+                                        Background="AliceBlue"
+                                        BorderBrush="#FFC5BFBF"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="Move State : " />
+                                            <Border
+                                                x:Name="tblMoveState"
+                                                Grid.Column="1"
+                                                Width="120"
+                                                Background="Green"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    x:Name="txtMoveState"
+                                                    Width="120"
+                                                    Margin="5,0,0,0"
+                                                    FontSize="20"
+                                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                                    Text="Running"
+                                                    TextAlignment="Left" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Margin="5,3,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <Border
+                                        Background="AliceBlue"
+                                        BorderBrush="#FFC5BFBF"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="Run State : " />
+                                            <Border
+                                                x:Name="tblRunState"
+                                                Grid.Column="1"
+                                                Width="120"
+                                                Background="Green"
+                                                CornerRadius="5">
+                                                <TextBlock
+                                                    x:Name="txtRunState"
+                                                    Width="120"
+                                                    Margin="5,0,0,0"
+                                                    FontSize="20"
+                                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                                    Text="Run"
+                                                    TextAlignment="Left" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <Border
+                                Margin="20,5"
+                                BorderBrush="AliceBlue"
+                                BorderThickness="2"
+                                CornerRadius="3" />
+                            <Grid Margin="5,4,5,0">
+                                <Border
+                                    Height="100"
+                                    Background="AliceBlue"
+                                    BorderBrush="#FFC5BFBF"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock
+                                            x:Name="tblNameEq"
+                                            Grid.Column="0"
+                                            Margin="5,0,0,0"
+                                            FontSize="20"
+                                            Style="{StaticResource HeaderTextBlockStyle}"
+                                            Text="PC Signal 1"
+                                            TextAlignment="Center" />
+                                        <Grid Margin="5,5,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="7*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="IP: " />
+                                            <TextBlock
+                                                x:Name="txtIPPc1"
+                                                Grid.Column="1"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="192.168.0.1"
+                                                TextAlignment="Left" />
+                                        </Grid>
+                                        <Grid Margin="5,5,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="2.7*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="PORT: " />
+                                            <TextBlock
+                                                x:Name="txtPortPc1"
+                                                Grid.Column="1"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="8000"
+                                                TextAlignment="Left" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <Grid Margin="5,4,5,0">
+                                <Border
+                                    Height="100"
+                                    Background="AliceBlue"
+                                    BorderBrush="#FFC5BFBF"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock
+                                            x:Name="tblNameEq2"
+                                            Grid.Column="0"
+                                            Margin="5,0,0,0"
+                                            FontSize="20"
+                                            Style="{StaticResource HeaderTextBlockStyle}"
+                                            Text="PC Signal 2"
+                                            TextAlignment="Center" />
+                                        <Grid Margin="5,5,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="7*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="IP: " />
+                                            <TextBlock
+                                                x:Name="txtIPPc2"
+                                                Grid.Column="1"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="192.168.0.1"
+                                                TextAlignment="Left" />
+                                        </Grid>
+                                        <Grid Margin="5,5,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="2.7*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="PORT: " />
+                                            <TextBlock
+                                                x:Name="txtPortPc2"
+                                                Grid.Column="1"
+                                                Margin="5,0,0,0"
+                                                FontSize="20"
+                                                Style="{StaticResource HeaderTextBlockStyle}"
+                                                Text="8000"
+                                                TextAlignment="Left" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Border>
+
+    </Grid>
+</UserControl>

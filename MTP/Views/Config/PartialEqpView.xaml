@@ -1,0 +1,197 @@
+﻿<UserControl x:Class="ACO2.Views.Config.PartialEqpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ACO2.Views.Config"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="tglisFirstMachine">
+            <BeginStoryboard>
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="dplFirst" Storyboard.TargetProperty="Visibility">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Visible</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="tglisFirstMachine">
+            <BeginStoryboard>
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="dplFirst" Storyboard.TargetProperty="Visibility">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Collapsed</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="tglisUseMcr">
+            <BeginStoryboard>
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="txtBarcode" Storyboard.TargetProperty="Visibility">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Visible</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="tglisUseMcr">
+            <BeginStoryboard>
+                <Storyboard>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="txtBarcode" Storyboard.TargetProperty="Visibility">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Collapsed</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+    <Border BorderThickness="3" CornerRadius="4" BorderBrush="Gray">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBlock Style="{StaticResource ManualButtonText}" 
+                           Text="{Binding Header}"></TextBlock>
+            </Grid>
+            <Grid Grid.Row="1">
+                <StackPanel Orientation="Vertical">
+                    <!--  ============================  -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                        Margin="30,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource DataStageText}"
+                        Text="SKIP : " />
+                        <ToggleButton
+                        x:Name="tglisSkip"
+                        HorizontalAlignment="Right"
+                        Background="Red"
+                        IsChecked="False"
+                        Style="{StaticResource ToggleFlipFlop}"
+                        Tag="OrangeRed" />
+                    </StackPanel>
+                    <!--  ============================  -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                        Margin="30,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource DataStageText}"
+                        Text="IS ROTARY 90 : " />
+                        <ToggleButton
+                        x:Name="tglisRotary"
+                        HorizontalAlignment="Right"
+                        Background="LawnGreen"
+                        IsChecked="False"
+                        Style="{StaticResource ToggleFlipFlop}"
+                        Tag="GreenYellow" />
+                       
+                    </StackPanel>
+                    <!--  ============================  -->
+                    <DockPanel LastChildFill="True">
+                        <TextBlock
+                        Margin="30,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource DataStageText}"
+                        Text="USE MCR : " />
+                                        <ToggleButton
+                        x:Name="tglisUseMcr"
+                        HorizontalAlignment="Right"
+                        Background="LawnGreen"
+                        IsChecked="False"
+                        Style="{StaticResource ToggleFlipFlop}"
+                        Tag="GreenYellow" />
+                        <TextBox Visibility="Collapsed"
+x:Name="txtBarcode"
+Margin="10,5,10,5"
+HorizontalAlignment="Stretch"
+VerticalAlignment="Center"
+HorizontalContentAlignment="Left"
+Style="{StaticResource TextBoxHintStyle1}"
+Tag="MCR READER"
+Text="" />
+                    </DockPanel>
+
+                    <!--  ============================  -->
+                    <DockPanel LastChildFill="True">
+                        <TextBlock
+    Margin="30,0,0,0"
+    HorizontalAlignment="Left"
+    VerticalAlignment="Center"
+    Style="{StaticResource DataStageText}"
+    Text="IS FIRST MACHINE : " />
+                        <ToggleButton
+    x:Name="tglisFirstMachine"
+    HorizontalAlignment="Right"
+    Background="LawnGreen"
+    IsChecked="False"
+    Style="{StaticResource ToggleFlipFlop}"
+    Tag="GreenYellow" />
+                        <DockPanel LastChildFill="True" Visibility="Collapsed" 
+                                   x:Name="dplFirst">
+                            <TextBlock
+Margin="30,0,0,0"
+HorizontalAlignment="Left"
+VerticalAlignment="Center"
+Style="{StaticResource DataStageText}"
+Text="PACKING : " />
+                            <TextBox 
+x:Name="txtCountPaper"
+Margin="10,5,10,5"
+HorizontalAlignment="Stretch"
+VerticalAlignment="Center"
+HorizontalContentAlignment="Left"
+Style="{StaticResource TextBoxHintStyle1}"
+Tag="PACK Ex:5"
+Text="" />
+                        </DockPanel>
+                        <TextBlock x:Name="txtCountWarning" Visibility="Collapsed" Margin="0 0 0 0" VerticalAlignment="Center"
+           Foreground="DarkRed" Text="Please enter a number!"></TextBlock>
+                    </DockPanel>
+                    <!--  ============================  -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+    Margin="30,0,0,0"
+    HorizontalAlignment="Left"
+    VerticalAlignment="Center"
+    Style="{StaticResource DataStageText}"
+    Text="IS THICKNESS : " />
+                        <ToggleButton
+    x:Name="tglisThickness"
+    HorizontalAlignment="Right"
+    Background="LawnGreen"
+    IsChecked="False"
+    Style="{StaticResource ToggleFlipFlop}"
+    Tag="GreenYellow" />
+                        
+                    </StackPanel>
+                </StackPanel>
+
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

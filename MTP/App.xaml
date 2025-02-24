@@ -1,0 +1,22 @@
+﻿<Application
+    x:Class="ACO2_App._0.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ACO2_App._0">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/style/UIColors.xaml" />
+                <ResourceDictionary Source="/style/ButtonStyle.xaml" />
+                <ResourceDictionary Source="/style/TabControlStyle.xaml" />
+                <ResourceDictionary Source="/style/TextBoxStyle.xaml" />
+                <ResourceDictionary Source="/style/ComboBoxStyle.xaml" />
+                <ResourceDictionary Source="/style/BorderStyle.xaml" />
+                <ResourceDictionary Source="/style/ProgressBarStyle.xaml" />
+                <ResourceDictionary Source="/style/LabelStyle.xaml" />
+                <ResourceDictionary Source="/style/ToggleButtonStyle.xaml" />
+                <ResourceDictionary Source="/style/ListViewStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

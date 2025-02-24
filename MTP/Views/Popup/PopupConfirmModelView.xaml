@@ -1,0 +1,141 @@
+﻿<Window x:Class="ACO2.Views.Popup.PopupConfirmModelView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ACO2.Views.Popup"
+        Title="PopupConfirmModelView" Width="800"
+Height="500"
+Background="Transparent"
+WindowStartupLocation="CenterScreen"
+WindowStyle="None"
+mc:Ignorable="d">
+    <Border Margin="0,0,0,-6" CornerRadius="3">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="Black" />
+                <GradientStop Offset="1" Color="White" />
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Label
+             x:Name="txtHeader"
+             Width="352"
+             Height="56"
+             Margin="0,10,0,0"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Top"
+             HorizontalContentAlignment="Center"
+             VerticalContentAlignment="Center"
+             Content="OPERATION MESAGE"
+             FontSize="24"
+             FontWeight="Bold"
+             Foreground="#FFFDFF00" />
+            <Border Background="AliceBlue" Height="300" Width="600" 
+                    CornerRadius="3" BorderThickness="3">
+                <Grid ShowGridLines="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <!--  =============HEADER===============  -->
+                    <TextBlock Style="{StaticResource ManualButtonText}" Text="Stt"/>
+                    <TextBlock Grid.Column="1" Style="{StaticResource ManualButtonText}" Text="Barcode"/>
+                    <TextBlock Grid.Column="2" Style="{StaticResource ManualButtonText}" Text="Rotate 90"/>
+                    <TextBlock Grid.Column="3" Style="{StaticResource ManualButtonText}" Text="Confirm"/>
+                    <!--  =============MACHINE #1===============  -->
+                    <TextBlock Grid.Row="1" Style="{StaticResource ManualButtonText}" Text="1"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource ManualButtonText}" x:Name="txtMC1Barcode"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource ManualButtonText}" x:Name="txtMC1Rotaty"/>
+                    <ToggleButton Grid.Row="1" Grid.Column="3" x:Name="tglMc1Confirm" Style="{StaticResource toggleButtonGreen}">
+                        <TextBlock  Style="{StaticResource ManualButtonText}" Text="OK"/>
+                    </ToggleButton>
+                    <!--  =============MACHINE #2===============  -->
+                    <TextBlock Grid.Row="2" Style="{StaticResource ManualButtonText}" Text="2"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource ManualButtonText}" x:Name="txtMC2Barcode"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource ManualButtonText}" x:Name="txtMC2Rotaty"/>
+                    <ToggleButton Grid.Row="2" Grid.Column="3" x:Name="tglMc2Confirm" Style="{StaticResource toggleButtonGreen}">
+                        <TextBlock  Style="{StaticResource ManualButtonText}" Text="OK"/>
+                    </ToggleButton>
+                    <!--  =============MACHINE #3===============  -->
+                    <TextBlock Grid.Row="3" Style="{StaticResource ManualButtonText}" Text="3"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource ManualButtonText}" x:Name="txtMC3Barcode"/>
+                    <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource ManualButtonText}" x:Name="txtMC3Rotaty"/>
+                    <ToggleButton Grid.Row="3" Grid.Column="3" x:Name="tglMc3Confirm" Style="{StaticResource toggleButtonGreen}">
+                        <TextBlock  Style="{StaticResource ManualButtonText}" Text="OK"/>
+                    </ToggleButton>
+                    <!--  =============MACHINE #4===============  -->
+                    <TextBlock Grid.Row="4" Style="{StaticResource ManualButtonText}" Text="4"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource ManualButtonText}" x:Name="txtMC4Barcode"/>
+                    <TextBlock Grid.Row="4" Grid.Column="2" Style="{StaticResource ManualButtonText}" x:Name="txtMC4Rotaty"/>
+                    <ToggleButton Grid.Row="4" Grid.Column="3" x:Name="tglMc4Confirm" Style="{StaticResource toggleButtonGreen}">
+                        <TextBlock  Style="{StaticResource ManualButtonText}" Text="OK"/>
+                    </ToggleButton>
+                    <!--  =============MACHINE #5===============  -->
+                    <TextBlock Grid.Row="5" Style="{StaticResource ManualButtonText}" Text="5"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource ManualButtonText}" x:Name="txtMC5Barcode"/>
+                    <TextBlock Grid.Row="5" Grid.Column="2" Style="{StaticResource ManualButtonText}" x:Name="txtMC5Rotaty"/>
+                    <ToggleButton Grid.Row="5" Grid.Column="3" x:Name="tglMc5Confirm" Style="{StaticResource toggleButtonGreen}">
+                        <TextBlock  Style="{StaticResource ManualButtonText}" Text="OK"/>
+                    </ToggleButton>
+                    <!--  =============MACHINE #6===============  -->
+                    <TextBlock Grid.Row="6" Style="{StaticResource ManualButtonText}" Text="6"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource ManualButtonText}" x:Name="txtMC6Barcode"/>
+                    <TextBlock Grid.Row="6" Grid.Column="2" Style="{StaticResource ManualButtonText}" x:Name="txtMC6Rotaty"/>
+                    <ToggleButton Grid.Row="6" Grid.Column="3" x:Name="tglMc6Confirm" Style="{StaticResource toggleButtonGreen}">
+                        <TextBlock  Style="{StaticResource ManualButtonText}" Text="OK"/>
+                    </ToggleButton>
+
+                </Grid>
+            </Border>
+            <Button IsEnabled="False"
+             x:Name="btnYes"
+             Width="166"
+             Height="60"
+             Margin="150,420,0,0"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             VerticalContentAlignment="Center"
+             Content="OK"
+             FontSize="20"
+             FontWeight="Bold"
+             Style="{StaticResource controlButton}" />
+            <Button
+             x:Name="btnNo"
+             Width="166"
+             Height="60"
+             Margin="450,420,0,0"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             Content="CANCEL"
+             FontSize="20"
+             FontWeight="Bold"
+             Style="{StaticResource controlButton}" />
+            <Button Visibility="Hidden"
+             x:Name="btnOk"
+             Width="166"
+             Height="60"
+             Margin="0,420,0,0"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Top"
+             Content="OK"
+             FontSize="20"
+             FontWeight="Bold"
+             Style="{StaticResource controlButton}" />
+        </Grid>
+
+
+
+    </Border>
+</Window>

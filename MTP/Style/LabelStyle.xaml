@@ -1,0 +1,60 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ACO2.Style">
+    <!--  Header Style  -->
+    <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Montserrat" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="local:AutoFontSizeBehavior.IsAutoFontSizeEnabled" Value="True" />
+    </Style>
+
+    <!--  Body Style  -->
+    <Style x:Key="BodyTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Montserrat" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="local:AutoFontSizeBehavior.IsAutoFontSizeEnabled" Value="True" />
+    </Style>
+
+    <!--  Caption Style  -->
+    <Style x:Key="CaptionTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Montserrat" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="local:AutoFontSizeBehavior.IsAutoFontSizeEnabled" Value="True" />
+    </Style>
+
+    <!--  Highlight Style  -->
+    <Style x:Key="HighlightTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Montserrat" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="Foreground" Value="Red" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="local:AutoFontSizeBehavior.IsAutoFontSizeEnabled" Value="True" />
+    </Style>
+
+    <!--  Suggest Style  -->
+    <Style x:Key="SuggestTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Montserrat" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="LightGray" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="local:AutoFontSizeBehavior.IsAutoFontSizeEnabled" Value="True" />
+    </Style>
+
+</ResourceDictionary>

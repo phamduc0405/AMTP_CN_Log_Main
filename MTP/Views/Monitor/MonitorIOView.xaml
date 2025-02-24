@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="ACO2_App._0.Views.MonitorIOView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ACO2_App._0.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Border
+        Margin="5"
+        BorderBrush="Gray"
+        BorderThickness="1"
+        CornerRadius="5">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <RadioButton
+                        x:Name="btnBits"
+                        Width="180"
+                        Height="80"
+                        Margin="0,50,0,10"
+                        Style="{StaticResource toggleButton}">
+                        <TextBlock
+                            Height="30"
+                            Margin="-5,30,0,10"
+                            Style="{StaticResource HeaderTextBlockStyle}"
+                            Text="BITS" />
+                    </RadioButton>
+                    <RadioButton
+                        x:Name="btnWords"
+                        Width="180"
+                        Height="80"
+                        Margin="0,10"
+                        Style="{StaticResource toggleButton}">
+                        <TextBlock
+                            Height="30"
+                            Margin="-5,30,0,10"
+                            Style="{StaticResource HeaderTextBlockStyle}"
+                            Text="WORDS" />
+                    </RadioButton>
+                </StackPanel>
+            </Grid>
+            <Grid Name="grdView" Grid.Column="1" />
+        </Grid>
+    </Border>
+</UserControl>

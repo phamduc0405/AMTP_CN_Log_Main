@@ -1,0 +1,168 @@
+﻿<UserControl
+    x:Class="MTP.Views.Config.ConfigDefectCodeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+    xmlns:local="clr-namespace:MTP.Views.Config"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.5*" />
+            <RowDefinition Height="20*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <DockPanel>
+                <Grid DockPanel.Dock="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            x:Name="btnCheckResult"
+                            Width="130"
+                            Height="50"
+                            Margin="10,3"
+                            Style="{StaticResource ButtonSave}">
+                            <StackPanel Width="200" Orientation="Horizontal">
+                                <fa:IconImage
+                                    Width="25"
+                                    Margin="15,0,5,0"
+                                    HorizontalAlignment="Left"
+                                    Icon="Search" />
+                                <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Text="SEARCH" />
+
+                            </StackPanel>
+
+
+                        </Button>
+                        <TextBox
+                            x:Name="txtResult"
+                            Width="200"
+                            Height="40"
+                            Style="{StaticResource TextBoxStandard}" />
+                    </StackPanel>
+
+                </Grid>
+
+                <Grid DockPanel.Dock="Right">
+                    <DockPanel>
+                        <Button
+                            x:Name="btnSave"
+                            Width="auto"
+                            Height="50"
+                            Margin="10,3,30,3"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource ButtonSave}">
+
+                            <StackPanel Orientation="Horizontal">
+                                <fa:IconImage
+                                    Width="25"
+                                    Margin="15,0,5,0"
+                                    HorizontalAlignment="Left"
+                                    Icon="Save" />
+                                <TextBlock
+                                    Margin="0,0,15,0"
+                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                    Text="SAVE" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            x:Name="btnLoad"
+                            Width="auto"
+                            Height="50"
+                            Margin="15,3,5,3"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource ButtonSave}">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:IconImage
+                                    Width="25"
+                                    Margin="15,0,5,0"
+                                    HorizontalAlignment="Left"
+                                    Icon="Refresh" />
+                                <TextBlock
+                                    Margin="0,0,15,0"
+                                    Style="{StaticResource HeaderTextBlockStyle}"
+                                    Text="LOAD" />
+
+                            </StackPanel>
+
+
+                        </Button>
+                        <Button
+                            x:Name="btnDirLog"
+                            Width="30"
+                            Height="30"
+                            Content=". . ."
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource ButtonCircle}" />
+                        <TextBox
+                            x:Name="txtPathFile"
+                            Width="200"
+                            Height="40"
+                            Margin="-2,0"
+                            HorizontalAlignment="Right"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource TextBoxStandard}" />
+                    </DockPanel>
+
+                </Grid>
+            </DockPanel>
+
+        </Grid>
+
+        <DockPanel Grid.Row="1" LastChildFill="True">
+            <ProgressBar
+                x:Name="progressBar"
+                Height="20"
+                Margin="0,2"
+                DockPanel.Dock="Bottom"
+                Visibility="Collapsed" />
+            <ListView
+                x:Name="lvDefectCode"
+                Margin="10,10,10,0"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            Width="50"
+                            DisplayMemberBinding="{Binding Index}"
+                            Header="ID" />
+                        <GridViewColumn
+                            Width="300"
+                            DisplayMemberBinding="{Binding DefectName}"
+                            Header="DEFECT NAME" />
+                        <GridViewColumn
+                            Width="150"
+                            DisplayMemberBinding="{Binding DefectGroup}"
+                            Header="DEFECT GROUP" />
+                        <GridViewColumn
+                            Width="150"
+                            DisplayMemberBinding="{Binding Msg}"
+                            Header="MESSAGE" />
+
+                        <GridViewColumn
+                            Width="100"
+                            DisplayMemberBinding="{Binding PrintCode}"
+                            Header="PRINT CODE" />
+                        <GridViewColumn
+                            Width="50"
+                            DisplayMemberBinding="{Binding AbRule}"
+                            Header="AB RULE" />
+                        <GridViewColumn
+                            Width="50"
+                            DisplayMemberBinding="{Binding Tray}"
+                            Header="TRAY" />
+
+                    </GridView>
+                </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </DockPanel>
+    </Grid>
+</UserControl>

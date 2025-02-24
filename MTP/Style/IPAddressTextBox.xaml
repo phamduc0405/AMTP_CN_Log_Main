@@ -1,0 +1,130 @@
+﻿<UserControl
+    x:Class="ACO2_App.Style.IPAddressTextBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ACO2_App.Style"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="IpTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Montserrat" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Rectangle
+            Fill="#FFA4BCC6"
+            RadiusX="4"
+            RadiusY="4"
+            Visibility="Visible" />
+        <Border
+            Background="White"
+            BorderBrush="{StaticResource gradientLayout5}"
+            BorderThickness="1"
+            CornerRadius="3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!--  TextBoxes for IP Segments  -->
+                <TextBox
+                    x:Name="txtFirstSegment"
+                    Grid.Column="0"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Montserrat"
+                    FontSize="15"
+                    FontWeight="Medium"
+                    MaxLength="3"
+                    PreviewKeyDown="SegmentTextBox_PreviewKeyDown"
+                    Text="{Binding FirstSegment, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                    TextAlignment="Center"
+                    TextChanged="SegmentTextBox_TextChanged" />
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="." />
+
+                <TextBox
+                    x:Name="txtSecondSegment"
+                    Grid.Column="2"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Montserrat"
+                    FontSize="15"
+                    FontWeight="Medium"
+                    MaxLength="3"
+                    PreviewKeyDown="SegmentTextBox_PreviewKeyDown"
+                    Text="{Binding SecondSegment, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                    TextAlignment="Center"
+                    TextChanged="SegmentTextBox_TextChanged" />
+                <TextBlock
+                    Grid.Column="3"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="." />
+
+                <TextBox
+                    x:Name="txtThirdSegment"
+                    Grid.Column="4"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Montserrat"
+                    FontSize="15"
+                    FontWeight="Medium"
+                    MaxLength="3"
+                    PreviewKeyDown="SegmentTextBox_PreviewKeyDown"
+                    Text="{Binding ThirdSegment, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                    TextAlignment="Center"
+                    TextChanged="SegmentTextBox_TextChanged" />
+                <TextBlock
+                    Grid.Column="5"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="." />
+
+                <TextBox
+                    x:Name="txtLastSegment"
+                    Grid.Column="6"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Montserrat"
+                    FontSize="15"
+                    FontWeight="Medium"
+                    MaxLength="3"
+                    PreviewKeyDown="SegmentTextBox_PreviewKeyDown"
+                    Text="{Binding LastSegment, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                    TextAlignment="Center"
+                    TextChanged="SegmentTextBox_TextChanged" />
+            </Grid>
+        </Border>
+    </Grid>
+
+
+</UserControl>

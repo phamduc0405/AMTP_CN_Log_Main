@@ -1,0 +1,80 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:system="clr-namespace:System;assembly=mscorlib">
+	<!--  MAIN MENU  -->
+	<system:String x:Key="StrButton">Submit</system:String>
+	<system:String x:Key="StrMenu">Menu</system:String>
+	<system:String x:Key="StrHome">Home</system:String>
+	<system:String x:Key="StrConfig">Config</system:String>
+	<system:String x:Key="StrMonitor">Monitor</system:String>
+    <system:String x:Key="StrData">Data</system:String>
+
+	<!--  MAIN AUTO  -->
+	<system:String x:Key="StrCimStateMainAuto">CIM CONNECTED</system:String>
+	<system:String x:Key="StrPLCStateMainAuto">PLC CONNECTED</system:String>
+	<system:String x:Key="StrAPStateMainAuto">AP1.5 CONNNECTED</system:String>
+	<system:String x:Key="StrMcrStateMainAuto">MCR CONNECTED</system:String>
+
+	<system:String x:Key="StrBarcodeProductMainAuto">PRODUCT CODE</system:String>
+	<system:String x:Key="StrConfirmMainAuto">CONFIRM</system:String>
+
+
+
+	<!--  MAIN MENU DOWN  -->
+	<system:String x:Key="StrAutoMainMenuDown">AUTO</system:String>
+	<system:String x:Key="StrManualMainMenuDown">MANUAL</system:String>
+	<system:String x:Key="StrConfigMainMenuDown">CONFIG</system:String>
+	<system:String x:Key="StrDataMainMenuDown">DATA</system:String>
+	<system:String x:Key="StrMonitorMainMenuDown">MONITOR</system:String>
+	<system:String x:Key="StrResetMainMenuDown">RESET</system:String>
+	<system:String x:Key="StrAlarmMainMenuDown">ALARM</system:String>
+    <system:String x:Key="StrSkipMainMenuDown">SKIP</system:String>
+
+
+    <!--  Header  -->
+	<system:String x:Key="StrMenuVietnamese">Vietnamese</system:String>
+	<system:String x:Key="StrMenuEnglish">English</system:String>
+	<system:String x:Key="StrLogOut">LogOut</system:String>
+	<system:String x:Key="StrOnline">Online</system:String>
+
+
+
+	<!--  T5Control  -->
+	<system:String x:Key="StrSelectChannel">Select Channel :</system:String>
+	<system:String x:Key="StrSelectCommand">Select Command :</system:String>
+	<system:String x:Key="StrSelectCellID">Select Cell ID :</system:String>
+	<system:String x:Key="StrInMesageTable">In Mesage Table</system:String>
+	<system:String x:Key="StrSTART">START</system:String>
+	<system:String x:Key="StrSTOP">STOP</system:String>
+	<system:String x:Key="StrSEND">SEND</system:String>
+	<system:String x:Key="StrEXCELASYNC">EXCEL ASYNC</system:String>
+	<system:String x:Key="StrStationNo">Station No :</system:String>
+	<system:String x:Key="StrIPAddress">IP Address :</system:String>
+	<system:String x:Key="StrTypeOfCPU">Type of CPU</system:String>
+	<system:String x:Key="StrPORT">PORT :</system:String>
+	<system:String x:Key="StrStatus">Status</system:String>
+	<system:String x:Key="StrRefresh">Refresh</system:String>
+	<system:String x:Key="StrConnectPLC">Connect PLC</system:String>
+	<system:String x:Key="StrDisconnectPLC">Disconnect PLC</system:String>
+	<system:String x:Key="StrStatusPLC">Status PLC</system:String>
+	<system:String x:Key="StrDisconnectAutoSyncPLC">Disconnect AutoSync PLC</system:String>
+
+	<!--  T5View  -->
+
+
+
+	<!--  CONFIG  -->
+	<system:String x:Key="StrSave">SAVE</system:String>
+
+
+	<!--  OperaterView  -->
+
+	<!--  DataProduct  -->
+	<system:String x:Key="StrGrouping">Grouping :</system:String>
+	<system:String x:Key="StrSearch">Search :</system:String>
+	<system:String x:Key="StrLoad">LOAD</system:String>
+	<system:String x:Key="StrEquipment">EQUIPMENT :</system:String>
+
+
+
+</ResourceDictionary>

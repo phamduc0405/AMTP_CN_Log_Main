@@ -1,0 +1,180 @@
+﻿<UserControl x:Class="ACO2.Views.Config.ConfigModelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+                xmlns:local="clr-namespace:ACO2.Views.Config"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <GroupBox Header="MODEL NAME">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="3*" />
+
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+ Style="{StaticResource ManualButtonText}"
+ Text="WORK MODEL :" />
+                            <TextBlock
+                             x:Name="txtWorkModel"
+                             Grid.Column="1"
+                             Style="{StaticResource ManualButtonText}"
+                             Text="ABCDEFGHIKLM" />
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="3*" />
+
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+ Style="{StaticResource ManualButtonText}"
+ Text="SELECT MODEL :" />
+                            <TextBox Grid.Column="1"
+x:Name="txtSelectedRecipeName" Margin="0"
+HorizontalAlignment="Stretch"
+VerticalAlignment="Center"
+HorizontalContentAlignment="Left"
+Style="{StaticResource TextBoxHintStyle1}"
+Tag="ABCDEF"
+Text="" />
+        
+                        </Grid>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="btnSearch" Style="{StaticResource controlManualButton}" Width="100">
+                                <TextBlock Style="{StaticResource menuButtonText}" Text="Search"></TextBlock>
+                            </Button>
+
+                            <TextBox Grid.Column="1"
+                            x:Name="txtSearch" Margin="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            Style="{StaticResource TextBoxHintStyle1}"
+                            Tag="ABCDEF"
+                            Text="" />
+                            <Button x:Name="btnTrigger" Width="40" Height="40"
+                                    Grid.Column="2" Style="{StaticResource controlManualButton}" >
+                                <TextBlock Style="{StaticResource menuButtonText}" Text="Trigger" FontSize="12"
+                                           ></TextBlock>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <GroupBox Header="MODEL LIST">
+                    <ListBox x:Name="lstModel" />
+                </GroupBox>
+
+            </Grid>
+            <Grid Grid.Row="2">
+                <GroupBox Header="BUTTON CONTROL">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                             x:Name="btnCreate"
+                             Grid.Column="0"
+                             Width="auto"
+                             Margin="5"
+                             Style="{StaticResource controlButton}">
+                                <TextBlock Style="{StaticResource ManualButtonText}" Text="CREATE" />
+
+                            </Button>
+                            <Button
+                             x:Name="btnDelete"
+                             Grid.Column="1"
+                             Width="auto"
+                             Margin="5"
+                             Style="{StaticResource controlButton}">
+                                <TextBlock Style="{StaticResource ManualButtonText}" Text="DELETE" />
+
+                            </Button>
+
+
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                             x:Name="btnSave"
+                             Grid.Column="0"
+                             Width="auto"
+                             Margin="5"
+                             Style="{StaticResource controlButton}">
+                                <TextBlock Style="{StaticResource ManualButtonText}" Text="SAVE" />
+
+                            </Button>
+                            <Button
+                             x:Name="btnApply"
+                             Grid.Column="1"
+                             Width="auto"
+                             Margin="5"
+                             Style="{StaticResource controlButton}">
+                                <TextBlock Style="{StaticResource ManualButtonText}" Text="SET MODEL" />
+
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
+
+            </Grid>
+
+        </Grid>
+        <Grid Grid.Column="1">
+            <GroupBox Header="PARAMETER"
+                      Margin="2 0">
+                <Grid x:Name="grdMain">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
+                </Grid>
+                
+            </GroupBox>
+        </Grid>
+    </Grid>
+</UserControl>
