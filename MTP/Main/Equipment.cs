@@ -591,7 +591,6 @@ namespace ACO2_App._0
         }
         #endregion
 
-        
         #region Update
         //T:Update
         public async void Update()
