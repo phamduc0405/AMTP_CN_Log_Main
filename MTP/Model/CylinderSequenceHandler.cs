@@ -27,20 +27,21 @@ namespace MTP.Model
 
         private void Initial(string action)
         {
-            var match = System.Text.RegularExpressions.Regex.Match(action, @"ZONE(?<zone>\d+)_CYL_(START|END)_(?<action>\w+)_(?<channel>\d+)");
-
-            if (match.Success)
+            try
             {
-                _zone = int.Parse(match.Groups["zone"].Value);
-                _state = match.Groups[1].Value; // "START" or "END"
-                _actionStr = match.Groups["action"].Value; // "DW"
-                _channel = int.Parse(match.Groups["channel"].Value);
+                var parts = action.Split('_');
+                // parts[0] = "ZONE1", parts[1] = "CYL", parts[2] = "1", parts[3] = "UP", parts[4] = "START"
+                _zone = int.Parse(parts[0].Replace("ZONE", ""));
+                _actionStr = parts[3]; // "UP" or "DOWN"
+                _state = parts[4]; // "START" or "END"
+                _channel = int.Parse(parts[2]); 
             }
-            else
+           catch(Exception ex)
             {
-                LogTxt.Add(LogTxt.Type.Exception, $"[ACTUTOR] Invalid Action Format: {action}");
+                LogTxt.Add(LogTxt.Type.Exception, $"[ACTUTOR] {ex.Message}");
                 return;
             }
+            
         }
     
         private void HandlerCylinder()

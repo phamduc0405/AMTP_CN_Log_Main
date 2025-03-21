@@ -15,24 +15,25 @@ namespace MTP.Model
     {
         public enum RobotAction
         {
-            RB1Tool1StartDrop, 
-            RB1Tool2StartDrop,
-            RB2Tool1StartDrop,
-            RB2Tool2StartDrop,
+            Rb1Tool1StartPut,
+            Rb1Tool2StartPut,
+            Rb1Tool1EndPut,
+            Rb1Tool2EndPut,
 
-            RB1Tool1StartPick,
-            RB1Tool2StartPick,
-            RB2Tool1StartPick,
-            RB2Tool2StartPick,
+            Rb1Tool1StartGet,
+            Rb1Tool2StartGet,
+            Rb1Tool1EndGet,
+            Rb1Tool2EndGet,
 
-            RB1Tool1Drop,
-            RB1Tool2Drop,
-            RB2Tool1Drop,
-            RB2Tool2Drop,
-            RB1Tool1Pick,
-            RB1Tool2Pick,
-            RB2Tool1Pick,
-            RB2Tool2Pick,
+            Rb2Tool1StartPut,
+            Rb2Tool2StartPut,
+            Rb2Tool1EndPut,
+            Rb2Tool2EndPut,
+
+            Rb2Tool1StartGet,
+            Rb2Tool2StartGet,
+            Rb2Tool1EndGet,
+            Rb2Tool2EndGet,
         }
         private Controller _controller;
         private  Dictionary<RobotAction, Func<Task>> _handlers;
@@ -51,28 +52,28 @@ namespace MTP.Model
         private void Initial(string action)
         {
             var actionMap = new Dictionary<string, RobotAction>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "ROBOT1_TOOL1_DROP", RobotAction.RB1Tool1Drop },
-            { "ROBOT1_TOOL2_DROP", RobotAction.RB1Tool2Drop },
-            { "ROBOT2_TOOL1_DROP", RobotAction.RB2Tool1Drop },
-            { "ROBOT2_TOOL2_DROP", RobotAction.RB2Tool2Drop },
+            {
+                { Bit.ROBOT1_1_START_PUT, RobotAction.Rb1Tool1StartPut },
+                { Bit.ROBOT1_2_START_PUT, RobotAction.Rb1Tool2StartPut },
+                { Bit.ROBOT1_1_END_PUT, RobotAction.Rb1Tool1EndPut },
+                { Bit.ROBOT1_2_END_PUT, RobotAction.Rb1Tool2EndPut },
 
+                { Bit.ROBOT1_1_START_GET, RobotAction.Rb1Tool1StartGet },
+                { Bit.ROBOT1_2_START_GET, RobotAction.Rb1Tool2StartGet },
+                { Bit.ROBOT1_1_END_GET, RobotAction.Rb1Tool1EndGet },
+                { Bit.ROBOT1_2_END_GET, RobotAction.Rb1Tool2EndGet },
 
-            { "ROBOT1_TOOL1_PICK", RobotAction.RB1Tool1Pick },
-            { "ROBOT1_TOOL2_PICK", RobotAction.RB1Tool2Pick },
-            { "ROBOT2_TOOL1_PICK", RobotAction.RB2Tool1Pick },
-            { "ROBOT2_TOOL2_PICK", RobotAction.RB2Tool2Pick },
+                { Bit.ROBOT2_1_START_PUT, RobotAction.Rb2Tool1StartPut },
+                { Bit.ROBOT2_2_START_PUT, RobotAction.Rb2Tool2StartPut },
+                { Bit.ROBOT2_1_END_PUT, RobotAction.Rb2Tool1EndPut },
+                { Bit.ROBOT2_2_END_PUT, RobotAction.Rb2Tool2EndPut },
 
-            { "ROBOT1_TOOL1_START_DROP", RobotAction.RB1Tool1StartDrop },
-            { "ROBOT1_TOOL2_START_DROP", RobotAction.RB1Tool2StartDrop },
-            { "ROBOT2_TOOL1_START_DROP", RobotAction.RB2Tool1StartDrop },
-            { "ROBOT2_TOOL2_START_DROP", RobotAction.RB2Tool2StartDrop },
+                { Bit.ROBOT2_1_START_GET, RobotAction.Rb2Tool1StartGet },
+                { Bit.ROBOT2_2_START_GET, RobotAction.Rb2Tool2StartGet },
+                { Bit.ROBOT2_1_END_GET, RobotAction.Rb2Tool1EndGet },
+                { Bit.ROBOT2_2_END_GET, RobotAction.Rb2Tool2EndGet },
+            };
 
-            { "ROBOT1_TOOL1_START_PICK", RobotAction.RB1Tool1StartPick },
-            { "ROBOT1_TOOL2_START_PICK", RobotAction.RB1Tool2StartPick },
-            { "ROBOT2_TOOL1_START_PICK", RobotAction.RB2Tool1StartPick },
-            { "ROBOT2_TOOL2_START_PICK", RobotAction.RB2Tool2StartPick },
-        };
 
             if (actionMap.TryGetValue(action, out RobotAction mappedAction))
             {
@@ -83,29 +84,28 @@ namespace MTP.Model
                 LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT] Unknown Action: {action}");
                 return;
             }
-
             _handlers = new Dictionary<RobotAction, Func<Task>>
-        {
-            { RobotAction.RB1Tool1Drop, async () => await HandleToolDrop(1,1) },
-            { RobotAction.RB1Tool2Drop, async () => await HandleToolDrop(1,2) },
-            { RobotAction.RB2Tool1Drop, async () => await HandleToolDrop(2,1) },
-            { RobotAction.RB2Tool2Drop, async () => await HandleToolDrop(2,2) },
+            {
+                { RobotAction.Rb1Tool1StartPut, async () => await HandleToolStartPut(1, 1) },
+                { RobotAction.Rb1Tool2StartPut, async () => await HandleToolStartPut(1, 2) },
+                { RobotAction.Rb1Tool1EndPut, async () => await HandleToolEndPut(1, 1) },
+                { RobotAction.Rb1Tool2EndPut, async () => await HandleToolEndPut(1, 2) },
 
-             { RobotAction.RB1Tool1Pick, async () => await HandleToolPick(1,1) },
-            { RobotAction.RB1Tool2Pick, async () => await HandleToolPick(1,2) },
-            { RobotAction.RB2Tool1Pick, async () => await HandleToolPick(2,1) },
-            { RobotAction.RB2Tool2Pick, async () => await HandleToolPick(2,2) },
+                { RobotAction.Rb1Tool1StartGet, async () => await HandleToolStartGet(1, 1) },
+                { RobotAction.Rb1Tool2StartGet, async () => await HandleToolStartGet(1, 2) },
+                { RobotAction.Rb1Tool1EndGet, async () => await HandleToolEndGet(1, 1) },
+                { RobotAction.Rb1Tool2EndGet, async () => await HandleToolEndGet(1, 2) },
 
-              { RobotAction.RB1Tool1StartDrop, async () => await HandleToolStartDrop(1,1) },
-            { RobotAction.RB1Tool2StartDrop, async () => await HandleToolStartDrop(1,2) },
-            { RobotAction.RB2Tool1StartDrop, async () => await HandleToolStartDrop(2,1) },
-            { RobotAction.RB2Tool2StartDrop, async () => await HandleToolStartDrop(2,2) },
+                { RobotAction.Rb2Tool1StartPut, async () => await HandleToolStartPut(2, 1) },
+                { RobotAction.Rb2Tool2StartPut, async () => await HandleToolStartPut(2, 2) },
+                { RobotAction.Rb2Tool1EndPut, async () => await HandleToolEndPut(2, 1) },
+                { RobotAction.Rb2Tool2EndPut, async () => await HandleToolEndPut(2, 2) },
 
-              { RobotAction.RB1Tool1StartPick, async () => await HandleToolStartPick(1,1) },
-            { RobotAction.RB1Tool2StartPick, async () => await HandleToolStartPick(1,2) },
-            { RobotAction.RB2Tool1StartPick, async () => await HandleToolStartPick(2,1) },
-            { RobotAction.RB2Tool2StartPick, async () => await HandleToolStartPick(2,2) },
-        };
+                { RobotAction.Rb2Tool1StartGet, async () => await HandleToolStartGet(2, 1) },
+                { RobotAction.Rb2Tool2StartGet, async () => await HandleToolStartGet(2, 2) },
+                { RobotAction.Rb2Tool1EndGet, async () => await HandleToolEndGet(2, 1) },
+                { RobotAction.Rb2Tool2EndGet, async () => await HandleToolEndGet(2, 2) },
+            };
         }
         private void HandleAction()
         {
@@ -118,17 +118,34 @@ namespace MTP.Model
                 LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT] No handler found for action {_action}");
             }
         }
-
-        private async Task HandleToolStartDrop(int zone, int toolNumber)
+        private async Task HandleToolStartPut(int zone, int toolNumber)
         {
-            switch (toolNumber)
+            switch (zone)
             {
                 case 1:
-                    _cellIDWord = $"CELL_ID_RB{zone}_DROP_TOOL1"; _channelWord = $"CHANNEL_RB{zone}_DROP_TOOL1";
-                    _unitWord = "UNIT_RB1_DROP_1"; _stageWord = "STAGE_RB1_DROP_1"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; break;
+
+                    }
+                    break;
                 case 2:
-                    _cellIDWord = $"CELL_ID_RB{zone}_DROP_TOOL2"; _channelWord = $"CHANNEL_RB{zone}_DROP_TOOL2";
-                    _unitWord = $"UNIT_RB{zone}_DROP_2"; _stageWord = $"STAGE_RB{zone}_DROP_2"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
+                            _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
+                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE; break;
+
+                    }
+                    break;
 
             }
             try
@@ -138,11 +155,11 @@ namespace MTP.Model
                 bool isTimeOut = false;
 
                 (cellIdRbDropTool, channelRbDropTool, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _channelWord);
-                if (isTimeOut)
-                {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }               
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}               
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -178,16 +195,34 @@ namespace MTP.Model
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]:" + debug);
             }
         }
-        private async Task HandleToolDrop(int zone, int toolNumber)
+        private async Task HandleToolEndPut(int zone, int toolNumber)
         {
-            switch (toolNumber)
+            switch (zone)
             {
                 case 1:
-                    _cellIDWord = $"CELL_ID_RB{zone}_DROP_TOOL1"; _channelWord = $"CHANNEL_RB{zone}_DROP_1"; 
-                    _unitWord = "UNIT_RB1_DROP_1"; _stageWord = "STAGE_RB1_DROP_1"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; break;
+
+                    }
+                    break;
                 case 2:
-                    _cellIDWord = $"CELL_ID_RB{zone}_DROP_TOOL2"; _channelWord = $"CHANNEL_RB{zone}_DROP_2";
-                    _unitWord = $"UNIT_RB{zone}_DROP_2"; _stageWord = $"STAGE_RB{zone}_DROP_2"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
+                            _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
+                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE; break;
+
+                    }
+                    break;
 
             }
             try
@@ -197,21 +232,21 @@ namespace MTP.Model
                 bool isTimeOut = false;
 
                 (cellIdRbDropTool, channelRbDropTool, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _channelWord);
-                if (isTimeOut)
-                {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
                 string unitRbDropTool = "";
                 string stageRbDropTool = "";
                 bool isTimeOut1 = false;
 
                 (unitRbDropTool, stageRbDropTool, isTimeOut1) = await _controller.WaitForPlcData(_unitWord, _stageWord);
-                if (isTimeOut)
-                {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -264,18 +299,38 @@ namespace MTP.Model
             }
         }
 
-        private async Task HandleToolStartPick(int zone, int toolNumber)
+        private async Task HandleToolStartGet(int zone, int toolNumber)
         {
-            switch (toolNumber)
+            switch (zone)
             {
                 case 1:
-                    _cellIDWord = $"CELL_ID_RB{zone}_PICK_TOOL1"; _channelWord = $"CHANNEL_RB{zone}_PICK_TOOL1";
-                    _unitWord = $"UNIT_RB{zone}_PICK_1"; _stageWord = $"STAGE_RB{zone}_PICK_1";
-                    _isNeedRetryWord = $"ISNEEDRETRY_RB{zone}_PICK1"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; 
+                            _isNeedRetryWord = Word.ROBOT1_1_ISNEEDRETRY; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; 
+                            _isNeedRetryWord = Word.ROBOT1_2_ISNEEDRETRY; break;
+
+                    }
+                    break;
                 case 2:
-                    _cellIDWord = $"CELL_ID_RB{zone}_PICK_TOOL2"; _channelWord = $"CHANNEL_RB{zone}_PICK_TOOL2";
-                    _unitWord = $"UNIT_RB{zone}_PICK_2"; _stageWord = $"STAGE_RB{zone}_PICK_2";
-                    _isNeedRetryWord = $"ISNEEDRETRY_RB{zone}_PICK2"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
+                            _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE;
+                            _isNeedRetryWord = Word.ROBOT2_1_ISNEEDRETRY; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
+                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE; 
+                            _isNeedRetryWord =Word.ROBOT2_2_ISNEEDRETRY; break;
+
+                    }
+                    break;
 
             }
             try
@@ -284,12 +339,12 @@ namespace MTP.Model
                 string channelRbPickTool = "";
                 bool isTimeOut = false;
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _channelWord);
-                if (isTimeOut)
-                {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }
-                string isNeedRetry = "";
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
+                string isNeedRetry = ""; 
                 isNeedRetry = _controller.GetWordValueFromPLC(_isNeedRetryWord, true);
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
@@ -316,18 +371,38 @@ namespace MTP.Model
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:" + debug);
             }
         }
-        private async Task HandleToolPick(int zone, int toolNumber)
+        private async Task HandleToolEndGet(int zone, int toolNumber)
         {
-            switch (toolNumber)
+            switch (zone)
             {
                 case 1:
-                    _cellIDWord = $"CELL_ID_RB{zone}_PICK_TOOL1"; _channelWord = $"CHANNEL_RB{zone}_PICK_1";
-                    _unitWord = $"UNIT_RB{zone}_PICK_1"; _stageWord = $"STAGE_RB{zone}_PICK_1";
-                    _isNeedRetryWord = $"ISNEEDRETRY_RB{zone}_PICK1"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE;
+                            _isNeedRetryWord = Word.ROBOT1_1_ISNEEDRETRY; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE;
+                            _isNeedRetryWord = Word.ROBOT1_2_ISNEEDRETRY; break;
+
+                    }
+                    break;
                 case 2:
-                    _cellIDWord = $"CELL_ID_RB{zone}_PICK_TOOL2"; _channelWord = $"CHANNEL_RB{zone}_PICK_2";
-                    _unitWord = $"UNIT_RB{zone}_PICK_2"; _stageWord = $"STAGE_RB{zone}_PICK_2";
-                    _isNeedRetryWord = $"ISNEEDRETRY_RB{zone}_PICK2"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
+                            _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE;
+                            _isNeedRetryWord = Word.ROBOT2_1_ISNEEDRETRY; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
+                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE;
+                            _isNeedRetryWord = Word.ROBOT2_2_ISNEEDRETRY; break;
+
+                    }
+                    break;
 
             }
             try
@@ -336,20 +411,20 @@ namespace MTP.Model
                 string channelRbPickTool = "";
                 bool isTimeOut = false;
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _channelWord);
-                if (isTimeOut)
-                {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
                 string unitRbPickTool = "";
                 string stageRbPickTool = "";
                 bool isTimeOut1 = false;
                 (unitRbPickTool, stageRbPickTool, isTimeOut1) = await _controller.WaitForPlcData(_unitWord, _stageWord);
-                if (isTimeOut1)
-                {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }
+                //if (isTimeOut1)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
                 string isNeedRetry = "";
                 isNeedRetry = _controller.GetWordValueFromPLC(_isNeedRetryWord, true);
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + $"RECEIVE DATA PLC: " +

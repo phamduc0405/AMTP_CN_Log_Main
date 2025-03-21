@@ -183,6 +183,7 @@
     <Compile Include="INIT\SystemConfig.cs" />
     <Compile Include="INIT\TcpIpHelper.cs" />
     <Compile Include="INIT\XmlHelper.cs" />
+    <Compile Include="Model\BitAndWordName.cs" />
     <Compile Include="Model\CylinderSequenceHandler.cs" />
     <Compile Include="Model\EquipmentConfig.cs" />
     <Compile Include="INIT\ObservableObject.cs" />

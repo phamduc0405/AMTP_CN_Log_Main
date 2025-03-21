@@ -35,8 +35,8 @@ namespace MTP.Model
         {
             var actionMap = new Dictionary<string, TrackInAction>(StringComparer.OrdinalIgnoreCase)
         {
-            { "TRACK_IN_TOOL1", TrackInAction.Tool1 },
-            { "TRACK_IN_TOOL2", TrackInAction.Tool2 }
+            { Bit.TRACKIN_1, TrackInAction.Tool1 },
+            { Bit.TRACKIN_2, TrackInAction.Tool2 }
         };
 
             if (actionMap.TryGetValue(action, out TrackInAction mappedAction))
@@ -75,9 +75,9 @@ namespace MTP.Model
 
             {
                 case 1:
-                    _cellIDWord = "CELL_ID_TRACKIN_TOOL1"; _resultTrackInWord = "RESULT_TRACKIN_1"; break;
+                    _cellIDWord =Word.TRACKIN_1_CELLID; _resultTrackInWord = Word.TRACKIN_1_RESULT; break;
                 case 2:
-                    _cellIDWord = "CELL_ID_TRACKIN_TOOL2"; _resultTrackInWord = "RESULT_TRACKIN_2"; break;
+                    _cellIDWord = Word.TRACKIN_2_CELLID; _resultTrackInWord = Word.TRACKIN_2_RESULT; break;
 
             }
                 try
@@ -86,11 +86,11 @@ namespace MTP.Model
                     string resultTrackIn = "";
                     bool isTimeOut = false;
                     (cellIDTrackIn, resultTrackIn, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _resultTrackInWord);
-                    if (isTimeOut)
-                    {
-                    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                        return;
-                    }
+                    //if (isTimeOut)
+                    //{
+                    //_controller.SetSignalBitFromPC("TIME_OUT", true);
+                    //    return;
+                    //}
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" 
                         + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");

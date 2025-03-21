@@ -50,25 +50,30 @@ namespace MTP.Model
         {
             var actionMap = new Dictionary<string, ActutorAction>(StringComparer.OrdinalIgnoreCase)
         {
-            { "ZONE1_SERVO1_START_FW", ActutorAction.Zone1Servo1StartFw },
-            { "ZONE1_SERVO1_START_BW",  ActutorAction.Zone1Servo1StartBw },
-            { "ZONE1_SERVO2_START_FW",  ActutorAction.Zone1Servo2StartFw},
-            { "ZONE1_SERVO2_START_BW",  ActutorAction.Zone1Servo2StartBw },
-
-             { "ZONE2_SERVO1_START_FW", ActutorAction.Zone2Servo1StartFw },
-            { "ZONE2_SERVO1_START_BW",  ActutorAction.Zone2Servo1StartBw },
-            { "ZONE2_SERVO2_START_FW",  ActutorAction.Zone2Servo2StartFw},
-            { "ZONE2_SERVO2_START_BW",  ActutorAction.Zone2Servo2StartBw },
-
-             { "ZONE1_SERVO1_END_FW", ActutorAction.Zone1Servo1EndFw },
-            { "ZONE1_SERVO1_END_BW",  ActutorAction.Zone1Servo1EndBw },
-            { "ZONE1_SERVO2_END_FW",  ActutorAction.Zone1Servo2EndFw},
-            { "ZONE1_SERVO2_END_BW",  ActutorAction.Zone1Servo2EndBw },
-
-             { "ZONE2_SERVO1_END_FW", ActutorAction.Zone2Servo1EndFw },
-            { "ZONE2_SERVO1_END_BW",  ActutorAction.Zone2Servo1EndBw },
-            { "ZONE2_SERVO2_END_FW",  ActutorAction.Zone2Servo2EndFw},
-            { "ZONE2_SERVO2_END_BW",  ActutorAction.Zone2Servo2EndBw },
+            // ZONE 1 - FW Start
+            { Bit.ZONE1_SERVO_1_FW_START, ActutorAction.Zone1Servo1StartFw },
+            { Bit.ZONE1_SERVO_2_FW_START, ActutorAction.Zone1Servo2StartFw },
+            // ZONE 1 - BW Start
+            { Bit.ZONE1_SERVO_1_BW_START, ActutorAction.Zone1Servo1StartBw },
+            { Bit.ZONE1_SERVO_2_BW_START, ActutorAction.Zone1Servo2StartBw },
+            // ZONE 2 - FW Start
+            { Bit.ZONE2_SERVO_1_FW_START, ActutorAction.Zone2Servo1StartFw },
+            { Bit.ZONE2_SERVO_2_FW_START, ActutorAction.Zone2Servo2StartFw },
+            // ZONE 2 - BW Start
+            { Bit.ZONE2_SERVO_1_BW_START, ActutorAction.Zone2Servo1StartBw },
+            { Bit.ZONE2_SERVO_2_BW_START, ActutorAction.Zone2Servo2StartBw },
+            // ZONE 1 - FW End
+            { Bit.ZONE1_SERVO_1_FW_END, ActutorAction.Zone1Servo1EndFw },
+            { Bit.ZONE1_SERVO_2_FW_END, ActutorAction.Zone1Servo2EndFw },
+            // ZONE 1 - BW End
+            { Bit.ZONE1_SERVO_1_BW_END, ActutorAction.Zone1Servo1EndBw },
+            { Bit.ZONE1_SERVO_2_BW_END, ActutorAction.Zone1Servo2EndBw },
+            // ZONE 2 - FW End
+            { Bit.ZONE2_SERVO_1_FW_END, ActutorAction.Zone2Servo1EndFw },
+            { Bit.ZONE2_SERVO_2_FW_END, ActutorAction.Zone2Servo2EndFw },
+            // ZONE 2 - BW End
+            { Bit.ZONE2_SERVO_1_BW_END, ActutorAction.Zone2Servo1EndBw },
+            { Bit.ZONE2_SERVO_2_BW_END, ActutorAction.Zone2Servo2EndBw },
         };
 
             if (actionMap.TryGetValue(action, out ActutorAction mappedAction))
