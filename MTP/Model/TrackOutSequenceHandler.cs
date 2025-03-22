@@ -14,8 +14,10 @@ namespace MTP.Model
     {
         public enum TrackOutAction
         {
-            Tool1,
-            Tool2
+            Rb1Tool1,
+            Rb1Tool2,
+            Rb2Tool1,
+            Rb2Tool2,
         }
         private Controller _controller;
 
@@ -37,8 +39,10 @@ namespace MTP.Model
         {
             var actionMap = new Dictionary<string, TrackOutAction>(StringComparer.OrdinalIgnoreCase)
         {
-            { "TRACK_OUT_TOOL1", TrackOutAction .Tool1 },
-            { "TRACK_OUT_TOOL2", TrackOutAction .Tool2 }
+            { Bit.ROBOT1_1_TRACKOUT, TrackOutAction .Rb1Tool1 },
+            { Bit.ROBOT1_2_TRACKOUT, TrackOutAction .Rb1Tool2 },
+            { Bit.ROBOT2_1_TRACKOUT, TrackOutAction .Rb2Tool1 },
+            { Bit.ROBOT2_2_TRACKOUT, TrackOutAction .Rb2Tool2 }
         };
 
             if (actionMap.TryGetValue(action, out TrackOutAction mappedAction))
@@ -54,8 +58,10 @@ namespace MTP.Model
 
             _handlers = new Dictionary<TrackOutAction, Func<Task>>
         {
-            { TrackOutAction.Tool1, async () => await HandleTrackOut(1) },
-            { TrackOutAction.Tool2, async () => await HandleTrackOut(2) }
+            { TrackOutAction.Rb1Tool1, async () => await HandleTrackOut(1, 1) },
+            { TrackOutAction.Rb1Tool2, async () => await HandleTrackOut(1,2) },
+             { TrackOutAction.Rb2Tool1, async () => await HandleTrackOut(1,1) },
+            { TrackOutAction.Rb2Tool2, async () => await HandleTrackOut(1,2) }
         };
 
         }
@@ -71,30 +77,49 @@ namespace MTP.Model
             }
         }
 
-        private async Task HandleTrackOut(int toolNumber)
+        private async Task HandleTrackOut(int robotNo, int toolNumber)
         {
-            switch (toolNumber)
+            switch (robotNo)
             {
                 case 1:
-                    _cellIDWord = "CELL_ID_TRACKOUT_TOOL1"; _resultTrackOutWord = "RESULT_TRACKOUT_1";
-                    _abRuleWord = "AB_RULE_TRACKOUT_TOOL1"; _reTryWord = "RETRY_TRACKOUT_TOOL1";
-                    _rechecked = "RECHECKED_TRACKOUT_TOOL1"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT1_1_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT1_1_TRACKOUT_RESULT;
+                            _abRuleWord = Word.ROBOT1_1_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT1_1_TRACKOUT_RETRY;
+                            _rechecked = Word.ROBOT1_1_TRACKOUT_RECHECKED; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT1_2_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT1_2_TRACKOUT_RESULT;
+                            _abRuleWord = Word.ROBOT1_2_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT1_2_TRACKOUT_RETRY;
+                            _rechecked = Word.ROBOT1_2_TRACKOUT_RECHECKED; break;
+                    }
+                    break;
                 case 2:
-                    _cellIDWord = "CELL_ID_TRACKOUT_TOOL2"; _resultTrackOutWord = "RESULT_TRACKOUT_2"; 
-                    _abRuleWord = "AB_RULE_TRACKOUT_TOOL2"; _reTryWord = "RETRY_TRACKOUT_TOOL2";
-                    _rechecked = "RECHECKED_TRACKOUT_TOOL2"; break;
+                    switch (toolNumber)
+                    {
+                        case 1:
+                            _cellIDWord = Word.ROBOT2_1_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT2_1_TRACKOUT_RESULT;
+                            _abRuleWord = Word.ROBOT2_1_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT2_1_TRACKOUT_RETRY;
+                            _rechecked = Word.ROBOT2_1_TRACKOUT_RECHECKED; break;
+                        case 2:
+                            _cellIDWord = Word.ROBOT2_2_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT2_2_TRACKOUT_RESULT;
+                            _abRuleWord = Word.ROBOT2_2_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT2_2_TRACKOUT_RETRY;
+                            _rechecked = Word.ROBOT2_2_TRACKOUT_RECHECKED; break;
+                    }
+                    break;
             }
+          
             try
             {
                 string cellIDTrackOut = "";
                 string resultTrackOut = "";
                 bool isTimeOut = false;
                 (cellIDTrackOut, resultTrackOut, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _resultTrackOutWord);
-                if (isTimeOut)
-                {
-                   _controller.SetSignalBitFromPC("TIME_OUT", true);
-                    return;
-                }
+                //if (isTimeOut)
+                //{
+                //   _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
                 string abRule = "";
                 string retry = "";
                 string rechecked = "";
@@ -103,7 +128,7 @@ namespace MTP.Model
                 rechecked = _controller.GetWordValueFromPLC(_rechecked, true);
                 if(rechecked == "0") { rechecked = "NO"; }
                 if (rechecked == "1") { rechecked = "YES"; }
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][TOOL{toolNumber}]:" 
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:" 
                     + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}"+
                     $"AB RULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}" +
@@ -121,31 +146,31 @@ namespace MTP.Model
                     cellData.MCEndTime = DateTime.Now;
                     cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
 
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][TOOL{toolNumber}]" + 
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 
                         $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}" +
                         $"");
                   await  _controller.SaveDataLog(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][TOOL{toolNumber}]" + 
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 
                         $"SAVE DATA TO DATALOG: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " + 
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
 
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
                     _controller.ListCellDatas.CellDatas.Remove(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][TOOL{toolNumber}]:  CellData Remove from List:" + logMessage);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:  CellData Remove from List:" + logMessage);
                 }
                 else
                 {
                     string m = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][TOOL{toolNumber}]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
                 }
 
             }
             catch (Exception e)
             {
                 string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
-                LogTxt.Add(LogTxt.Type.Exception, $"[TRACKOUT][TOOL{toolNumber}]" + debug);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][TOOL{toolNumber}]" + debug);
+                LogTxt.Add(LogTxt.Type.Exception, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + debug);
             }
         }
     }
