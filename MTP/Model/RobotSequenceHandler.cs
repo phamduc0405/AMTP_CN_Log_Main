@@ -3,6 +3,7 @@ using ACO2_App._0.INIT;
 using ACO2_App._0.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Channels;
@@ -42,7 +43,9 @@ namespace MTP.Model
         private string _channelWord = "";
         private string _unitWord = "";
         private string _stageWord = "";
-        private string _isNeedRetryWord = "";
+        private string _retryWord = "";
+        private string _recheckedWord = "";
+        private string _abRuleWord = "";
         public RobotSequenceHandler(string action)
         {
 
@@ -166,6 +169,15 @@ namespace MTP.Model
                     $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
                      $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
                );
+                string channel = "";
+                if (int.Parse(channelRbDropTool) < 10)
+                {
+                    channel = $"CH0{channelRbDropTool}";
+                }
+                else
+                {
+                    channel = $"CH{channelRbDropTool}";
+                }
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIdRbDropTool, true);
                 if (cellData != null)
@@ -204,10 +216,14 @@ namespace MTP.Model
                     {
                         case 1:
                             _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
-                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; break;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; 
+                           
+                            break;
                         case 2:
                             _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
-                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; break;
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; 
+                          
+                            break;
 
                     }
                     break;
@@ -259,7 +275,16 @@ namespace MTP.Model
                 {
                     cellData.RBDropEndTime = DateTime.Now;
                     cellData.RBDropTackTime = (cellData.RBDropEndTime - cellData.RBDropStartTime).TotalSeconds;
-                    cellData.Channel.ChannelNo = channelRbDropTool;
+                    string channel = "";
+                    if (int.Parse(channelRbDropTool) < 10)
+                    {
+                        channel = $"CH0{channelRbDropTool}";
+                    }
+                    else
+                    {
+                        channel = $"CH{channelRbDropTool}";
+                    }
+                    cellData.Channel.ChannelNo = channel;
                     cellData.UnitStartTime = DateTime.Now;
                     cellData.ZoneNo = zone.ToString() ;
                     if(zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
@@ -308,13 +333,14 @@ namespace MTP.Model
                     {
                         case 1:
                             _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
-                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; 
-                            _isNeedRetryWord = Word.ROBOT1_1_ISNEEDRETRY; break;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE;
+                            _abRuleWord = Word.ROBOT1_1_ABRULE; _recheckedWord = Word.ROBOT1_1_RECHECKED; _retryWord = Word.ROBOT1_1_RETRY;
+                            break;
                         case 2:
                             _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
-                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; 
-                            _isNeedRetryWord = Word.ROBOT1_2_ISNEEDRETRY; break;
-
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE;
+                            _abRuleWord = Word.ROBOT1_2_ABRULE; _recheckedWord = Word.ROBOT1_2_RECHECKED; _retryWord = Word.ROBOT1_2_RETRY;
+                            break;
                     }
                     break;
                 case 2:
@@ -323,11 +349,13 @@ namespace MTP.Model
                         case 1:
                             _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
                             _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE;
-                            _isNeedRetryWord = Word.ROBOT2_1_ISNEEDRETRY; break;
+                            _abRuleWord = Word.ROBOT2_1_ABRULE; _recheckedWord = Word.ROBOT2_1_RECHECKED; _retryWord = Word.ROBOT2_1_RETRY;
+                            break;
                         case 2:
                             _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
-                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE; 
-                            _isNeedRetryWord =Word.ROBOT2_2_ISNEEDRETRY; break;
+                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE;
+                            _abRuleWord = Word.ROBOT2_2_ABRULE; _recheckedWord = Word.ROBOT2_2_RECHECKED; _retryWord = Word.ROBOT2_2_RETRY;
+                            break;
 
                     }
                     break;
@@ -344,14 +372,34 @@ namespace MTP.Model
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-                string isNeedRetry = ""; 
-                isNeedRetry = _controller.GetWordValueFromPLC(_isNeedRetryWord, true);
+                string retry = "";
+                string rechecked = "";
+                string abRule = "";
+                bool isTimeOut1 = false;
+
+                (retry, rechecked, isTimeOut1) = await _controller.WaitForPlcData(_retryWord, _recheckedWord);
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
+                abRule = _controller.GetWordValueFromPLC(_abRuleWord, true);
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                    $"ISNEEDRETRY:{_controller.GetWordValueFromPLC(_isNeedRetryWord, true)}"
+                    $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}"+
+                    $"RECHECKED:{_controller.GetWordValueFromPLC(_retryWord, true)}"+
+                     $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}"
                     );
-
+                string channel = "";
+                if (int.Parse(channelRbPickTool) < 10)
+                {
+                    channel = $"CH0{channelRbPickTool}";
+                }
+                else
+                {
+                    channel = $"CH{channelRbPickTool}";
+                }
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
                 if (cellData != null)
@@ -381,12 +429,13 @@ namespace MTP.Model
                         case 1:
                             _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
                             _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE;
-                            _isNeedRetryWord = Word.ROBOT1_1_ISNEEDRETRY; break;
+                            _abRuleWord = Word.ROBOT1_1_ABRULE; _recheckedWord = Word.ROBOT1_1_RECHECKED; _retryWord = Word.ROBOT1_1_RETRY;
+                            break;
                         case 2:
                             _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
                             _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE;
-                            _isNeedRetryWord = Word.ROBOT1_2_ISNEEDRETRY; break;
-
+                            _abRuleWord = Word.ROBOT1_2_ABRULE; _recheckedWord = Word.ROBOT1_2_RECHECKED; _retryWord = Word.ROBOT1_2_RETRY;
+                            break;
                     }
                     break;
                 case 2:
@@ -395,11 +444,13 @@ namespace MTP.Model
                         case 1:
                             _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
                             _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE;
-                            _isNeedRetryWord = Word.ROBOT2_1_ISNEEDRETRY; break;
+                            _abRuleWord = Word.ROBOT2_1_ABRULE; _recheckedWord = Word.ROBOT2_1_RECHECKED; _retryWord = Word.ROBOT2_1_RETRY;
+                            break;
                         case 2:
                             _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
                             _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE;
-                            _isNeedRetryWord = Word.ROBOT2_2_ISNEEDRETRY; break;
+                            _abRuleWord = Word.ROBOT2_2_ABRULE; _recheckedWord = Word.ROBOT2_2_RECHECKED; _retryWord = Word.ROBOT2_2_RETRY;
+                            break;
 
                     }
                     break;
@@ -425,24 +476,45 @@ namespace MTP.Model
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-                string isNeedRetry = "";
-                isNeedRetry = _controller.GetWordValueFromPLC(_isNeedRetryWord, true);
+                string retry = "";
+                string rechecked = "";
+                string abRule = "";
+                bool isTimeOut2 = false;
+
+                (retry, rechecked, isTimeOut2) = await _controller.WaitForPlcData(_retryWord, _recheckedWord);
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
+                abRule = _controller.GetWordValueFromPLC(_abRuleWord, true);
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}"+
                     $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}"+
                     $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
-                    $"ISNEEDRETRY:{_controller.GetWordValueFromPLC(_isNeedRetryWord, true)}" 
+                      $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                    $"RECHECKED:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                     $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}"
                     );
-
+                string channel = "";
+                if (int.Parse(channelRbPickTool) < 10)
+                {
+                    channel = $"CH0{channelRbPickTool}";
+                }
+                else
+                {
+                    channel = $"CH{channelRbPickTool}";
+                }
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
+              
                 if (cellData != null)
                 {
                     cellData.RBPickEndTime = DateTime.Now;
                     cellData.RBPickTackTime = (cellData.RBPickEndTime - cellData.RBPickStartTime).TotalSeconds;
-                    var cell = _controller.Equipment[zone-1].Channels.FirstOrDefault(channel => channel.CellID == cellIdRbPickTool);
-                    if (cell == null)
+                    var cell = _controller.Equipment[zone-1].Channels.FirstOrDefault(ch => ch.ChannelNo == channel);
+                    if (cell != null)
                     {
                         if (zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
                         if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
@@ -451,7 +523,6 @@ namespace MTP.Model
                         cellData.Stage = stageRbPickTool;
                         cellData.ZoneNo = zone.ToString();
                         cellData.Channel = cell;
-                        cellData.Channel.ChannelNo = channelRbPickTool; 
                         cellData.UnitEndTime = DateTime.Now;
                         cellData.UnitTackTime = (cellData.UnitEndTime - cellData.UnitStartTime).TotalSeconds;
                         LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + $"UPDATE DATA IN LIST: " +
@@ -459,14 +530,17 @@ namespace MTP.Model
                             $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
                             $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
                             $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
-                            $"ISNEEDRETRY:{_controller.GetWordValueFromPLC(_isNeedRetryWord, true)}");
+                             $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                    $"RECHECKED:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                     $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}");
                         string logMessage = _controller.CreateLogFollowCellData(cellData);
                         LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:  CellData Updated:" + logMessage);
 
 
-                        if(isNeedRetry == "0") { } // no need retry
-                        if(isNeedRetry == "1") // need retry
+                        if(retry == "0") { cellData.Retry = retry; cellData.Rechecked = rechecked;cellData.ABRule = abRule; } // no need retry
+                        if(retry == "1") // need retry
                         {
+                            cellData.Retry = retry; cellData.Rechecked = rechecked; cellData.ABRule = abRule;
                             cellData.MCEndTime = DateTime.Now;
                             cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
                            await _controller.SaveDataLog(cellData);

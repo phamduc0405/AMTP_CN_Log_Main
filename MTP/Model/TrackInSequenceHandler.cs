@@ -94,9 +94,15 @@ namespace MTP.Model
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" 
                         + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
+                //Convert Data
+                if (resultTrackIn == "G")
+                {
+                    resultTrackIn = "GOOD";
+                }
+                else if (resultTrackIn == "V") { resultTrackIn = "NG Validation"; }
 
-                    // Save To Log
-                    CellData cellData = new CellData();
+                // Save To Log
+                CellData cellData = new CellData();
                     cellData.CellID = cellIDTrackIn;
                     cellData.TrackIn = resultTrackIn;
                     cellData.MCStartTime = DateTime.Now;

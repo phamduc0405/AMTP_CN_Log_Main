@@ -219,7 +219,7 @@ namespace ACO2_App._0
                             if (prefix == Prefix.Ack)
                             {
                                 Channel product = _channels[channel - 1];
-                                product.MTPStartTime = DateTime.Now;
+                                //product.MTPStartTime = DateTime.Now;
                                 
                             }
                             if (prefix == Prefix.None)
@@ -244,8 +244,8 @@ namespace ACO2_App._0
                             if (prefix == Prefix.Ack)
                             {
                                 Channel product = _channels[channel - 1];
-                                product.ContactStartTime = DateTime.Now;
-                                product.InsStartTime = DateTime.Now;
+                                //product.ContactStartTime = DateTime.Now;
+                                //product.InsStartTime = DateTime.Now;
                             }
                             if (prefix == Prefix.None)
                             {
@@ -253,7 +253,6 @@ namespace ACO2_App._0
                                 {
                                     Channel product = _channels[channel - 1];
                                     UpdateDataContactLog(product, split[3], true);
-                                    if (string.IsNullOrEmpty(product.CellID)) return;
                                     Thread.Sleep(600);
                                     Task.Run(() =>
                                     {
@@ -287,6 +286,9 @@ namespace ACO2_App._0
                             if (prefix == Prefix.None)
                             {
                                 Channel product0 = _channels[channel - 1];
+                                product0.TMDFile = split[3];
+                                product0.PGUi = split[4];
+                                product0.T5MacChannel = split[15];
                             }
                             break;
                         case T5Helper.Command.TmdMd5:
@@ -317,6 +319,17 @@ namespace ACO2_App._0
                             if (prefix == Prefix.None)
                             {
                                 Channel productCtCurr1 = _channels[channel - 1];
+                                if(split.Length > 10)
+                                {
+                                    productCtCurr1.Ibat = split[6];
+                                    productCtCurr1.IVss = split[8];
+                                    productCtCurr1.IDd = split[10];
+                                    productCtCurr1.ICi = split[12];
+                                    productCtCurr1.IBat2 = split[14];
+                                    productCtCurr1.IDd2 = split[16];
+
+
+                                }
                                 if (productCtCurr1.MTPWriteResult != "GOOD")
                                 {
                                     if (split.Count() > 4 && split[3] != "GOOD")
@@ -338,8 +351,16 @@ namespace ACO2_App._0
                         case T5Helper.Command.Current:
                             break;
                         case T5Helper.Command.Start:
-                            if (split[3] == "NEXT")
+                            if (split[3] == "CELL_LOADING")
                             {
+                                Channel product = _channels[channel - 1];
+                                product.ContactStartTime = DateTime.Now;
+                                product.InsStartTime = DateTime.Now;
+                            }
+                            if (split[3] == "MTP_WRITE")
+                            {
+                                Channel product = _channels[channel - 1];
+                                product.MTPStartTime = DateTime.Now;
                             }
                             break;
                         case T5Helper.Command.Run:
@@ -361,6 +382,23 @@ namespace ACO2_App._0
                         case T5Helper.Command.MtpWritePrescale:
                             break;
                         case T5Helper.Command.MtpVerify:
+                            if (prefix == Prefix.None)
+                            {
+                                Channel product = _channels[channel - 1];
+
+                                if (split[3] == "GOOD")
+                                {
+                                    CheckMessage(command, channel, "GOOD");
+
+                                }
+                                else
+                                {
+                                    if (split.Count() > 4)
+                                    {
+                                        CheckMessage(command, channel, split[4]);
+                                    }
+                                }
+                            }
                             break;
                         case T5Helper.Command.IdCheck:
                             break;
@@ -390,7 +428,7 @@ namespace ACO2_App._0
                         case T5Helper.Command.MCA_OFF:
                             if (!split[3].Contains("GOOD"))
                             {
-                                CheckMessage(T5Helper.Command.MtpWrite, channel, "MCA_CHECK_NG");
+                                CheckMessage(T5Helper.Command.MtpVerify, channel, "MCA_CHECK_NG");
                             }
                             break;
                         case T5Helper.Command.C_CURRENT:
@@ -479,7 +517,7 @@ namespace ACO2_App._0
             {
                 UpdateDataContactLog(productData, result);
             }
-            if (command == T5Helper.Command.MtpWrite)
+            if (command == T5Helper.Command.MtpVerify)
             {
                 UpdateDataInsLog(productData, result);
                 productData.MTPEndTime = DateTime.Now;

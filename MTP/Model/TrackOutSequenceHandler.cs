@@ -25,9 +25,6 @@ namespace MTP.Model
         private TrackOutAction _action;
         private string _cellIDWord = "";
         private string _resultTrackOutWord = "";
-        private string _abRuleWord = "";
-        private string _reTryWord = "";
-        private string _rechecked = "";
         public TrackOutSequenceHandler(string action)
         {
             _controller = MainWindow.Controller;
@@ -85,26 +82,19 @@ namespace MTP.Model
                     switch (toolNumber)
                     {
                         case 1:
-                            _cellIDWord = Word.ROBOT1_1_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT1_1_TRACKOUT_RESULT;
-                            _abRuleWord = Word.ROBOT1_1_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT1_1_TRACKOUT_RETRY;
-                            _rechecked = Word.ROBOT1_1_TRACKOUT_RECHECKED; break;
+                            _cellIDWord = Word.ROBOT1_1_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT1_1_TRACKOUT_RESULT; break;
+                         
                         case 2:
-                            _cellIDWord = Word.ROBOT1_2_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT1_2_TRACKOUT_RESULT;
-                            _abRuleWord = Word.ROBOT1_2_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT1_2_TRACKOUT_RETRY;
-                            _rechecked = Word.ROBOT1_2_TRACKOUT_RECHECKED; break;
+                            _cellIDWord = Word.ROBOT1_2_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT1_2_TRACKOUT_RESULT; break;
                     }
                     break;
                 case 2:
                     switch (toolNumber)
                     {
                         case 1:
-                            _cellIDWord = Word.ROBOT2_1_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT2_1_TRACKOUT_RESULT;
-                            _abRuleWord = Word.ROBOT2_1_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT2_1_TRACKOUT_RETRY;
-                            _rechecked = Word.ROBOT2_1_TRACKOUT_RECHECKED; break;
+                            _cellIDWord = Word.ROBOT2_1_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT2_1_TRACKOUT_RESULT; break;
                         case 2:
-                            _cellIDWord = Word.ROBOT2_2_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT2_2_TRACKOUT_RESULT;
-                            _abRuleWord = Word.ROBOT2_2_TRACKOUT_ABRULE; _reTryWord = Word.ROBOT2_2_TRACKOUT_RETRY;
-                            _rechecked = Word.ROBOT2_2_TRACKOUT_RECHECKED; break;
+                            _cellIDWord = Word.ROBOT2_2_TRACKOUT_CELLID; _resultTrackOutWord = Word.ROBOT2_2_TRACKOUT_RESULT; break;
                     }
                     break;
             }
@@ -120,28 +110,18 @@ namespace MTP.Model
                 //   _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-                string abRule = "";
-                string retry = "";
-                string rechecked = "";
-                abRule = _controller.GetWordValueFromPLC(_abRuleWord, true);
-                retry = _controller.GetWordValueFromPLC(_reTryWord, true);
-                rechecked = _controller.GetWordValueFromPLC(_rechecked, true);
-                if(rechecked == "0") { rechecked = "NO"; }
-                if (rechecked == "1") { rechecked = "YES"; }
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:" 
                     + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}"+
-                    $"AB RULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}" +
-                    $"RETRY:{_controller.GetWordValueFromPLC(_reTryWord, true)}" +
-                    $"RECHECKED:{_controller.GetWordValueFromPLC(_rechecked, true)}");
+                    $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
 
+                // Convert Data
+                if(resultTrackOut == "G") { resultTrackOut = "GOOD"; }
+                else if(resultTrackOut == "V") { resultTrackOut= "NG Validation"; }
+                else if(resultTrackOut == "O") { resultTrackOut= "Manual TrackOut"; }
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIDTrackOut, false, false, "", true);
                 if (cellData != null)
                 {
-                    cellData.Rechecked=rechecked;
-                    cellData.ABRule=abRule;
-                    cellData.Retry=retry;
                     cellData.TrackOut = resultTrackOut;
                     cellData.MCEndTime = DateTime.Now;
                     cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;

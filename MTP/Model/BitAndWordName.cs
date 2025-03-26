@@ -158,49 +158,45 @@ namespace MTP.Model
         public const string TRACKIN_2_CELLID = "TRACKIN_2_CELLID";
         public const string TRACKIN_2_RESULT = "TRACKIN_2_RESULT";
 
-        public const string ROBOT1_1_TRACKOUT_RESULT = "ROBOT1_1_TRACKOUT_RESULT";
-        public const string ROBOT1_1_TRACKOUT_ABRULE = "ROBOT1_1_TRACKOUT_ABRULE";
-        public const string ROBOT1_1_TRACKOUT_RETRY = "ROBOT1_1_TRACKOUT_RETRY";
-        public const string ROBOT1_1_TRACKOUT_RECHECKED = "ROBOT1_1_TRACKOUT_RECHECKED";
+        public const string ROBOT1_1_TRACKOUT_RESULT = "ROBOT1_1_TRACKOUT_RESULT";     
         public const string ROBOT1_1_TRACKOUT_CELLID = "ROBOT1_1_TRACKOUT_CELLID";
         public const string ROBOT1_2_TRACKOUT_RESULT = "ROBOT1_2_TRACKOUT_RESULT";
-        public const string ROBOT1_2_TRACKOUT_ABRULE = "ROBOT1_2_TRACKOUT_ABRULE";
-        public const string ROBOT1_2_TRACKOUT_RETRY = "ROBOT1_2_TRACKOUT_RETRY";
-        public const string ROBOT1_2_TRACKOUT_RECHECKED = "ROBOT1_2_TRACKOUT_RECHECKED";
         public const string ROBOT1_2_TRACKOUT_CELLID = "ROBOT1_2_TRACKOUT_CELLID";
 
         public const string ROBOT1_1_CELLID = "ROBOT1_1_CELLID";
         public const string ROBOT1_1_CHANNEL = "ROBOT1_1_CHANNEL";
         public const string ROBOT1_1_UNIT = "ROBOT1_1_UNIT";
         public const string ROBOT1_1_STAGE = "ROBOT1_1_STAGE";
-        public const string ROBOT1_1_ISNEEDRETRY = "ROBOT1_1_ISNEEDRETRY";
+        public const string ROBOT1_1_ABRULE = "ROBOT1_1_ABRULE";
+        public const string ROBOT1_1_RETRY = "ROBOT1_1_RETRY";
+        public const string ROBOT1_1_RECHECKED = "ROBOT1_1_RECHECKED";
         public const string ROBOT1_2_CELLID = "ROBOT1_2_CELLID";
         public const string ROBOT1_2_CHANNEL = "ROBOT1_2_CHANNEL";
         public const string ROBOT1_2_UNIT = "ROBOT1_2_UNIT";
         public const string ROBOT1_2_STAGE = "ROBOT1_2_STAGE";
-        public const string ROBOT1_2_ISNEEDRETRY = "ROBOT1_2_ISNEEDRETRY";
+        public const string ROBOT1_2_ABRULE = "ROBOT1_2_ABRULE";
+        public const string ROBOT1_2_RETRY = "ROBOT1_2_RETRY";
+        public const string ROBOT1_2_RECHECKED = "ROBOT1_2_RECHECKED";
 
         public const string ROBOT2_1_TRACKOUT_RESULT = "ROBOT2_1_TRACKOUT_RESULT";
-        public const string ROBOT2_1_TRACKOUT_ABRULE = "ROBOT2_1_TRACKOUT_ABRULE";
-        public const string ROBOT2_1_TRACKOUT_RETRY = "ROBOT2_1_TRACKOUT_RETRY";
-        public const string ROBOT2_1_TRACKOUT_RECHECKED = "ROBOT2_1_TRACKOUT_RECHECKED";
         public const string ROBOT2_1_TRACKOUT_CELLID = "ROBOT2_1_TRACKOUT_CELLID";
         public const string ROBOT2_2_TRACKOUT_RESULT = "ROBOT2_2_TRACKOUT_RESULT";
-        public const string ROBOT2_2_TRACKOUT_ABRULE = "ROBOT2_2_TRACKOUT_ABRULE";
-        public const string ROBOT2_2_TRACKOUT_RETRY = "ROBOT2_2_TRACKOUT_RETRY";
-        public const string ROBOT2_2_TRACKOUT_RECHECKED = "ROBOT2_2_TRACKOUT_RECHECKED";
         public const string ROBOT2_2_TRACKOUT_CELLID = "ROBOT2_2_TRACKOUT_CELLID";
 
         public const string ROBOT2_1_CELLID = "ROBOT2_1_CELLID";
         public const string ROBOT2_1_CHANNEL = "ROBOT2_1_CHANNEL";
         public const string ROBOT2_1_UNIT = "ROBOT2_1_UNIT";
         public const string ROBOT2_1_STAGE = "ROBOT2_1_STAGE";
-        public const string ROBOT2_1_ISNEEDRETRY = "ROBOT2_1_ISNEEDRETRY";
+        public const string ROBOT2_1_ABRULE = "ROBOT2_1_ABRULE";
+        public const string ROBOT2_1_RETRY = "ROBOT2_1_RETRY";
+        public const string ROBOT2_1_RECHECKED = "ROBOT2_1_RECHECKED";
         public const string ROBOT2_2_CELLID = "ROBOT2_2_CELLID";
         public const string ROBOT2_2_CHANNEL = "ROBOT2_2_CHANNEL";
         public const string ROBOT2_2_UNIT = "ROBOT2_2_UNIT";
         public const string ROBOT2_2_STAGE = "ROBOT2_2_STAGE";
-        public const string ROBOT2_2_ISNEEDRETRY = "ROBOT2_2_ISNEEDRETRY";
+        public const string ROBOT2_2_ABRULE = "ROBOT2_2_ABRULE";
+        public const string ROBOT2_2_RETRY = "ROBOT2_2_RETRY";
+        public const string ROBOT2_2_RECHECKED = "ROBOT2_2_RECHECKED";
 
         public const string CHANNEL1 = "CHANNEL1";
         public const string CHANNEL2 = "CHANNEL2";
