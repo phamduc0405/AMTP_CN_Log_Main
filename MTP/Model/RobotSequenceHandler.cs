@@ -121,6 +121,17 @@ namespace MTP.Model
                 LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT] No handler found for action {_action}");
             }
         }
+        private string ScaleValueStage(int zone,string unitvalue , string stagevalue,string channelvalue)
+        {
+            int unit = int.Parse(unitvalue);
+            int stage = int.Parse(stagevalue);
+            int channel = int.Parse(channelvalue);
+            if(zone == 2)
+            {
+                stage = channel + 12;
+            }
+            return stage.ToString();
+        }
         private async Task HandleToolStartPut(int zone, int toolNumber)
         {
             switch (zone)
@@ -290,7 +301,7 @@ namespace MTP.Model
                     if(zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
                     if(zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
                     cellData.Unit=unitRbDropTool;
-                    cellData.Stage=stageRbDropTool;
+                    cellData.Stage= ScaleValueStage(zone,unitRbDropTool,stageRbDropTool,channelRbDropTool);
                 }
                 else
                 {
@@ -520,7 +531,7 @@ namespace MTP.Model
                         if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
                         
                         cellData.Unit = unitRbPickTool;
-                        cellData.Stage = stageRbPickTool;
+                        cellData.Stage = ScaleValueStage(zone,unitRbPickTool,stageRbPickTool,channelRbPickTool);
                         cellData.ZoneNo = zone.ToString();
                         cellData.Channel = cell;
                         cellData.UnitEndTime = DateTime.Now;

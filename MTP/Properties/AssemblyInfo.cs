@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Asoft")]
 [assembly: AssemblyProduct("ACO2_App")]
-[assembly: AssemblyCopyright("Asoft Copyright ©  2023")]
+[assembly: AssemblyCopyright("Asoft Copyright ? 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.757")]
+[assembly: AssemblyVersion("1.0.0.773")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

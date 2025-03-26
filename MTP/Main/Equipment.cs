@@ -190,15 +190,18 @@ namespace ACO2_App._0
                     LogT5EventHandle(strLog, channel.ToString());
                     Channel channelSignal = new Channel();
 
-                    if (channel < 10)
+                    if (channel < 10 && channel != 0)
                     {
                         channelSignal.ChannelNo = $"CH0{channel.ToString()}";
+                        PopUpMesEventHandle(channelSignal, str);
+
                     }
                     else
                     {
                         channelSignal.ChannelNo = $"CH{channel.ToString()}";
+                        PopUpMesEventHandle(channelSignal, str);
+
                     }
-                    PopUpMesEventHandle(channelSignal, str);
                     switch (command)
                     {
                         case T5Helper.Command.None:
@@ -220,7 +223,7 @@ namespace ACO2_App._0
                             {
                                 Channel product = _channels[channel - 1];
                                 //product.MTPStartTime = DateTime.Now;
-                                
+
                             }
                             if (prefix == Prefix.None)
                             {
@@ -229,7 +232,7 @@ namespace ACO2_App._0
                                 if (split[3] == "GOOD")
                                 {
                                     CheckMessage(command, channel, "GOOD");
-                                
+
                                 }
                                 else
                                 {
@@ -280,7 +283,7 @@ namespace ACO2_App._0
                                     }
                                 }
                             }
-                           
+
                             break;
                         case T5Helper.Command.CheckTmdInfo:
                             if (prefix == Prefix.None)
@@ -308,9 +311,11 @@ namespace ACO2_App._0
                         case T5Helper.Command.CheckHostVer:
                             if (prefix == Prefix.None)
                             {
-                                Channel product0 = _channels[channel - 1];
-                                product0.TxHostVer = split[3];
-                                T5InforEventHandle(product0);
+                                foreach (var product0 in _channels)
+                                {
+                                    product0.TxHostVer = split[3];
+                                    T5InforEventHandle(product0);
+                                }
                             }
                             break;
                         case T5Helper.Command.LineCheck:
@@ -319,7 +324,7 @@ namespace ACO2_App._0
                             if (prefix == Prefix.None)
                             {
                                 Channel productCtCurr1 = _channels[channel - 1];
-                                if(split.Length > 10)
+                                if (split.Length > 10)
                                 {
                                     productCtCurr1.Ibat = split[6];
                                     productCtCurr1.IVss = split[8];
@@ -497,9 +502,11 @@ namespace ACO2_App._0
                 }
                 catch (Exception e)
                 {
+                    string msg = Encoding.ASCII.GetString(message);
                     string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
-                    LogTxt.Add(LogTxt.Type.Exception, "Controller ProcessSignal:" + debug);
-                    LogTxt.Add(LogTxt.Type.FlowRun, "Controller ProcessSignal:" + debug);
+                    LogTxt.Add(LogTxt.Type.Exception, $"Controller ProcessSignal:{debug}\n Message:{msg}");
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"Controller ProcessSignal:{debug}\n Message:{msg}");
+                
                 }
             }
             else

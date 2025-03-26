@@ -109,7 +109,7 @@ namespace MTP.Model
                     _controller.ListCellDatas.CellDatas.Add(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" + 
                         $"ADD DATA TO QUEUEE: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                        $"RESULT:{_controller.GetWordValueFromPLC(_cellIDWord, true)}");
+                        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
                     string logMessage =_controller.CreateLogFollowCellData(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}] New CellData Added:" + logMessage);
 

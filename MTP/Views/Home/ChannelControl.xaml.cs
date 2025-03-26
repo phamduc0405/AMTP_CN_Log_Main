@@ -144,7 +144,7 @@ namespace MTP.Views.Home
         {
             Dispatcher.Invoke(() =>
             {
-                txtHeader.Text = "CH" + _channel.ChannelNo;
+                txtHeader.Text = /*"CH" + */_channel.ChannelNo;
                 txtCellID.Text = _channel.CellID;
                 if(ContactResult == "GOOD"|| MTPWriteResult == "GOOD"|| !string.IsNullOrEmpty(DefectCode))
                 {
@@ -188,7 +188,7 @@ namespace MTP.Views.Home
         {
             Dispatcher.Invoke(() =>
             {
-                txtHeader.Text = "CH"+_channel.ChannelNo; 
+                txtHeader.Text = /*"CH"+*/_channel.ChannelNo; 
                 txtCellID.Text = _channel.CellID; 
                 if(_channel.ContactResult == "GOOD"|| _channel.MTPWriteResult == "GOOD"|| !string.IsNullOrEmpty(_channel.DefectCode))
                 {
