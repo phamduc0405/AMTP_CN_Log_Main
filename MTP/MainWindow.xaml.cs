@@ -90,6 +90,10 @@ namespace ACO2_App._0
             {
                 UiHeader();
             };
+            bdrPC1Connect.Background = Controller.Equipment[0].IsConnected ? Brushes.Green : Brushes.IndianRed;
+            txtPC1Connect.Text = Controller.Equipment[0].IsConnected ? $"{Controller.ControllerConfig.EqpConfigs[0].EqpName}Connected" : $"{Controller.ControllerConfig.EqpConfigs[0].EqpName} Disconnected";
+            bdrPC2Connect.Background = Controller.Equipment[1].IsConnected ? Brushes.Green : Brushes.IndianRed;
+            txtPC2Connect.Text = Controller.Equipment[1].IsConnected ? $"{Controller.ControllerConfig.EqpConfigs[1].EqpName}Connected" : $"{Controller.ControllerConfig.EqpConfigs[1].EqpName} Disconnected";
         }
         public void UiHeader()
         {

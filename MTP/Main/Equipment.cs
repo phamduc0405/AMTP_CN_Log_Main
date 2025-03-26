@@ -27,6 +27,7 @@ namespace ACO2_App._0
         #region Common
         private int _indexEquip;
         private Thread _update;
+        private bool _isConnected;
         #endregion
         #endregion
         #region Property
@@ -53,6 +54,11 @@ namespace ACO2_App._0
         }
         #endregion
         #region Common
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+            set { _isConnected = value; }
+        }
         #endregion
         #endregion
         //T:Event
@@ -594,7 +600,9 @@ namespace ACO2_App._0
             Task.Run(async () =>
             {
                 await Task.Delay(1000);
+                _isConnected = IsConnected;
                 ConnectEventHandle(IsConnected);
+
             });
         }
         public void LogT5EventHandle(string message, string ch)
