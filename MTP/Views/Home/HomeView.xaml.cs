@@ -9,6 +9,9 @@ using MTP.Views.Home;
 using System.Windows;
 using System.Windows.Threading;
 using Mitsu3E;
+using System.Collections.Generic;
+using ACO2_App._0.Model;
+using System.Windows.Data;
 
 namespace ACO2.Views.Home
 {
@@ -21,7 +24,7 @@ namespace ACO2.Views.Home
         private Equipment _equipment;
         private Thread _updateTime;
         private DispatcherTimer _updateTimer;
-
+        private List<ListCell> _listCell;
         public HomeView()
         {
             InitializeComponent();
@@ -43,6 +46,29 @@ namespace ACO2.Views.Home
             };
             _updateTimer.Tick += UpdateEquipmentUI;
             _updateTimer.Start();
+            grdView.Columns.Clear();
+            grdView.Columns.Add(new GridViewColumn
+            {
+                Header = "CELLID",
+                DisplayMemberBinding = new Binding("CellID"),
+                Width = 200
+            });
+            Dispatcher.Invoke(new Action(() =>
+            {
+                listView.ItemsSource = null;
+                listView.ItemsSource = _controller.ListCell;
+            }));
+            _controller.ListCellUpdateEvent -= _controller_ListCellUpdateEvent;
+            _controller.ListCellUpdateEvent += _controller_ListCellUpdateEvent;
+        }
+
+        private void _controller_ListCellUpdateEvent(List<ListCell> listCells)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                listView.ItemsSource = null;
+                listView.ItemsSource = listCells;
+            }));
         }
 
         private void MachineStatus_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -150,8 +176,11 @@ namespace ACO2.Views.Home
                         txtIPPc2.Text = _controller.ControllerConfig.EqpConfigs[1].PCSignalIPAddress;
                         txtPortPc2.Text = _controller.ControllerConfig.EqpConfigs[1].PCSignalPort.ToString();
                     }
-                {
-                    txtMachineName.Text = _controller.ControllerConfig.EQPID;
+                    {
+                        txtMachineName.Text = _controller.ControllerConfig.EQPID;
+                    }
+                    {
+                  
                 }
             };
             

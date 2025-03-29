@@ -3,6 +3,7 @@ using ACO2_App._0.INIT;
 using ACO2_App._0.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -106,7 +107,17 @@ namespace MTP.Model
                     cellData.CellID = cellIDTrackIn;
                     cellData.TrackIn = resultTrackIn;
                     cellData.MCStartTime = DateTime.Now;
-                    _controller.ListCellDatas.CellDatas.Add(cellData);
+                //var checkCheckCellDuplicate = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
+                //if(checkCheckCellDuplicate != null)
+                //{
+                //    checkCheckCellDuplicate
+                //    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
+                //        $"DULLICATE DATA: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                //        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
+                //}
+                 _controller.ListCellDatas.CellDatas.Add(cellData);
+                _controller.ListCell.Add(new ListCell{ CellID = cellData.CellID });
+                _controller.ListCellUpdateEventHandle(_controller.ListCell);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" + 
                         $"ADD DATA TO QUEUEE: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");

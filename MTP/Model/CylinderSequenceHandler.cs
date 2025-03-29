@@ -18,6 +18,7 @@ namespace MTP.Model
         private string _state;
         private string _actionStr;
         private int _channel;
+        private string _action;
         public CylinderSequenceHandler(string action)
         {
             _controller = MainWindow.Controller;
@@ -29,8 +30,9 @@ namespace MTP.Model
         {
             try
             {
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][HANDLER] RECEIVE{action}");
-
+                
+                _action = action;
+              //  LogTxt.Add(LogTxt.Type.FlowRun, $"[{_action}] ");
                 var parts = action.Split('_');
                 // parts[0] = "ZONE1", parts[1] = "CYL", parts[2] = "1", parts[3] = "UP", parts[4] = "START"
                 _zone = int.Parse(parts[0].Replace("ZONE", ""));
@@ -50,32 +52,44 @@ namespace MTP.Model
         {
             try
             {
-                CellData cellData = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.ZoneNo==_zone.ToString()&& x.Channel.ChannelNo == _channel.ToString());
+                string channel = "";
+                if (_channel < 10)
+                {
+                    channel = $"CH0{_channel}";
+                }
+                else
+                {
+                    channel = $"CH{_channel}";
+                }
+                CellData cellData = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.ZoneNo==_zone.ToString()&& x.Channel.ChannelNo == channel.ToString());
             if (cellData != null)
             {
                 switch(_state)
                 {
                     case "START":
-                        if(_actionStr == "DW")
+                        if(_actionStr == "DOWN")
                         {
                             cellData.CylDWStartTime = DateTime.Now;
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpStartTime = DateTime.Now;
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         break;
                     case "END":
-                        if (_actionStr == "DW")
+                        if (_actionStr == "DOWN")
                         {
                             cellData.CylDWEndTime = DateTime.Now;
                             cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalMilliseconds;
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpEndTime = DateTime.Now;
                             cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalMilliseconds;
-
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         break;
                 }

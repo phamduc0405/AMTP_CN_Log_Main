@@ -56,6 +56,7 @@ namespace ACO2_App._0
         private MachineStatus _machineStatus;
         private List<CurrentData> _currDatas;
         private List<DefectCode> _defectCodes;
+        private List<ListCell> _listCell;
         #endregion
         #region Common
         private bool _isTrigging;
@@ -100,6 +101,11 @@ namespace ACO2_App._0
             get { return _defectCodes; }
             set { _defectCodes = value; }
         }
+        public List<ListCell> ListCell
+        {
+            get { return _listCell; }
+            set { _listCell = value; }
+        }
         #endregion
         #region Common
         public bool IsPlcConnected
@@ -117,6 +123,8 @@ namespace ACO2_App._0
         public event PlcConnectChangeEventDelegate PlcConnectChangeEvent;
         public delegate Task<bool> MessageDisplayEventDelegate(bool isYesNo, string message);
         public event MessageDisplayEventDelegate MessageDisplayEvent;
+        public delegate void ListCellUpdateEventDelegate(List<ListCell> listCells);
+        public event ListCellUpdateEventDelegate ListCellUpdateEvent;
         #endregion
         #region Constuctor
         public Controller()
@@ -124,6 +132,7 @@ namespace ACO2_App._0
             Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _controllerConfig = new ControllerConfig();
             _listCellDatas = new ListCellDatas();
+            _listCell = new List<ListCell>();
             ReadControllerConfig();
             ReadCellDataBackup();
             _equipment = new List<Equipment>();
@@ -224,7 +233,7 @@ namespace ACO2_App._0
                                       {
                                           Time = DateTime.Now,
                                           Zone = g.Key.ZoneNo,
-                                          ChannelName = g.Key.ChannelNo.Replace("CHANNEL",""),
+                                          ChannelName = g.Key.ChannelNo,
                                           Good = g.Count(c => c.Channel.MTPWriteResult == "GOOD"),
                                           NGContact = g.Count(c => !string.IsNullOrEmpty(c.Channel.ContactResult) && c.Channel.ContactResult != "GOOD"),
                                           NGIns = g.Count(c => !string.IsNullOrEmpty(c.Channel.MTPWriteResult) && c.Channel.MTPWriteResult != "GOOD")
@@ -234,7 +243,7 @@ namespace ACO2_App._0
 
             foreach (var data in _currDatas)
             {
-                LogTxt.Add(LogTxt.Type.Status, $"[ZONE {data.Zone} - CHANNEL {data.ChannelName}] Good: {data.Good}, NGContact: {data.NGContact}, NGIns: {data.NGIns}");
+                LogTxt.Add(LogTxt.Type.Status, $"[ZONE {data.Zone} - CH {data.ChannelName}] Good: {data.Good}, NGContact: {data.NGContact}, NGIns: {data.NGIns}");
             }
         }
 
@@ -915,7 +924,7 @@ namespace ACO2_App._0
 
             #endregion
             #region Make content
-            int indexeqp = int.Parse(productData.ZoneNo)-1;
+            //int indexeqp = int.Parse(productData.ZoneNo)-1;
             var content = new StringBuilder();
             productData.Time = DateTime.Now;
             productData.MachineName = _controllerConfig.EQPID;
@@ -929,11 +938,7 @@ namespace ACO2_App._0
 
             }
             productData.Temperater = GetWordValueFromPLC("TEMPERATER", true);
-            //  productData.EQPID = _controllerConfig.EqpConfigs[indexeqp].EQPID;
-            productData.CylDWEndTime = productData.Channel.MTPStartTime;
-            productData.CylDWTaktTime = (productData.CylDWEndTime - productData.CylDWStartTime).TotalMilliseconds;
-            productData.CylUpStartTime = productData.Channel.MTPEndTime;
-            productData.CylUpTaktTime = (productData.CylUpEndTime - productData.CylUpStartTime).TotalMilliseconds;
+       
 
             content.Append(string.Format("{0:yyyy-MM-dd HH:mm:ss},", productData.Time)); // TIME
             content.Append(string.Format("{0},", productData.CellID)); //CELLID
@@ -1447,7 +1452,14 @@ namespace ACO2_App._0
                 handle(currDatas);
             }
         }
-
+        public void ListCellUpdateEventHandle(List<ListCell> listCells)
+        {
+            var handle = ListCellUpdateEvent;
+            if (handle != null)
+            {
+                handle(listCells);
+            }
+        }
         #endregion
     }
 }

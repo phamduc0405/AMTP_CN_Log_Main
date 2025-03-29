@@ -138,6 +138,12 @@ namespace MTP.Model
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
 
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
+                    ListCell cell = _controller.ListCell.FirstOrDefault(x => x.CellID == cellData.CellID);
+                    if (cell != null)
+                    {
+                        _controller.ListCell.Remove(cell);
+                        _controller.ListCellUpdateEventHandle(_controller.ListCell);
+                    }
                     _controller.ListCellDatas.CellDatas.Remove(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:  CellData Remove from List:" + logMessage);
                 }

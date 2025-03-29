@@ -312,4 +312,8 @@ namespace ACO2_App._0.Model
 
         }
     }
+    public class ListCell
+    {
+        public string CellID { get; set; } = string.Empty;
+    }
 }

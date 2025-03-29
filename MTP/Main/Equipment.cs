@@ -256,6 +256,7 @@ namespace ACO2_App._0
                                 Channel product = _channels[channel - 1];
                                 //product.ContactStartTime = DateTime.Now;
                                 //product.InsStartTime = DateTime.Now;
+                                product.CellID = split[4];
                             }
                             if (prefix == Prefix.None)
                             {
@@ -366,7 +367,7 @@ namespace ACO2_App._0
                             if (split[3] == "CELL_LOADING")
                             {
                                 Channel product = _channels[channel - 1];
-                                product.ResultInsEventHandle(product.ChannelNo, "", "", "");
+                               
 
                                 product.ContactStartTime = DateTime.Now;
                                 product.InsStartTime = DateTime.Now;
@@ -379,6 +380,12 @@ namespace ACO2_App._0
                                 product.MTPStartTime = DateTime.Now;
                                 LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{product.ChannelNo}]:" +
                                       $"START MTPWRITE:{product.MTPStartTime} ");
+                            }
+                            if (split[3] == "RESET")
+                            {
+                                Channel product = _channels[channel - 1];
+                                product.CellID = "";
+                                product.ResultInsEventHandle(product.ChannelNo, "", "", "");
                             }
                             break;
                         case T5Helper.Command.Run:
@@ -444,10 +451,14 @@ namespace ACO2_App._0
                         case T5Helper.Command.TESTER_INIT:
                             break;
                         case T5Helper.Command.MCA_OFF:
-                            if (!split[3].Contains("GOOD"))
+                            if (prefix == Prefix.None)
+                            {
+                                if (!split[3].Contains("GOOD"))
                             {
                                 CheckMessage(T5Helper.Command.MtpVerify, channel, "MCA_CHECK_NG");
                             }
+                            }
+
                             break;
                         case T5Helper.Command.C_CURRENT:
                             if (prefix == Prefix.None)
@@ -597,7 +608,7 @@ namespace ACO2_App._0
             productData.InsTackTime = (productData.InsEndTime - productData.InsStartTime).TotalSeconds;
             LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{productData.ChannelNo}]:" +
                                        $"MTPWRITE RESULT:{productData.MTPWriteResult} ");
-            productData.ResultInsEventHandle(productData.ChannelNo, productData.ContactResult, productData.MTPWriteResult, productData.DefectCode);
+            productData.ResultInsEventHandle(productData.ChannelNo, "", productData.MTPWriteResult, productData.DefectCode);
             
         }
         #endregion

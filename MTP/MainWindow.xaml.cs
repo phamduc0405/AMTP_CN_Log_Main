@@ -302,8 +302,11 @@ namespace ACO2_App._0
                         item.Clear();
                     }
                     Controller.ListCellDatas.CellDatas.Clear();
+                    Controller.ListCell.Clear();
+                    Controller.ListCellUpdateEventHandle(Controller.ListCell);
                     LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                     LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
+                    tblScreen.Text = "ALL DATA INIT BY CLICK INIT BUTTON";
                 }
                 else
                 {
