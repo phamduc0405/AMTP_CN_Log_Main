@@ -28,7 +28,7 @@ namespace ACO2_App._0
         {
             const string appName = "ACO2_App";
             bool createdNew;
-
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _mutex = new Mutex(true, appName, out createdNew);
 
             if (!createdNew)

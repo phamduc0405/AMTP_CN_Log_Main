@@ -4,6 +4,7 @@ using ACO2_App._0.Model;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MTP.Model
@@ -24,6 +25,7 @@ namespace MTP.Model
 
         public TrackInSequenceHandler(string action)
         {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _controller = MainWindow.Controller;
             Initial(action);
             HandleAction();

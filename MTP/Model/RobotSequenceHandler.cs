@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting.Channels;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MTP.Model
@@ -46,9 +47,12 @@ namespace MTP.Model
         private string _retryWord = "";
         private string _recheckedWord = "";
         private string _abRuleWord = "";
+        private string _temperatureWord = "";
+
         public RobotSequenceHandler(string action)
         {
-
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            _controller = MainWindow.Controller;
             Initial(action);
             HandleAction();
         }
@@ -141,10 +145,10 @@ namespace MTP.Model
                     {
                         case 1:
                             _cellIDWord = Word.ROBOT1_1_CELLID; _channelWord = Word.ROBOT1_1_CHANNEL;
-                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; break;
+                            _unitWord = Word.ROBOT1_1_UNIT; _stageWord = Word.ROBOT1_1_STAGE; _temperatureWord = Word.ROBOT1_1_TEMPERATURE; break;
                         case 2:
                             _cellIDWord = Word.ROBOT1_2_CELLID; _channelWord = Word.ROBOT1_2_CHANNEL;
-                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; break;
+                            _unitWord = Word.ROBOT1_2_UNIT; _stageWord = Word.ROBOT1_2_STAGE; _temperatureWord = Word.ROBOT1_2_TEMPERATURE; break;
 
                     }
                     break;
@@ -153,10 +157,10 @@ namespace MTP.Model
                     {
                         case 1:
                             _cellIDWord = Word.ROBOT2_1_CELLID; _channelWord = Word.ROBOT2_1_CHANNEL;
-                            _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE; break;
+                            _unitWord = Word.ROBOT2_1_UNIT; _stageWord = Word.ROBOT2_1_STAGE; _temperatureWord = Word.ROBOT2_1_TEMPERATURE; break;
                         case 2:
                             _cellIDWord = Word.ROBOT2_2_CELLID; _channelWord = Word.ROBOT2_2_CHANNEL;
-                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE; break;
+                            _unitWord = Word.ROBOT2_2_UNIT; _stageWord = Word.ROBOT2_2_STAGE; _temperatureWord = Word.ROBOT2_2_TEMPERATURE; break;
 
                     }
                     break;
@@ -173,12 +177,24 @@ namespace MTP.Model
                 //{
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
-                //}               
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]:" + $"RECEIVE DATA PLC: " +
+                //}
+                string unitRbDropTool = "";
+                string stageRbDropTool = "";
+                bool isTimeOut1 = false;
+
+                (unitRbDropTool, stageRbDropTool, isTimeOut1) = await _controller.WaitForPlcData(_unitWord, _stageWord);
+                //if (isTimeOut)
+                //{
+                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
+                //    return;
+                //}
+                string temperature = _controller.GetWordValueFromPLC(_temperatureWord, true);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
                     $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                     $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
+                     $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
+                     $"TEMPERATURE:{_controller.GetWordValueFromPLC(_temperatureWord, true)}"
                );
                 string channel = "";
                 if (int.Parse(channelRbDropTool) < 10)
@@ -189,33 +205,46 @@ namespace MTP.Model
                 {
                     channel = $"CH{channelRbDropTool}";
                 }
+                if (!string.IsNullOrEmpty(temperature))
+                {
+                    temperature = String.Format("{0:f}", float.Parse(temperature) / 10);
+                }
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIdRbDropTool, true);
                 if (cellData != null)
                 {
+                    cellData.Temperater = temperature;
                    cellData.RBDropStartTime = DateTime.Now;
+                    cellData.Channel.ChannelNo = channel;
+                    cellData.UnitStartTime = DateTime.Now;
+                    cellData.ZoneNo = zone.ToString();
+                    if (zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
+                    if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
+                    cellData.Unit = unitRbDropTool;
+                    cellData.Stage = ScaleValueStage(zone, unitRbDropTool, stageRbDropTool, channelRbDropTool);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]:" +
+                   $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                   $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
+                   $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
+                   $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
+                   );
+                    string logMessage = _controller.CreateLogFollowCellData(cellData);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]: CellData Updated:" + logMessage);
                 }
                 else
                 {
                    
                     string Message = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
                 }
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]:" +
-                    $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                    $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
-                    );
-                string logMessage = _controller.CreateLogFollowCellData(cellData);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]: CellData Updated:" + logMessage);
+               
 
             }
             catch (Exception e)
             {
                 string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
-                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]:" + debug);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][DROP]:" + debug);
+                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]:" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]:" + debug);
             }
         }
         private async Task HandleToolEndPut(int zone, int toolNumber)
@@ -264,17 +293,8 @@ namespace MTP.Model
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-                string unitRbDropTool = "";
-                string stageRbDropTool = "";
-                bool isTimeOut1 = false;
-
-                (unitRbDropTool, stageRbDropTool, isTimeOut1) = await _controller.WaitForPlcData(_unitWord, _stageWord);
-                //if (isTimeOut)
-                //{
-                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                //    return;
-                //}
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]:" + $"RECEIVE DATA PLC: " +
+              
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
                     $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}"+
@@ -286,22 +306,14 @@ namespace MTP.Model
                 {
                     cellData.RBDropEndTime = DateTime.Now;
                     cellData.RBDropTackTime = (cellData.RBDropEndTime - cellData.RBDropStartTime).TotalSeconds;
-                    string channel = "";
-                    if (int.Parse(channelRbDropTool) < 10)
-                    {
-                        channel = $"CH0{channelRbDropTool}";
-                    }
-                    else
-                    {
-                        channel = $"CH{channelRbDropTool}";
-                    }
-                    cellData.Channel.ChannelNo = channel;
-                    cellData.UnitStartTime = DateTime.Now;
-                    cellData.ZoneNo = zone.ToString() ;
-                    if(zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
-                    if(zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
-                    cellData.Unit=unitRbDropTool;
-                    cellData.Stage= ScaleValueStage(zone,unitRbDropTool,stageRbDropTool,channelRbDropTool);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" +
+                $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
+                $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
+                $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
+                );
+                    string logMessage = _controller.CreateLogFollowCellData(cellData);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]: CellData Updated:" + logMessage);
                 }
                 else
                 {
@@ -315,23 +327,16 @@ namespace MTP.Model
                     //};
                     //_listCellDatas.CellDatas.Add(cellData);
                     string Message = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
                 }
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]:" + 
-                    $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}"+
-                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                    $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
-                    );
-                string logMessage = _controller.CreateLogFollowCellData(cellData);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]: CellData Updated:" + logMessage);
+            
 
             }
             catch (Exception e)
             {
                 string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
-                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]:" + debug);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][DROP]:" + debug);
+                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" + debug);
             }
         }
 
@@ -378,29 +383,9 @@ namespace MTP.Model
                 string channelRbPickTool = "";
                 bool isTimeOut = false;
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _channelWord);
-                //if (isTimeOut)
-                //{
-                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                //    return;
-                //}
-                string retry = "";
-                string rechecked = "";
-                string abRule = "";
-                bool isTimeOut1 = false;
-
-                (retry, rechecked, isTimeOut1) = await _controller.WaitForPlcData(_retryWord, _recheckedWord);
-                //if (isTimeOut)
-                //{
-                //    _controller.SetSignalBitFromPC("TIME_OUT", true);
-                //    return;
-                //}
-                abRule = _controller.GetWordValueFromPLC(_abRuleWord, true);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:" + $"RECEIVE DATA PLC: " +
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                    $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}"+
-                    $"RECHECKED:{_controller.GetWordValueFromPLC(_retryWord, true)}"+
-                     $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}"
+                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}"
                     );
                 string channel = "";
                 if (int.Parse(channelRbPickTool) < 10)
@@ -411,23 +396,32 @@ namespace MTP.Model
                 {
                     channel = $"CH{channelRbPickTool}";
                 }
+                
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
                 if (cellData != null)
                 {
                    cellData.RBPickStartTime = DateTime.Now;
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" +
+               $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+               $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
+               $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
+               $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
+               );
+                    string logMessage = _controller.CreateLogFollowCellData(cellData);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]: CellData Updated:" + logMessage);
                 }
                 else
                 {
                     string m = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
                 }
             }
             catch (Exception e)
             {
                 string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
-                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:" + debug);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PICK]:" + debug);
+                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" + debug);
             }
         }
         private async Task HandleToolEndGet(int zone, int toolNumber)
@@ -499,13 +493,13 @@ namespace MTP.Model
                 //    return;
                 //}
                 abRule = _controller.GetWordValueFromPLC(_abRuleWord, true);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + $"RECEIVE DATA PLC: " +
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}"+
-                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}"+
+                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
+                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
                     $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
                       $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
-                    $"RECHECKED:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                    $"RECHECKED:{_controller.GetWordValueFromPLC(_recheckedWord, true)}" +
                      $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}"
                     );
                 string channel = "";
@@ -536,16 +530,16 @@ namespace MTP.Model
                         cellData.Channel = cell;
                         cellData.UnitEndTime = DateTime.Now;
                         cellData.UnitTackTime = (cellData.UnitEndTime - cellData.UnitStartTime).TotalSeconds;
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + $"UPDATE DATA IN LIST: " +
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + $"UPDATE DATA IN LIST: " +
                             $"CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                             $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
                             $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
                             $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
                              $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
-                    $"RECHECKED:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                    $"RECHECKED:{_controller.GetWordValueFromPLC(_recheckedWord, true)}" +
                      $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}");
                         string logMessage = _controller.CreateLogFollowCellData(cellData);
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:  CellData Updated:" + logMessage);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:  CellData Updated:" + logMessage);
 
 
                         if(retry == "0") { cellData.Retry = retry; cellData.Rechecked = rechecked;cellData.ABRule = abRule; } // no need retry
@@ -557,19 +551,19 @@ namespace MTP.Model
                            await _controller.SaveDataLog(cellData);
                             cellData.Channel.Clear();
                             string log1Message = _controller.CreateLogFollowCellData(cellData);
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK][NEED RETRY]:Save Datalog cell need Retry" + logMessage);
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET][NEED RETRY]:Save Datalog cell need Retry" + logMessage);
                         }
                     }
                     else
                     {
                         string m = _controller.CreateLogFollowCellData(cellData);
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:CANNOT FIND IN EQUIP Channel have same cellID&Channel with Queue  CellData:" + m);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:CANNOT FIND IN EQUIP Channel have same cellID&Channel with Queue  CellData:" + m);
                     }
                 }
                 else
                 {
                     string m = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
                 }
 
 
@@ -578,8 +572,8 @@ namespace MTP.Model
             catch (Exception e)
             {
                 string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
-                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + debug);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][PICK]:" + debug);
+                LogTxt.Add(LogTxt.Type.Exception, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + debug);
             }
         }
     }

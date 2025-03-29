@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MTP.Model
@@ -27,6 +28,7 @@ namespace MTP.Model
         private string _resultTrackOutWord = "";
         public TrackOutSequenceHandler(string action)
         {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _controller = MainWindow.Controller;
             Initial(action);
             HandleAction();
@@ -57,8 +59,8 @@ namespace MTP.Model
         {
             { TrackOutAction.Rb1Tool1, async () => await HandleTrackOut(1, 1) },
             { TrackOutAction.Rb1Tool2, async () => await HandleTrackOut(1,2) },
-             { TrackOutAction.Rb2Tool1, async () => await HandleTrackOut(1,1) },
-            { TrackOutAction.Rb2Tool2, async () => await HandleTrackOut(1,2) }
+             { TrackOutAction.Rb2Tool1, async () => await HandleTrackOut(2,1) },
+            { TrackOutAction.Rb2Tool2, async () => await HandleTrackOut(2,2) }
         };
 
         }

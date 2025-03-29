@@ -176,6 +176,10 @@ namespace MTP.Views.Home
                     {
                         brdPopup.Visibility = Visibility.Hidden;
                     }
+                    if(ContactResult == "" && MTPWriteResult == "" && string.IsNullOrEmpty(DefectCode))
+                    {
+                        brdPopup.Visibility = Visibility.Hidden;
+                    }
                 }
                 if (!string.IsNullOrEmpty(DefectCode))
                 {
@@ -217,6 +221,10 @@ namespace MTP.Views.Home
                 else
                 {
                     if (!_isSkip)
+                    {
+                        brdPopup.Visibility = Visibility.Hidden;
+                    }
+                    if (_channel.ContactResult == "" && _channel.MTPWriteResult == "" &&string.IsNullOrEmpty(_channel.DefectCode))
                     {
                         brdPopup.Visibility = Visibility.Hidden;
                     }

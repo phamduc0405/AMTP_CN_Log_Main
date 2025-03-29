@@ -192,11 +192,11 @@ namespace ACO2.Views.Home
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    _controller.MachineStatus.Status = "AUTO";
-                    _controller.MachineStatus.AvailabilityState = "DOWN";
-                    _controller.MachineStatus.InterlockState = "ON";
-                    _controller.MachineStatus.MoveState = "PAUSE";
-                    _controller.MachineStatus.RunState = "IDLE";
+                    //_controller.MachineStatus.Status = "AUTO";
+                    //_controller.MachineStatus.AvailabilityState = "DOWN";
+                    //_controller.MachineStatus.InterlockState = "ON";
+                    //_controller.MachineStatus.MoveState = "PAUSE";
+                    //_controller.MachineStatus.RunState = "IDLE";
                    //_controller.test();
                 }));
                 Thread.Sleep(500);

@@ -29,6 +29,8 @@ namespace MTP.Model
         {
             try
             {
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][HANDLER] RECEIVE{action}");
+
                 var parts = action.Split('_');
                 // parts[0] = "ZONE1", parts[1] = "CYL", parts[2] = "1", parts[3] = "UP", parts[4] = "START"
                 _zone = int.Parse(parts[0].Replace("ZONE", ""));
@@ -46,7 +48,9 @@ namespace MTP.Model
     
         private void HandlerCylinder()
         {
-            CellData cellData = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.ZoneNo==_zone.ToString()&& x.Channel.ChannelNo == _channel.ToString());
+            try
+            {
+                CellData cellData = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.ZoneNo==_zone.ToString()&& x.Channel.ChannelNo == _channel.ToString());
             if (cellData != null)
             {
                 switch(_state)
@@ -75,6 +79,17 @@ namespace MTP.Model
                         }
                         break;
                 }
+            }
+                else
+                {
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][HANDLER] CANNOT FIND CELL DATA WITH ZONE{_zone} AND CHANNEL{_channel}");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTxt.Add(LogTxt.Type.Exception, $"[ACTUTOR][HANDLER] {ex.Message}");
+                return;
             }
         }
       

@@ -56,7 +56,7 @@ namespace ACO2_App._0
         private MainViewModel viewModel;
         private Thread _updateTime;
         private PartialCpuChart _cpuChart;
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -301,6 +301,7 @@ namespace ACO2_App._0
                     {
                         item.Clear();
                     }
+                    Controller.ListCellDatas.CellDatas.Clear();
                     LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                     LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                 }

@@ -76,6 +76,7 @@ namespace ACO2_App._0
         #region Constructor
         public Equipment(int eqpindex, EquipmentConfig eqpConfig)
         {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _eqpConfig = eqpConfig;
             _indexEquip = eqpindex;
             _channels = new List<Channel>();
@@ -268,7 +269,7 @@ namespace ACO2_App._0
                                         Task.Delay(10);
                                         if (product.ContactResult == "GOOD")
                                         {
-                                            UpdateDataContactLog(product, split[3], true);
+                                          //  UpdateDataContactLog(product, split[3], true);
                                         }
                                         else
                                         {
@@ -365,13 +366,19 @@ namespace ACO2_App._0
                             if (split[3] == "CELL_LOADING")
                             {
                                 Channel product = _channels[channel - 1];
+                                product.ResultInsEventHandle(product.ChannelNo, "", "", "");
+
                                 product.ContactStartTime = DateTime.Now;
                                 product.InsStartTime = DateTime.Now;
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{product.ChannelNo}]:" +
+                                       $"START CONTACT:{product.ContactStartTime} ");
                             }
                             if (split[3] == "MTP_WRITE")
                             {
                                 Channel product = _channels[channel - 1];
                                 product.MTPStartTime = DateTime.Now;
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{product.ChannelNo}]:" +
+                                      $"START MTPWRITE:{product.MTPStartTime} ");
                             }
                             break;
                         case T5Helper.Command.Run:
@@ -557,6 +564,8 @@ namespace ACO2_App._0
                 productData.ContactResult = result;
                 productData.ContactEndTime = DateTime.Now;
                 productData.ContactTackTime = (productData.ContactEndTime - productData.ContactStartTime).TotalSeconds;
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{productData.ChannelNo}]:" +
+                                       $"CONTACT RESULT:{productData.ContactResult} " );
                 productData.ResultInsEventHandle(productData.ChannelNo, productData.ContactResult, "", productData.DefectCode);
                 return;
             }
@@ -582,11 +591,14 @@ namespace ACO2_App._0
             {
                 productData.DefectCode = GetDefectCode(result);
             }
+            
             productData.MTPWriteResult = result;
             productData.InsEndTime = DateTime.Now;
             productData.InsTackTime = (productData.InsEndTime - productData.InsStartTime).TotalSeconds;
+            LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{productData.ChannelNo}]:" +
+                                       $"MTPWRITE RESULT:{productData.MTPWriteResult} ");
             productData.ResultInsEventHandle(productData.ChannelNo, productData.ContactResult, productData.MTPWriteResult, productData.DefectCode);
-
+            
         }
         #endregion
         #endregion

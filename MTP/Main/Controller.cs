@@ -62,7 +62,7 @@ namespace ACO2_App._0
         private Thread _aliveBit;
         private bool _isPlcConnected;
         private Dictionary<string, Func<Task>> _handlers;
-
+        private object _cs = new object();
         #endregion
         #endregion
         #region Property
@@ -121,6 +121,7 @@ namespace ACO2_App._0
         #region Constuctor
         public Controller()
         {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _controllerConfig = new ControllerConfig();
             _listCellDatas = new ListCellDatas();
             ReadControllerConfig();
@@ -450,7 +451,7 @@ namespace ACO2_App._0
         public string GetWordValueFromPLC(string Name, bool isPLCWord, string Area = "")
         {
             string value = "";
-            value = _plcH.Words.FirstOrDefault(x => x.Comment == $"{Name}" && x.IsPlc == isPLCWord).GetValue;
+            value = _plcH.Words.FirstOrDefault(x => x.Item == $"{Name}" && x.IsPlc == isPLCWord).GetValue;
             return value;
         }
         public List<WordModel> GetManyWordValueInAreaFromPLC(string area)
@@ -469,7 +470,7 @@ namespace ACO2_App._0
         }
         public bool SetWordValueFromPC(string Name, string value, string Area = "")
         {
-            _plcH.Words.FirstOrDefault(x => x.Comment == $"{Name}").SetValue = value;
+            _plcH.Words.FirstOrDefault(x => x.Item == $"{Name}").SetValue = value;
             if (GetWordValueFromPLC($"{Name}", false) == value) { return true; } else { return false; }
         }
 
@@ -669,45 +670,68 @@ namespace ACO2_App._0
 
         #endregion
         #region Method Excute Data
-        
+     
         public CellData FindCellInListTemp(string cellid, bool isStepStartIns = false, bool isStepInsDone = false, string channel = "", bool isStepStartTrackOut = false)
         {
-            if (isStepStartIns)
+            try
             {
-                return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid && cell.TrackIn == "OK");
+                lock (_cs)
+                {
+                    if (isStepStartIns)
+                    {
+                        return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid);
+                    }
+                    else if (isStepInsDone && !isStepStartIns)
+                    {
+                        return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid);
+                    }
+                    else if (isStepStartTrackOut)
+                    {
+                        return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid);
+                    }
+                }
             }
-            else if (isStepInsDone && !isStepStartIns)
+            catch (Exception e)
             {
-                return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid && cell.TrackIn == "OK" );
-            }
-            else if (isStepStartTrackOut)
-            {
-                return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid);
+                string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
+                LogTxt.Add(LogTxt.Type.Exception, $"Find Cell Fail:" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"Find Cell Fail:" + debug);
             }
             return null;
         }
         public async Task<(string cellId, string channel,bool isTimeOut)> WaitForPlcData(string cellIdKey, string data2key)
         {
-            int maxTimeoutMs = 10000;
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.Start();
-
-            while (string.IsNullOrEmpty(GetWordValueFromPLC(cellIdKey, true)) &&
-                   string.IsNullOrEmpty(GetWordValueFromPLC(data2key, true)))
+            try
             {
-                if (stopwatch.CheckElapsedTime(maxTimeoutMs))
+                int maxTimeoutMs = 10000;
+                StopWatch stopwatch = new StopWatch();
+                stopwatch.Start();
+
+                while (string.IsNullOrEmpty(GetWordValueFromPLC(cellIdKey, true)) &&
+                       string.IsNullOrEmpty(GetWordValueFromPLC(data2key, true)))
                 {
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC TIMEOUT] Timeout while waiting for {cellIdKey} and {data2key}.");
-                    return (null, null, true); 
+                    if (stopwatch.CheckElapsedTime(maxTimeoutMs))
+                    {
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC TIMEOUT] Timeout while waiting for {cellIdKey} and {data2key}.");
+                        return (null, null, true);
+                    }
+                    Thread.Sleep(5);
                 }
-                Thread.Sleep(5);
+                stopwatch.Stop();
+
+                string cellId = GetWordValueFromPLC(cellIdKey, true);
+                string data2 = GetWordValueFromPLC(data2key, true);
+              
+                return (cellId, data2, false);
             }
-            stopwatch.Stop();
-
-            string cellId = GetWordValueFromPLC(cellIdKey, true);
-            string data2 = GetWordValueFromPLC(data2key, true);
-
-            return (cellId, data2,false);
+            catch(Exception e)
+            {
+                string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
+                LogTxt.Add(LogTxt.Type.Exception, $"Read Data PLC Fail:" + debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"Read Data PLC Fail:" + debug);
+                return ("", "", false);
+            }
+       
         }
         private void GetStatusDataFromPLC()
         {
@@ -917,7 +941,7 @@ namespace ACO2_App._0
             content.Append(string.Format("{0},", productData.ZoneNo)); //ZONE
             content.Append(string.Format("UNIT{0},", productData.Unit)); //UNIT
             content.Append(string.Format("STAGE{0},", productData.Stage)); //STAGE
-            content.Append(string.Format("CHANNEL{0},", productData.Channel.ChannelNo)); //CHANNEL
+            content.Append(string.Format("{0},", productData.Channel.ChannelNo)); //CHANNEL
             content.Append(string.Format("{0},", productData.TrackIn)); //TRACEIN
             content.Append(string.Format("{0},", productData.TrackOut)); //TRACEOUT
 

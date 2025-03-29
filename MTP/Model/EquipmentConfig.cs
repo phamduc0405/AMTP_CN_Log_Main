@@ -182,7 +182,7 @@ namespace ACO2_App._0.Model
         {
             this.CellID = "";
             this.TxHostVer = "";
-            this.ChannelNo = "";
+            //this.ChannelNo = "";
             this.X600 = "";
             this.T5MACVer = "";
             this.TMDFile = "";

@@ -170,6 +170,8 @@ namespace MTP.Model
         public const string ROBOT1_1_ABRULE = "ROBOT1_1_ABRULE";
         public const string ROBOT1_1_RETRY = "ROBOT1_1_RETRY";
         public const string ROBOT1_1_RECHECKED = "ROBOT1_1_RECHECKED";
+        public const string ROBOT1_1_TEMPERATURE = "ROBOT1_1_TEMPERATURE";
+
         public const string ROBOT1_2_CELLID = "ROBOT1_2_CELLID";
         public const string ROBOT1_2_CHANNEL = "ROBOT1_2_CHANNEL";
         public const string ROBOT1_2_UNIT = "ROBOT1_2_UNIT";
@@ -177,6 +179,7 @@ namespace MTP.Model
         public const string ROBOT1_2_ABRULE = "ROBOT1_2_ABRULE";
         public const string ROBOT1_2_RETRY = "ROBOT1_2_RETRY";
         public const string ROBOT1_2_RECHECKED = "ROBOT1_2_RECHECKED";
+        public const string ROBOT1_2_TEMPERATURE = "ROBOT1_2_TEMPERATURE";
 
         public const string ROBOT2_1_TRACKOUT_RESULT = "ROBOT2_1_TRACKOUT_RESULT";
         public const string ROBOT2_1_TRACKOUT_CELLID = "ROBOT2_1_TRACKOUT_CELLID";
@@ -190,6 +193,8 @@ namespace MTP.Model
         public const string ROBOT2_1_ABRULE = "ROBOT2_1_ABRULE";
         public const string ROBOT2_1_RETRY = "ROBOT2_1_RETRY";
         public const string ROBOT2_1_RECHECKED = "ROBOT2_1_RECHECKED";
+        public const string ROBOT2_1_TEMPERATURE = "ROBOT2_1_TEMPERATURE";
+
         public const string ROBOT2_2_CELLID = "ROBOT2_2_CELLID";
         public const string ROBOT2_2_CHANNEL = "ROBOT2_2_CHANNEL";
         public const string ROBOT2_2_UNIT = "ROBOT2_2_UNIT";
@@ -197,6 +202,7 @@ namespace MTP.Model
         public const string ROBOT2_2_ABRULE = "ROBOT2_2_ABRULE";
         public const string ROBOT2_2_RETRY = "ROBOT2_2_RETRY";
         public const string ROBOT2_2_RECHECKED = "ROBOT2_2_RECHECKED";
+        public const string ROBOT2_2_TEMPERATURE = "ROBOT2_2_TEMPERATURE";
 
         public const string CHANNEL1 = "CHANNEL1";
         public const string CHANNEL2 = "CHANNEL2";
