@@ -714,7 +714,7 @@ namespace ACO2_App._0
             }
             return null;
         }
-        public async Task<(string cellId, string channel,bool isTimeOut)> WaitForPlcData(string cellIdKey, string data2key)
+        public (string cellId, string channel,bool isTimeOut) WaitForPlcData(string cellIdKey, string data2key)
         {
             try
             {

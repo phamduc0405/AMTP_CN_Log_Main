@@ -178,7 +178,7 @@ namespace ACO2_App._0.INIT
                         // Create a directory corresponding to the current year and month.
                         CheckFolderData(_logPathData[index]);
 
-                        var path = string.Format(@"{0}\DataStorage.setting");
+                        var path = string.Format(@"{0}\DataStorage.setting", _logPathData[index]);
                         string str = XmlHelper<ListCellDatas>.SerializeToString(data);
                         // Add to String Builder to write data from the same time zone at once. 
                         var builder = new StringBuilder();

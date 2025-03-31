@@ -86,7 +86,7 @@ namespace MTP.Model
                     string cellIDTrackIn = "";
                     string resultTrackIn = "";
                     bool isTimeOut = false;
-                    (cellIDTrackIn, resultTrackIn, isTimeOut) = await _controller.WaitForPlcData(_cellIDWord, _resultTrackInWord);
+                    (cellIDTrackIn, resultTrackIn, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _resultTrackInWord);
                     //if (isTimeOut)
                     //{
                     //_controller.SetSignalBitFromPC("TIME_OUT", true);
