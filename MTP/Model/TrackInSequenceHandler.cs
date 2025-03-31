@@ -107,6 +107,7 @@ namespace MTP.Model
                     cellData.CellID = cellIDTrackIn;
                     cellData.TrackIn = resultTrackIn;
                     cellData.MCStartTime = DateTime.Now;
+                cellData.TimeStartTrackIn = DateTime.Now;
                 //var checkCheckCellDuplicate = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
                 //if(checkCheckCellDuplicate != null)
                 //{
@@ -118,7 +119,8 @@ namespace MTP.Model
                  _controller.ListCellDatas.CellDatas.Add(cellData);
                 _controller.ListCell.Add(new ListCell{ CellID = cellData.CellID });
                 _controller.ListCellUpdateEventHandle(_controller.ListCell);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" + 
+                LogStorage.Add(_controller.ListCellDatas);
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" + 
                         $"ADD DATA TO QUEUEE: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
                     string logMessage =_controller.CreateLogFollowCellData(cellData);

@@ -575,6 +575,7 @@ namespace ACO2_App._0
                 productData.ContactResult = result;
                 productData.ContactEndTime = DateTime.Now;
                 productData.ContactTackTime = (productData.ContactEndTime - productData.ContactStartTime).TotalSeconds;
+                
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{productData.ChannelNo}]:" +
                                        $"CONTACT RESULT:{productData.ContactResult} " );
                 productData.ResultInsEventHandle(productData.ChannelNo, productData.ContactResult, "", productData.DefectCode);

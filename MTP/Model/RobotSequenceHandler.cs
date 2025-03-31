@@ -222,6 +222,7 @@ namespace MTP.Model
                     if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
                     cellData.Unit = unitRbDropTool;
                     cellData.Stage = ScaleValueStage(zone, unitRbDropTool, stageRbDropTool, channelRbDropTool);
+                    LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]:" +
                    $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -306,6 +307,7 @@ namespace MTP.Model
                 {
                     cellData.RBDropEndTime = DateTime.Now;
                     cellData.RBDropTackTime = (cellData.RBDropEndTime - cellData.RBDropStartTime).TotalSeconds;
+                    LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" +
                 $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                 $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -402,6 +404,7 @@ namespace MTP.Model
                 if (cellData != null)
                 {
                    cellData.RBPickStartTime = DateTime.Now;
+                    LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" +
                $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -518,6 +521,7 @@ namespace MTP.Model
                 {
                     cellData.RBPickEndTime = DateTime.Now;
                     cellData.RBPickTackTime = (cellData.RBPickEndTime - cellData.RBPickStartTime).TotalSeconds;
+                    LogStorage.Add(_controller.ListCellDatas);
                     var cell = _controller.Equipment[zone-1].Channels.FirstOrDefault(ch => ch.ChannelNo == channel);
                     if (cell != null)
                     {
@@ -530,6 +534,7 @@ namespace MTP.Model
                         cellData.Channel = cell;
                         cellData.UnitEndTime = DateTime.Now;
                         cellData.UnitTackTime = (cellData.UnitEndTime - cellData.UnitStartTime).TotalSeconds;
+                        LogStorage.Add(_controller.ListCellDatas);
                         LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + $"UPDATE DATA IN LIST: " +
                             $"CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                             $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -550,6 +555,7 @@ namespace MTP.Model
                             cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
                            await _controller.SaveDataLog(cellData);
                             cellData.Channel.Clear();
+                            LogStorage.Add(_controller.ListCellDatas);
                             string log1Message = _controller.CreateLogFollowCellData(cellData);
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET][NEED RETRY]:Save Datalog cell need Retry" + logMessage);
                         }

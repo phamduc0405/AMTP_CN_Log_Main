@@ -127,12 +127,13 @@ namespace MTP.Model
                     cellData.TrackOut = resultTrackOut;
                     cellData.MCEndTime = DateTime.Now;
                     cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
-
+                    LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 
                         $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}" +
                         $"");
                   await  _controller.SaveDataLog(cellData);
+                    LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 
                         $"SAVE DATA TO DATALOG: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " + 
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
@@ -145,6 +146,7 @@ namespace MTP.Model
                         _controller.ListCellUpdateEventHandle(_controller.ListCell);
                     }
                     _controller.ListCellDatas.CellDatas.Remove(cellData);
+                    LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:  CellData Remove from List:" + logMessage);
                 }
                 else

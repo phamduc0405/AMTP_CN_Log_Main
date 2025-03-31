@@ -67,6 +67,7 @@ namespace ACO2_App._0
             Controller.Initial();
             DataContext = new MainViewModel();
             LogTxt.Start();
+            LogStorage.Start();
             Controller.InitialGetDataProduct();
             _cpuChart = new PartialCpuChart();
             grdCpu.Children.Add(_cpuChart);
@@ -189,6 +190,8 @@ namespace ACO2_App._0
             {
                 _running = false;
                 LogTxt.Stop();
+                Controller.SaveCellDataBackup();
+                LogStorage.Stop();
                 Controller.Dispose();
                 memoryUsageThread?.Abort();
                 _updateTime?.Abort();

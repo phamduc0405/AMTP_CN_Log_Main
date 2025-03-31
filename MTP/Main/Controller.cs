@@ -259,7 +259,6 @@ namespace ACO2_App._0
             _plc.Close();
             _plcH?.Close();
             _dataLog?.Stop();
-            SaveCellDataBackup();
         }
         #endregion
         #region Config
@@ -315,9 +314,9 @@ namespace ACO2_App._0
         {
             try
             {
-                if (File.Exists(DefaultData.AppPath + @"\Setting\DataCellBackup.data"))
+                if (File.Exists(DefaultData.AppPath + @"\Setting\DataStorage.setting"))
                 {
-                    string readText = File.ReadAllText(DefaultData.AppPath + @"\Setting\DataCellBackup.data");
+                    string readText = File.ReadAllText(DefaultData.AppPath + @"\Setting\DataStorage.setting");
                     ListCellDatas = XmlHelper<ListCellDatas>.DeserializeFromString(readText);
                     if (_listCellDatas == null)
                     {
@@ -346,7 +345,7 @@ namespace ACO2_App._0
                 {
                     string path = DefaultData.AppPath + @"\Setting";
                     DefaultData.CheckFolder(path);
-                    path += @"\DataCellBackup.data";
+                    path += @"\DataStorage.setting";
                     File.WriteAllText(path, str);
                 });
             }
@@ -1402,6 +1401,27 @@ namespace ACO2_App._0
                             else
                             {
                                 LogTxt.Add(LogTxt.Type.Exception, "[PLC] Cannot find Bit ALIVE!");
+                            }
+
+                            if (_listCellDatas.CellDatas.Count > 0)
+                            {
+                                foreach(var cell in _listCellDatas.CellDatas)
+                                {
+                                    var timenow = DateTime.Now;
+                                    double tactTimeCell = (timenow - cell.TimeStartTrackIn).TotalDays;
+                                    if (tactTimeCell > 1)
+                                    {
+                                        SaveDataLog(cell);
+                                        LogTxt.Add(LogTxt.Type.FlowRun, $"[TIMEOUT][CELL] ：[{cell.CellID}]. Cell in Machine too long ({tactTimeCell} days) and not trackout. Save Log");
+                                        _listCellDatas.CellDatas.Remove(cell);
+                                        ListCell cells = _listCell.FirstOrDefault(x => x.CellID == cell.CellID);
+                                        if (cells != null)
+                                        {
+                                            _listCell.Remove(cells);
+                                            ListCellUpdateEventHandle(_listCell);
+                                        }
+                                    }
+                                }
                             }
                         }
                         catch (Exception ex)

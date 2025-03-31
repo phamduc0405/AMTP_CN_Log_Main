@@ -49,6 +49,7 @@ namespace ACO2_App._0.Model
     public class CellData
     {
         public DateTime Time { get; set; } = DateTime.Now;
+        public DateTime TimeStartTrackIn { get; set; } = DateTime.Now;
         public string MachineName { get; set; } = string.Empty; // Name Machine
         public string EQPID { get; set; } = string.Empty; // Name EQP
         public string Unit { get; set; } = string.Empty; // Name Unit

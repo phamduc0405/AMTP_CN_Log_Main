@@ -11,6 +11,7 @@ namespace MTP.Model
         public const string ALIVE = "ALIVE";
         public const string TRACKIN_1 = "TRACKIN_1";
         public const string TRACKIN_2 = "TRACKIN_2";
+
         public const string ROBOT1_1_TRACKOUT = "ROBOT1_1_TRACKOUT";
         public const string ROBOT1_2_TRACKOUT = "ROBOT1_2_TRACKOUT";
         public const string ROBOT1_1_START_PUT = "ROBOT1_1_START_PUT";
@@ -31,6 +32,7 @@ namespace MTP.Model
         public const string ROBOT2_2_START_GET = "ROBOT2_2_START_GET";
         public const string ROBOT2_1_END_GET = "ROBOT2_1_END_GET";
         public const string ROBOT2_2_END_GET = "ROBOT2_2_END_GET";
+
         public const string ZONE1_CYL_1_UP_START = "ZONE1_CYL_1_UP_START";
         public const string ZONE1_CYL_2_UP_START = "ZONE1_CYL_2_UP_START";
         public const string ZONE1_CYL_3_UP_START = "ZONE1_CYL_3_UP_START";
@@ -79,6 +81,7 @@ namespace MTP.Model
         public const string ZONE1_CYL_10_DOWN_END = "ZONE1_CYL_10_DOWN_END";
         public const string ZONE1_CYL_11_DOWN_END = "ZONE1_CYL_11_DOWN_END";
         public const string ZONE1_CYL_12_DOWN_END = "ZONE1_CYL_12_DOWN_END";
+
         public const string ZONE2_CYL_1_UP_START = "ZONE2_CYL_1_UP_START";
         public const string ZONE2_CYL_2_UP_START = "ZONE2_CYL_2_UP_START";
         public const string ZONE2_CYL_3_UP_START = "ZONE2_CYL_3_UP_START";
@@ -127,6 +130,7 @@ namespace MTP.Model
         public const string ZONE2_CYL_10_DOWN_END = "ZONE2_CYL_10_DOWN_END";
         public const string ZONE2_CYL_11_DOWN_END = "ZONE2_CYL_11_DOWN_END";
         public const string ZONE2_CYL_12_DOWN_END = "ZONE2_CYL_12_DOWN_END";
+
         public const string ZONE1_SERVO_1_FW_START = "ZONE1_SERVO_1_FW_START";
         public const string ZONE1_SERVO_2_FW_START = "ZONE1_SERVO_2_FW_START";
         public const string ZONE1_SERVO_1_FW_END = "ZONE1_SERVO_1_FW_END";
@@ -135,6 +139,25 @@ namespace MTP.Model
         public const string ZONE1_SERVO_2_BW_START = "ZONE1_SERVO_2_BW_START";
         public const string ZONE1_SERVO_1_BW_END = "ZONE1_SERVO_1_BW_END";
         public const string ZONE1_SERVO_2_BW_END = "ZONE1_SERVO_2_BW_END";
+
+        public const string ZONE1_SERVO_3_FW_START = "ZONE1_SERVO_3_FW_START";
+        public const string ZONE1_SERVO_4_FW_START = "ZONE1_SERVO_4_FW_START";
+        public const string ZONE1_SERVO_3_FW_END = "ZONE1_SERVO_3_FW_END";
+        public const string ZONE1_SERVO_4_FW_END = "ZONE1_SERVO_4_FW_END";
+        public const string ZONE1_SERVO_3_BW_START = "ZONE1_SERVO_3_BW_START";
+        public const string ZONE1_SERVO_4_BW_START = "ZONE1_SERVO_4_BW_START";
+        public const string ZONE1_SERVO_3_BW_END = "ZONE1_SERVO_3_BW_END";
+        public const string ZONE1_SERVO_4_BW_END = "ZONE1_SERVO_4_BW_END";
+
+        public const string ZONE1_SERVO_5_FW_START = "ZONE1_SERVO_5_FW_START";
+        public const string ZONE1_SERVO_6_FW_START = "ZONE1_SERVO_6_FW_START";
+        public const string ZONE1_SERVO_5_FW_END = "ZONE1_SERVO_5_FW_END";
+        public const string ZONE1_SERVO_6_FW_END = "ZONE1_SERVO_6_FW_END";
+        public const string ZONE1_SERVO_5_BW_START = "ZONE1_SERVO_5_BW_START";
+        public const string ZONE1_SERVO_6_BW_START = "ZONE1_SERVO_6_BW_START";
+        public const string ZONE1_SERVO_5_BW_END = "ZONE1_SERVO_5_BW_END";
+        public const string ZONE1_SERVO_6_BW_END = "ZONE1_SERVO_6_BW_END";
+
         public const string ZONE2_SERVO_1_FW_START = "ZONE2_SERVO_1_FW_START";
         public const string ZONE2_SERVO_2_FW_START = "ZONE2_SERVO_2_FW_START";
         public const string ZONE2_SERVO_1_FW_END = "ZONE2_SERVO_1_FW_END";
@@ -143,6 +166,24 @@ namespace MTP.Model
         public const string ZONE2_SERVO_2_BW_START = "ZONE2_SERVO_2_BW_START";
         public const string ZONE2_SERVO_1_BW_END = "ZONE2_SERVO_1_BW_END";
         public const string ZONE2_SERVO_2_BW_END = "ZONE2_SERVO_2_BW_END";
+
+        public const string ZONE2_SERVO_3_FW_START = "ZONE2_SERVO_3_FW_START";
+        public const string ZONE2_SERVO_4_FW_START = "ZONE2_SERVO_4_FW_START";
+        public const string ZONE2_SERVO_3_FW_END = "ZONE2_SERVO_3_FW_END";
+        public const string ZONE2_SERVO_4_FW_END = "ZONE2_SERVO_4_FW_END";
+        public const string ZONE2_SERVO_3_BW_START = "ZONE2_SERVO_3_BW_START";
+        public const string ZONE2_SERVO_4_BW_START = "ZONE2_SERVO_4_BW_START";
+        public const string ZONE2_SERVO_3_BW_END = "ZONE2_SERVO_3_BW_END";
+        public const string ZONE2_SERVO_4_BW_END = "ZONE2_SERVO_4_BW_END";
+
+        public const string ZONE2_SERVO_5_FW_START = "ZONE2_SERVO_5_FW_START";
+        public const string ZONE2_SERVO_6_FW_START = "ZONE2_SERVO_6_FW_START";
+        public const string ZONE2_SERVO_5_FW_END = "ZONE2_SERVO_5_FW_END";
+        public const string ZONE2_SERVO_6_FW_END = "ZONE2_SERVO_6_FW_END";
+        public const string ZONE2_SERVO_5_BW_START = "ZONE2_SERVO_5_BW_START";
+        public const string ZONE2_SERVO_6_BW_START = "ZONE2_SERVO_6_BW_START";
+        public const string ZONE2_SERVO_5_BW_END = "ZONE2_SERVO_5_BW_END";
+        public const string ZONE2_SERVO_6_BW_END = "ZONE2_SERVO_6_BW_END";
     }
     public static class Word
     {

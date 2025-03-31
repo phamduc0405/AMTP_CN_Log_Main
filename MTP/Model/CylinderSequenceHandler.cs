@@ -70,25 +70,30 @@ namespace MTP.Model
                         if(_actionStr == "DOWN")
                         {
                             cellData.CylDWStartTime = DateTime.Now;
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
+                                LogStorage.Add(_controller.ListCellDatas);
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
+
                         }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpStartTime = DateTime.Now;
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
+                                LogStorage.Add(_controller.ListCellDatas);
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         break;
                     case "END":
                         if (_actionStr == "DOWN")
                         {
                             cellData.CylDWEndTime = DateTime.Now;
-                            cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalMilliseconds;
+                                LogStorage.Add(_controller.ListCellDatas);
+                                cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalMilliseconds;
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpEndTime = DateTime.Now;
-                            cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalMilliseconds;
+                                LogStorage.Add(_controller.ListCellDatas);
+                                cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalMilliseconds;
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                         }
                         break;
