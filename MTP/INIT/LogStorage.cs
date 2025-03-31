@@ -106,7 +106,7 @@ namespace ACO2_App._0.INIT
         /// </summary>
         public static void Stop()
         {
-            var count = 1;
+            var count = 0;
             Parallel.For(0, count, (i) =>
             {
                 _isSave[i] = false;
