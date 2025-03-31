@@ -40,7 +40,7 @@ namespace MTP.Views.Home
             _channel.ResultInsEvent -= _channel_ResultInsEvent;
             _channel.ResultInsEvent += _channel_ResultInsEvent;
             _eqpIndex = int.Parse(_equipment.EqpConfig.EQPIndex.ToString());
-            _channelStatus = _controller.MachineStatus.ChannelStatus.FirstOrDefault(x => x.ZoneNo == (_eqpIndex + 1).ToString() && x.Channnel == channel.ChannelNo);
+            _channelStatus = _controller.StatusChannel.ChannelStatus.FirstOrDefault(x => x.ZoneNo == (_eqpIndex + 1).ToString() && x.Channnel == channel.ChannelNo);
 
             if(_channelStatus!=null)
             {

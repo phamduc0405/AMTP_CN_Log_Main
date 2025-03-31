@@ -54,6 +54,7 @@ namespace ACO2_App._0
         private ListCellDatas _listCellDatas;
         private DataLog _dataLog;
         private MachineStatus _machineStatus;
+        private StatusChannel _statusChannel;
         private List<CurrentData> _currDatas;
         private List<DefectCode> _defectCodes;
         private List<ListCell> _listCell;
@@ -94,6 +95,11 @@ namespace ACO2_App._0
         {
             get { return _machineStatus; }
             set { _machineStatus = value; }
+        }
+        public StatusChannel StatusChannel
+        {
+            get { return _statusChannel; }
+            set { _statusChannel = value; }
         }
         public List<CurrentData> CurrsDatas { get { return _currDatas; } set { _currDatas = value; } }
         public List<DefectCode> DefectCodes
@@ -148,13 +154,14 @@ namespace ACO2_App._0
             else _dataLog = new DataLog(_controllerConfig.EQPID);
             _dataLog.Start();
             _machineStatus = new MachineStatus();
+            _statusChannel = new StatusChannel();
             _defectCodes = new List<DefectCode>();
             _defectCodes = ReadDefectConfig();
         }
         public void test()
         {
-           _machineStatus.ChannelStatus.FirstOrDefault(x => x.ZoneNo == "1" && x.Channnel == "CH03").Status="SKIP";
-            _machineStatus.ChannelStatus.FirstOrDefault(x => x.ZoneNo == "2" && x.Channnel == "CH05").Status = "SKIP";
+           _statusChannel.ChannelStatus.FirstOrDefault(x => x.ZoneNo == "1" && x.Channnel == "CH03").Status="SKIP";
+            _statusChannel.ChannelStatus.FirstOrDefault(x => x.ZoneNo == "2" && x.Channnel == "CH05").Status = "SKIP";
 
         }
         public void InitialChannelStatus()
@@ -162,7 +169,7 @@ namespace ACO2_App._0
             var zone1 = GetManyWordValueInAreaFromPLC("STATUS_ZONE1");
             foreach (var channel in zone1)
             {
-                    _machineStatus.ChannelStatus.Add(new ChannelStatus
+                    _statusChannel.ChannelStatus.Add(new ChannelStatus
                     {
                         ZoneNo = "1",
                         Channnel = channel.Comment.Replace("CHANNEL", ""),
@@ -172,7 +179,7 @@ namespace ACO2_App._0
             var zone2 = GetManyWordValueInAreaFromPLC("STATUS_ZONE2");
             foreach (var channel in zone2)
             {
-                _machineStatus.ChannelStatus.Add(new ChannelStatus
+                _statusChannel.ChannelStatus.Add(new ChannelStatus
                 {
                     ZoneNo = "2",
                     Channnel = channel.Comment.Replace("CHANNEL", ""),
@@ -741,7 +748,7 @@ namespace ACO2_App._0
             }
        
         }
-        private void GetStatusDataFromPLC()
+        public void GetStatusDataFromPLC()
         {
             switch(GetWordValueFromPLC("STATUS", true))
             {
@@ -752,30 +759,28 @@ namespace ACO2_App._0
             }
             switch (GetWordValueFromPLC("AVAILABILITYSTATE", true))
             {
-                case "0": _machineStatus.Status = "UP"; break;
-                case "1": _machineStatus.Status = "DOWN"; break;
-                default: _machineStatus.Status = "DEFAULT"; break;
+                case "0": _machineStatus.AvailabilityState = "UP"; break;
+                case "1": _machineStatus.AvailabilityState = "DOWN"; break;
+                default: _machineStatus.AvailabilityState = "DEFAULT"; break;
             }
             switch (GetWordValueFromPLC("INTERLOCKSTATE", true))
             {
-                case "0": _machineStatus.Status = "ON"; break;
-                case "1": _machineStatus.Status = "OFF"; break;
-                default: _machineStatus.Status = "DEFAULT"; break;
+                case "0": _machineStatus.InterlockState = "ON"; break;
+                case "1": _machineStatus.InterlockState = "OFF"; break;
+                default: _machineStatus.InterlockState = "DEFAULT"; break;
             }
             switch (GetWordValueFromPLC("MOVESTATE", true))
             {
-                case "0": _machineStatus.Status = "RUNNING"; break;
-                case "1": _machineStatus.Status = "PAUSE"; break;
-                default: _machineStatus.Status = "DEFAULT"; break;
+                case "0": _machineStatus.MoveState = "RUNNING"; break;
+                case "1": _machineStatus.MoveState = "PAUSE"; break;
+                default: _machineStatus.MoveState = "DEFAULT"; break;
             }
             switch (GetWordValueFromPLC("RUNSTATE", true))
             {
-                case "0": _machineStatus.Status = "RUN"; break;
-                case "1": _machineStatus.Status = "IDLE"; break;
-                default: _machineStatus.Status = "DEFAULT"; break;
-            }
-            _machineStatus.ChannelStatus.Clear();
-            
+                case "0": _machineStatus.RunState = "RUN"; break;
+                case "1": _machineStatus.RunState = "IDLE"; break;
+                default: _machineStatus.RunState = "DEFAULT"; break;
+            }           
             var zone1 = GetManyWordValueInAreaFromPLC("STATUS_ZONE1");
             foreach(var channel in zone1)
             {
@@ -786,14 +791,14 @@ namespace ACO2_App._0
                     case "1":status = "MANUAL";break;
                     case "2":status = "SKIP";break;
                 }
-               var channelstatus = _machineStatus.ChannelStatus.FirstOrDefault(x=>x.ZoneNo=="1"&&x.Channnel== channel.Comment.Replace("CHANNEL", "CH"));
+               var channelstatus = _statusChannel.ChannelStatus.FirstOrDefault(x=>x.ZoneNo=="1"&&x.Channnel== channel.Comment.Replace("CHANNEL", "CH"));
                 if(channelstatus != null)
                 {
                     channelstatus.Status = status;
                 }
                 else
                 {
-                    _machineStatus.ChannelStatus.Add(new ChannelStatus
+                    _statusChannel.ChannelStatus.Add(new ChannelStatus
                     {
                         ZoneNo = "1",
                         Channnel = channel.Comment.Replace("CHANNEL", "CH"),
@@ -811,14 +816,14 @@ namespace ACO2_App._0
                     case "1": status = "MANUAL"; break;
                     case "2": status = "SKIP"; break;
                 }
-                var channelstatus = _machineStatus.ChannelStatus.FirstOrDefault(x => x.ZoneNo == "2" && x.Channnel == channel.Comment.Replace("CHANNEL", "CH"));
+                var channelstatus = _statusChannel.ChannelStatus.FirstOrDefault(x => x.ZoneNo == "2" && x.Channnel == channel.Comment.Replace("CHANNEL", "CH"));
                 if (channelstatus != null)
                 {
                     channelstatus.Status = status;
                 }
                 else
                 {
-                    _machineStatus.ChannelStatus.Add(new ChannelStatus
+                    _statusChannel.ChannelStatus.Add(new ChannelStatus
                     {
                         ZoneNo = "2",
                         Channnel = channel.Comment.Replace("CHANNEL", "CH"),
@@ -1423,6 +1428,7 @@ namespace ACO2_App._0
                                     }
                                 }
                             }
+                           
                         }
                         catch (Exception ex)
                         {

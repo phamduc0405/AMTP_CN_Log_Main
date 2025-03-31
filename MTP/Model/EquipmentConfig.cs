@@ -257,19 +257,22 @@ namespace ACO2_App._0.Model
             get => _runState;
             set => SetProperty(ref _runState, value, nameof(RunState));
         }
-        public List<ChannelStatus> ChannelStatus { get; set; } = new List<ChannelStatus>();
+      
         private void SetProperty(ref string field, string newValue, string propertyName)
         {
-            if (field != newValue)
+            if (field != newValue && newValue!="DEFAULT")
             {
                 string str = $"[MACHINE]{propertyName} changed from '{field}' to '{newValue}'";
                 LogTxt.Add(LogTxt.Type.Status, str);
-                LogTxt.Add(LogTxt.Type.FlowRun, str);
                 field = newValue;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
+    public class StatusChannel
+    {
+        public List<ChannelStatus> ChannelStatus { get; set; } = new List<ChannelStatus>();
+    } 
     public class ChannelStatus
     {
         public event PropertyChangedEventHandler PropertyChannelChanged;
@@ -284,11 +287,10 @@ namespace ACO2_App._0.Model
         }
         private void SetProperty(ref string field, string newValue, string propertyName)
         {
-            if (field != newValue)
+            if (field != newValue && newValue != "DEFAULT")
             {
                 string str = $"[CHANNEL][{ZoneNo}][{Channnel}]{propertyName} changed from '{field}' to '{newValue}'";
                 LogTxt.Add(LogTxt.Type.Status, str);
-                LogTxt.Add(LogTxt.Type.FlowRun, str);
                 field = newValue;
                 PropertyChannelChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }

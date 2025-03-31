@@ -26,79 +26,79 @@ namespace ACO2_App._0.INIT
         /// <summary>
         /// Event for log update.
         /// </summary>
-        public static event UpdateLogEventDelegate DisplayLogEvent;
+        public static event UpdateLogEventDelegate DisplayLogDataEvent;
         #endregion
 
         #region Fields
         /// <summary>
         /// 
         /// </summary>
-        private static string[] _path;
+        private static string[] _pathData;
 
         /// <summary>
         /// 
         /// </summary>
-        private static string[] _logPath;
+        private static string[] _logPathData;
 
         /// <summary>
         /// Log list for updating.
         /// </summary>
-        private static Queue<ListCellDatas>[] _logQueues;
+        private static Queue<ListCellDatas>[] _logQueuesData;
 
         /// <summary>
         /// Work thread for updating logs.
         /// </summary>
-        private static Thread[] _workers;
+        private static Thread[] _workersData;
 
         /// <summary>
         /// 
         /// </summary>
-        private static ManualResetEvent[] _writeResetEvents;
+        private static ManualResetEvent[] _writeResetEventsData;
 
         /// <summary>
         /// Semaphore for controlling concurrent access for log updates.
         /// </summary>
-        private static SemaphoreSlim[] _semaphoreSlims;
+        private static SemaphoreSlim[] _semaphoreSlimsData;
 
         /// <summary>
         /// 
         /// </summary>
-        private static bool[] _isSave;
+        private static bool[] _isSaveData;
         #endregion
         /// <summary>
         /// 
         /// </summary>
         public static void Start()
         {
-            if (_workers != null)
+            if (_workersData != null)
             {
                 return;
             }
-            var count = 2;
+            var count = 1;
 
-            _workers = new Thread[count];
-            _writeResetEvents = new ManualResetEvent[count];
-            _logQueues = new Queue<ListCellDatas>[count];
-            _semaphoreSlims = new SemaphoreSlim[count];
-            _path = new string[count];
-            _logPath = new string[count];
-            _isSave = new bool[count];
+            _workersData = new Thread[count];
+            _writeResetEventsData = new ManualResetEvent[count];
+            _logQueuesData = new Queue<ListCellDatas>[count];
+            _semaphoreSlimsData = new SemaphoreSlim[count];
+            _pathData = new string[count];
+            _logPathData = new string[count];
+            _isSaveData = new bool[count];
 
 
-            for (var i = 1; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 #region Set log storage location according to type.
                 {
-                    _logPath[i] = string.Format(@"{0}\Setting", DefaultData.AppPath);
+                    _logPathData[i] = string.Format(@"{0}\Setting", DefaultData.AppPath);
                 }
                 #endregion
 
-                _logQueues[i] = new Queue<ListCellDatas>();
-                _semaphoreSlims[i] = new SemaphoreSlim(1, 1);
-                _writeResetEvents[i] = new ManualResetEvent(false);
+                _logQueuesData[i] = new Queue<ListCellDatas>();
+                _semaphoreSlimsData[i] = new SemaphoreSlim(1, 1);
+                _writeResetEventsData[i] = new ManualResetEvent(false);
 
-                _workers[i] = new Thread(Work);
-                _workers[i].Start(i);
+                _workersData[i] = new Thread(Work);
+                _workersData[i].Start(i);
             }
         }
         /// <summary>
@@ -106,19 +106,18 @@ namespace ACO2_App._0.INIT
         /// </summary>
         public static void Stop()
         {
-            var count = 0;
+            var count = 1;
             Parallel.For(0, count, (i) =>
             {
-                _isSave[i] = false;
+                _isSaveData[i] = false;
+                if (_writeResetEventsData[i] != null)
+                    _writeResetEventsData[i].Dispose();
 
-                if (_writeResetEvents[i] != null)
-                    _writeResetEvents[i].Dispose();
-
-                _workers[i]?.Abort();
+                _workersData[i]?.Abort();
 
 
-                if (_writeResetEvents[i] != null)
-                    _writeResetEvents[i].Dispose();
+                if (_writeResetEventsData[i] != null)
+                    _writeResetEventsData[i].Dispose();
             });
         }
 
@@ -130,21 +129,21 @@ namespace ACO2_App._0.INIT
         {
             var value = Task.Run(async () =>
             {
-                var index = 1;
+                var index = 0;
                 ListCellDatas data = new ListCellDatas();
                 data = datas;
-                await _semaphoreSlims[index].WaitAsync();
+                await _semaphoreSlimsData[index].WaitAsync();
 
                 try
                 {
-                    _logQueues[index].Enqueue(data);
+                    _logQueuesData[index].Enqueue(data);
 #pragma warning disable 4014
                     Task.Run(() =>
 #pragma warning restore 4014
                     {
 
-                        if (DisplayLogEvent != null)
-                            DisplayLogEvent.Invoke(data);
+                        if (DisplayLogDataEvent != null)
+                            DisplayLogDataEvent.Invoke(data);
                     });
                 }
                 catch (Exception exception)
@@ -153,10 +152,10 @@ namespace ACO2_App._0.INIT
                 }
                 finally
                 {
-                    _semaphoreSlims[index].Release();
+                    _semaphoreSlimsData[index].Release();
                 }
 
-                _writeResetEvents[index].Set();
+                _writeResetEventsData[index].Set();
             });
         }
 
@@ -166,18 +165,18 @@ namespace ACO2_App._0.INIT
         private static async void Work(object obj)
         {
             var index = (int)obj;
-            _isSave[index] = true;
-            while (_isSave[index])
+            _isSaveData[index] = true;
+            while (_isSaveData[index])
             {
-                _writeResetEvents[index].WaitOne();
-                await _semaphoreSlims[index].WaitAsync();
+                _writeResetEventsData[index].WaitOne();
+                await _semaphoreSlimsData[index].WaitAsync();
                 try
                 {
-                    if (_logQueues[index].Count > 0)
+                    if (_logQueuesData[index].Count > 0)
                     {
-                        var data = _logQueues[index].Dequeue();
+                        var data = _logQueuesData[index].Dequeue();
                         // Create a directory corresponding to the current year and month.
-                        CheckFolder(_logPath[index]);
+                        CheckFolderData(_logPathData[index]);
 
                         var path = string.Format(@"{0}\DataStorage.setting");
                         string str = XmlHelper<ListCellDatas>.SerializeToString(data);
@@ -188,7 +187,7 @@ namespace ACO2_App._0.INIT
                         File.WriteAllText(path, str);
                     }
                     else
-                        _writeResetEvents[index].Reset();
+                        _writeResetEventsData[index].Reset();
                 }
                 catch (Exception exception)
                 {
@@ -196,7 +195,7 @@ namespace ACO2_App._0.INIT
                 }
                 finally
                 {
-                    _semaphoreSlims[index].Release();
+                    _semaphoreSlimsData[index].Release();
                 }
 
                 await Task.Delay(100);
@@ -208,7 +207,7 @@ namespace ACO2_App._0.INIT
         /// </summary>
         /// <param name="fileStream">Stream of the log file to be saved.</param>
         /// <param name="content">Content of the log.</param>
-        internal static void Write(FileStream fileStream, string content)
+        internal static void WriteData(FileStream fileStream, string content)
         {
             if (fileStream == null)
                 return;
@@ -221,12 +220,12 @@ namespace ACO2_App._0.INIT
         /// Method for creating a specified folder if it does not exist.
         /// </summary>
         /// <param name="name">Path of the directory</param>
-        internal static void CheckFolder(string name)
+        internal static void CheckFolderData(string name)
         {
             if (!Directory.Exists(name))
                 Directory.CreateDirectory(name);
         }
-        internal static void CheckRemove(string dir, DateTime time, int days)
+        internal static void CheckRemoveData(string dir, DateTime time, int days)
         {
             var directories = Directory.GetDirectories(dir);
             foreach (var direct in directories)

@@ -16,7 +16,7 @@
                     x:Name="grbHeader"
                     HorizontalAlignment="Center"
                     Style="{StaticResource HeaderTextBlockStyle}"
-                    Text="MANUAL"
+                  
                     TextAlignment="Center" />
             </GroupBox.Header>
             <Grid x:Name="grdMain" />

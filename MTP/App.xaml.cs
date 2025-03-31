@@ -26,7 +26,7 @@ namespace ACO2_App._0
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            const string appName = "ACO2_App";
+            const string appName = "MTP";
             bool createdNew;
             Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
             _mutex = new Mutex(true, appName, out createdNew);

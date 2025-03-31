@@ -67,7 +67,7 @@ namespace ACO2_App._0
             Controller.Initial();
             DataContext = new MainViewModel();
             LogTxt.Start();
-            LogStorage.Start();
+       
             Controller.InitialGetDataProduct();
             _cpuChart = new PartialCpuChart();
             grdCpu.Children.Add(_cpuChart);
@@ -95,6 +95,7 @@ namespace ACO2_App._0
             txtPC1Connect.Text = Controller.Equipment[0].IsConnected ? $"{Controller.ControllerConfig.EqpConfigs[0].EqpName}Connected" : $"{Controller.ControllerConfig.EqpConfigs[0].EqpName} Disconnected";
             bdrPC2Connect.Background = Controller.Equipment[1].IsConnected ? Brushes.Green : Brushes.IndianRed;
             txtPC2Connect.Text = Controller.Equipment[1].IsConnected ? $"{Controller.ControllerConfig.EqpConfigs[1].EqpName}Connected" : $"{Controller.ControllerConfig.EqpConfigs[1].EqpName} Disconnected";
+            LogStorage.Start();
         }
         public void UiHeader()
         {
@@ -189,9 +190,9 @@ namespace ACO2_App._0
             btnClose.Click += (sender, e) =>
             {
                 _running = false;
-                LogTxt.Stop();
                 Controller.SaveCellDataBackup();
                 LogStorage.Stop();
+                LogTxt.Stop();
                 Controller.Dispose();
                 memoryUsageThread?.Abort();
                 _updateTime?.Abort();

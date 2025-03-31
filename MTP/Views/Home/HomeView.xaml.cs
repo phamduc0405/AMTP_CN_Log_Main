@@ -35,7 +35,6 @@ namespace ACO2.Views.Home
                 IsBackground = true,
             };
             _updateTime.Start();
-            _controller.MachineStatus.Status = "MANUAL";
             _controller.MachineStatus.PropertyChanged += MachineStatus_PropertyChanged;
         
             CreateEvent();
@@ -119,9 +118,9 @@ namespace ACO2.Views.Home
             if (state == "DOWN") return new SolidColorBrush(Colors.Red);
             if (state == "ON") return new SolidColorBrush(Colors.Red);
             if (state == "OFF") return new SolidColorBrush(Colors.Green);
-            if (state == "RUNNING") return new SolidColorBrush(Colors.Blue);
+            if (state == "RUNNING") return new SolidColorBrush(Colors.Green);
             if (state == "PAUSE") return new SolidColorBrush(Colors.Yellow);
-            if (state == "RUN") return new SolidColorBrush(Colors.Blue);
+            if (state == "RUN") return new SolidColorBrush(Colors.Green);
             if (state == "IDLE") return new SolidColorBrush(Colors.Yellow);
 
             return new SolidColorBrush(Colors.Gray);
@@ -217,18 +216,10 @@ namespace ACO2.Views.Home
         }
         private void UpdateTime()
         {
-            while (true)
+            while (MainWindow.Running)
             {
-                Dispatcher.Invoke(new Action(() =>
-                {
-                    //_controller.MachineStatus.Status = "AUTO";
-                    //_controller.MachineStatus.AvailabilityState = "DOWN";
-                    //_controller.MachineStatus.InterlockState = "ON";
-                    //_controller.MachineStatus.MoveState = "PAUSE";
-                    //_controller.MachineStatus.RunState = "IDLE";
-                   //_controller.test();
-                }));
-                Thread.Sleep(500);
+               _controller.GetStatusDataFromPLC();
+                Thread.Sleep(1000);
             }
 
         }
