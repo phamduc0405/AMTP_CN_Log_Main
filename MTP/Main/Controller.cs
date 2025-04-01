@@ -141,6 +141,10 @@ namespace ACO2_App._0
             _listCell = new List<ListCell>();
             ReadControllerConfig();
             ReadCellDataBackup();
+            foreach(var cell in _listCellDatas.CellDatas)
+            {
+                _listCell.Add(new ListCell { CellID = cell.CellID });
+            }
             _equipment = new List<Equipment>();
             foreach (var eqpc in _controllerConfig.EqpConfigs)
             {
@@ -324,7 +328,7 @@ namespace ACO2_App._0
                 if (File.Exists(DefaultData.AppPath + @"\Setting\DataStorage.setting"))
                 {
                     string readText = File.ReadAllText(DefaultData.AppPath + @"\Setting\DataStorage.setting");
-                    ListCellDatas = XmlHelper<ListCellDatas>.DeserializeFromString(readText);
+                    _listCellDatas = XmlHelper<ListCellDatas>.DeserializeFromString(readText);
                     if (_listCellDatas == null)
                     {
                         _listCellDatas = new ListCellDatas();
@@ -716,6 +720,8 @@ namespace ACO2_App._0
         }
         public (string cellId, string channel,bool isTimeOut) WaitForPlcData(string cellIdKey, string data2key)
         {
+            LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] test ");
+
             try
             {
                 int maxTimeoutMs = 10000;
@@ -736,7 +742,7 @@ namespace ACO2_App._0
 
                 string cellId = GetWordValueFromPLC(cellIdKey, true);
                 string data2 = GetWordValueFromPLC(data2key, true);
-              
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] data word   {cellIdKey}:{cellId} and {data2key}:{data2}.");
                 return (cellId, data2, false);
             }
             catch(Exception e)

@@ -171,7 +171,9 @@ namespace MTP.Model
                 string cellIdRbDropTool = "";
                 string channelRbDropTool = "";
                 bool isTimeOut = false;
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] test before read");
 
+                (cellIdRbDropTool, channelRbDropTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 (cellIdRbDropTool, channelRbDropTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 //if (isTimeOut)
                 //{
@@ -182,6 +184,7 @@ namespace MTP.Model
                 string stageRbDropTool = "";
                 bool isTimeOut1 = false;
 
+                (unitRbDropTool, stageRbDropTool, isTimeOut1) =  _controller.WaitForPlcData(_unitWord, _stageWord);
                 (unitRbDropTool, stageRbDropTool, isTimeOut1) =  _controller.WaitForPlcData(_unitWord, _stageWord);
                 //if (isTimeOut)
                 //{
@@ -289,12 +292,13 @@ namespace MTP.Model
                 bool isTimeOut = false;
 
                 (cellIdRbDropTool, channelRbDropTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
+                (cellIdRbDropTool, channelRbDropTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 //if (isTimeOut)
                 //{
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-              
+
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
@@ -385,6 +389,7 @@ namespace MTP.Model
                 string channelRbPickTool = "";
                 bool isTimeOut = false;
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
+                (cellIdRbPickTool, channelRbPickTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" + $"RECEIVE DATA PLC: " +
                     $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                     $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}"
@@ -470,6 +475,7 @@ namespace MTP.Model
                 string channelRbPickTool = "";
                 bool isTimeOut = false;
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
+                (cellIdRbPickTool, channelRbPickTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 //if (isTimeOut)
                 //{
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
@@ -478,6 +484,7 @@ namespace MTP.Model
                 string unitRbPickTool = "";
                 string stageRbPickTool = "";
                 bool isTimeOut1 = false;
+                (unitRbPickTool, stageRbPickTool, isTimeOut1) =  _controller.WaitForPlcData(_unitWord, _stageWord);
                 (unitRbPickTool, stageRbPickTool, isTimeOut1) =  _controller.WaitForPlcData(_unitWord, _stageWord);
                 //if (isTimeOut1)
                 //{
@@ -489,6 +496,7 @@ namespace MTP.Model
                 string abRule = "";
                 bool isTimeOut2 = false;
 
+                (retry, rechecked, isTimeOut2) =  _controller.WaitForPlcData(_retryWord, _recheckedWord);
                 (retry, rechecked, isTimeOut2) =  _controller.WaitForPlcData(_retryWord, _recheckedWord);
                 //if (isTimeOut)
                 //{
