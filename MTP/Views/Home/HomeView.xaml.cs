@@ -29,7 +29,7 @@ namespace ACO2.Views.Home
         {
             InitializeComponent();
             _controller = MainWindow.Controller;
-
+            Initial();
             _updateTime = new Thread(UpdateTime)
             {
                 IsBackground = true,
@@ -69,7 +69,24 @@ namespace ACO2.Views.Home
                 listView.ItemsSource = listCells;
             }));
         }
-
+        private void Initial()
+        {
+            txtState.Text = _controller.MachineStatus.Status;
+            tblState.Background = GetBackgroundColor(_controller.MachineStatus.Status);
+            txtState.Foreground = GetTextColor(_controller.MachineStatus.Status);
+             txtAvailability.Text = _controller.MachineStatus.AvailabilityState;
+            tblAvailability.Background = GetBackgroundColor(_controller.MachineStatus.AvailabilityState);
+            txtAvailability.Foreground = GetTextColor(_controller.MachineStatus.AvailabilityState);
+            txtInterlock.Text = _controller.MachineStatus.InterlockState;
+            tblInterlock.Background = GetBackgroundColor(_controller.MachineStatus.InterlockState);
+            txtInterlock.Foreground = GetTextColor(_controller.MachineStatus.InterlockState);
+            txtMoveState.Text = _controller.MachineStatus.MoveState;
+            tblMoveState.Background = GetBackgroundColor(_controller.MachineStatus.MoveState);
+            txtMoveState.Foreground = GetTextColor(_controller.MachineStatus.MoveState);
+            txtRunState.Text = _controller.MachineStatus.RunState;
+            tblRunState.Background = GetBackgroundColor(_controller.MachineStatus.RunState);
+            txtRunState.Foreground = GetTextColor(_controller.MachineStatus.RunState);
+        }
         private void MachineStatus_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>

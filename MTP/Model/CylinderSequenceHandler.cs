@@ -32,7 +32,8 @@ namespace MTP.Model
             {
                 
                 _action = action;
-              //  LogTxt.Add(LogTxt.Type.FlowRun, $"[{_action}] ");
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
+                //  LogTxt.Add(LogTxt.Type.FlowRun, $"[{_action}] ");
                 var parts = action.Split('_');
                 // parts[0] = "ZONE1", parts[1] = "CYL", parts[2] = "1", parts[3] = "UP", parts[4] = "START"
                 _zone = int.Parse(parts[0].Replace("ZONE", ""));
@@ -71,14 +72,14 @@ namespace MTP.Model
                         {
                             cellData.CylDWStartTime = DateTime.Now;
                                 LogStorage.Add(_controller.ListCellDatas);
-                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
 
-                        }
+                            }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpStartTime = DateTime.Now;
                                 LogStorage.Add(_controller.ListCellDatas);
-                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
                         }
                         break;
                     case "END":
@@ -87,15 +88,15 @@ namespace MTP.Model
                             cellData.CylDWEndTime = DateTime.Now;
                                 LogStorage.Add(_controller.ListCellDatas);
                                 cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalMilliseconds;
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
-                        }
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
+                            }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpEndTime = DateTime.Now;
                                 LogStorage.Add(_controller.ListCellDatas);
                                 cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalMilliseconds;
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
-                        }
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
+                            }
                         break;
                 }
             }

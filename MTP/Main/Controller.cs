@@ -720,7 +720,6 @@ namespace ACO2_App._0
         }
         public (string cellId, string channel,bool isTimeOut) WaitForPlcData(string cellIdKey, string data2key)
         {
-            LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] test ");
 
             try
             {
@@ -742,7 +741,7 @@ namespace ACO2_App._0
 
                 string cellId = GetWordValueFromPLC(cellIdKey, true);
                 string data2 = GetWordValueFromPLC(data2key, true);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] data word   {cellIdKey}:{cellId} and {data2key}:{data2}.");
+                //LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] data word   {cellIdKey}:{cellId} and {data2key}:{data2}.");
                 return (cellId, data2, false);
             }
             catch(Exception e)

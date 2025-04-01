@@ -12,6 +12,8 @@ namespace MTP.Model
 {
     public class TrackInSequenceHandler
     {
+        private object _cs = new object();
+
         public enum TrackInAction
         {
             Tool1,
@@ -69,61 +71,70 @@ namespace MTP.Model
                 LogTxt.Add(LogTxt.Type.Exception, $"[TRACKIN] No handler found for action {_action}");
             }
         }
-
+        
         private async Task HandleTrackIn(int toolNumber)
         {
-            switch (toolNumber)
-
+            lock (_cs)
             {
-                case 1:
-                    _cellIDWord =Word.TRACKIN_1_CELLID; _resultTrackInWord = Word.TRACKIN_1_RESULT; break;
-                case 2:
-                    _cellIDWord = Word.TRACKIN_2_CELLID; _resultTrackInWord = Word.TRACKIN_2_RESULT; break;
+                switch (toolNumber)
 
-            }
+                {
+                    case 1:
+                        _cellIDWord = Word.TRACKIN_1_CELLID; _resultTrackInWord = Word.TRACKIN_1_RESULT; break;
+                    case 2:
+                        _cellIDWord = Word.TRACKIN_2_CELLID; _resultTrackInWord = Word.TRACKIN_2_RESULT; break;
+
+                }
                 try
                 {
                     string cellIDTrackIn = "";
                     string resultTrackIn = "";
                     bool isTimeOut = false;
-                    (cellIDTrackIn, resultTrackIn, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _resultTrackInWord);
+                    (cellIDTrackIn, resultTrackIn, isTimeOut) = _controller.WaitForPlcData(_cellIDWord, _resultTrackInWord);
                     //if (isTimeOut)
                     //{
                     //_controller.SetSignalBitFromPC("TIME_OUT", true);
                     //    return;
                     //}
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" 
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:"
                         + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                         $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
-                //Convert Data
-                if (resultTrackIn == "G")
-                {
-                    resultTrackIn = "GOOD";
-                }
-                else if (resultTrackIn == "V") { resultTrackIn = "NG Validation"; }
+                    //Convert Data
+                    if (resultTrackIn == "G")
+                    {
+                        resultTrackIn = "GOOD";
+                    }
+                    else if (resultTrackIn == "V") { resultTrackIn = "NG Validation"; }
 
-                // Save To Log
-                CellData cellData = new CellData();
+                    // Save To Log
+                    CellData cellData = new CellData();
                     cellData.CellID = cellIDTrackIn;
                     cellData.TrackIn = resultTrackIn;
                     cellData.MCStartTime = DateTime.Now;
-                cellData.TimeStartTrackIn = DateTime.Now;
-                //var checkCheckCellDuplicate = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
-                //if(checkCheckCellDuplicate != null)
-                //{
-                //    checkCheckCellDuplicate
-                //    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
-                //        $"DULLICATE DATA: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                //        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
-                //}
-                 _controller.ListCellDatas.CellDatas.Add(cellData);
-                _controller.ListCell.Add(new ListCell{ CellID = cellData.CellID });
-                _controller.ListCellUpdateEventHandle(_controller.ListCell);
-                LogStorage.Add(_controller.ListCellDatas);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" + 
-                        $"ADD DATA TO QUEUEE: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
-                    string logMessage =_controller.CreateLogFollowCellData(cellData);
+                    cellData.TimeStartTrackIn = DateTime.Now;
+                    var checkCheckCellDuplicate = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
+                    if (checkCheckCellDuplicate != null)
+                    {
+
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
+                            $"DULLICATE DATA: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                            $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)} SAVE DATA OLD ");
+                         _controller.SaveDataLog(checkCheckCellDuplicate);
+                        _controller.ListCellDatas.CellDatas.Remove(checkCheckCellDuplicate);
+                        var cell = _controller.ListCell.FirstOrDefault(x => x.CellID == checkCheckCellDuplicate.CellID);
+                        if(cell != null)
+                        {
+                            _controller.ListCell.Remove(cell);
+                        }
+                    }
+                    _controller.ListCellDatas.CellDatas.Add(cellData);
+                    _controller.ListCell.Add(new ListCell { CellID = cellData.CellID });
+                    _controller.ListCellUpdateEventHandle(_controller.ListCell);
+                    LogStorage.Add(_controller.ListCellDatas);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
+                            $"ADD DATA TO QUEUEE: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                            $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
+                    string logMessage = _controller.CreateLogFollowCellData(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}] New CellData Added:" + logMessage);
 
                 }
@@ -133,6 +144,8 @@ namespace MTP.Model
                     LogTxt.Add(LogTxt.Type.Exception, $"[TRACKIN][TOOL{toolNumber}]:" + debug);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" + debug);
                 }
+            }
+               
         }
     }
 

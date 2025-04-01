@@ -269,7 +269,7 @@ namespace MTP.Model
                         {
                             cell.ServoFWStartTime = DateTime.Now;
                             LogStorage.Add(_controller.ListCellDatas);
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][FW]: CellData Updated:");
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][FW]: CellData Updated");
                         }
                     }
                     else
@@ -284,12 +284,12 @@ namespace MTP.Model
                         {
                             cell.ServoBWStartTime = DateTime.Now;
                             LogStorage.Add(_controller.ListCellDatas);
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][BW]: CellData Updated:");
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][BW]: CellData Updated");
                         }
                     }
                     else
                     {
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][BW]: CellData Cannot find in List:");
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][BW]: CellData Cannot find in List");
                     }
                     break;
             }
@@ -308,12 +308,12 @@ namespace MTP.Model
                             cell.ServoFWEndTime = DateTime.Now;
                             cell.ServoFWTaktTime = (cell.ServoFWEndTime - cell.ServoFWStartTime).TotalSeconds;
                             LogStorage.Add(_controller.ListCellDatas);
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][FW]: CellData Updated:");
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][FW]: CellData Updated");
                         }
                     }
                     else
                     {
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][FW]: CellData Cannot find in List:");
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][FW]: CellData Cannot find in List");
                     }
                     break;
                 case "BW":
@@ -324,12 +324,12 @@ namespace MTP.Model
                             cell.ServoBWEndTime = DateTime.Now;
                             cell.ServoBWTaktTime = (cell.ServoBWEndTime - cell.ServoBWStartTime).TotalSeconds;
                             LogStorage.Add(_controller.ListCellDatas);
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][BW]: CellData Updated:");
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][BW]: CellData Updated");
                         }
                     }
                     else
                     {
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][BW]: CellData Cannot find in List:");
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][BW]: CellData Cannot find in List");
                     }
                     break;
             }

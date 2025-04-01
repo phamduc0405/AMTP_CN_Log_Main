@@ -270,7 +270,7 @@ namespace ACO2_App._0
                                         Task.Delay(10);
                                         if (product.ContactResult == "GOOD")
                                         {
-                                          //  UpdateDataContactLog(product, split[3], true);
+                                            //UpdateDataContactLog(product, split[3], true);
                                         }
                                         else
                                         {
@@ -282,12 +282,14 @@ namespace ACO2_App._0
                                 else
                                 {
                                     Channel product = _channels[channel - 1];
-                                    if (split.Count() > 4)
+                                    if (split.Count() >= 4)
                                     {
                                         if (split[4] != "0")
                                         {
                                             UpdateDataContactLog(product, split[4], true);
                                         }
+                                        else { UpdateDataContactLog(product, split[3], true); }
+                                        
                                     }
                                 }
                             }
@@ -558,10 +560,10 @@ namespace ACO2_App._0
         public string GetDefectCode(string DefectName)
         {
             if (DefectName.ToUpper().Trim() == "GOOD") return "";
-            var result = _controller.DefectCodes.Any(x => x.DefectName.ToUpper() == DefectName.ToUpper());
+            var result = _controller.DefectCodes.Any(x => x.DefectName.ToUpper().Contains( DefectName.ToUpper()));
             if (result)
             {
-                return _controller.DefectCodes.First(x => x.DefectName.ToUpper() == DefectName.ToUpper()).Msg;
+                return _controller.DefectCodes.First(x => x.DefectName.ToUpper().Contains(DefectName.ToUpper())).Msg;
             }
             return "SF67";
         }
@@ -585,8 +587,11 @@ namespace ACO2_App._0
             {
                 productData.ContactResult = "NG";
                 productData.DefectCode = GetDefectCode(result);
+                productData.LastResult = "NG";
                 productData.ContactEndTime = DateTime.Now;
                 productData.ContactTackTime = (productData.ContactEndTime - productData.ContactStartTime).TotalSeconds;
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip}][CH{productData.ChannelNo}]:" +
+                               $"CONTACT RESULT:{productData.ContactResult} ");
                 productData.ResultInsEventHandle(productData.ChannelNo, productData.ContactResult, "", productData.DefectCode);
 
             }

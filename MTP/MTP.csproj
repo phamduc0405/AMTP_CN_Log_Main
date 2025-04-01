@@ -61,12 +61,13 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ACommV2">
-      <HintPath>..\..\..\..\PBA_241217_0957\PBA\PBA\bin\PBA\ACommV2.dll</HintPath>
+    <Reference Include="ACommV2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\updateMachine\ACommV2.dll</HintPath>
     </Reference>
     <Reference Include="AsoftLicense, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\..\AppTest\ClassLibrary1\ClassLibrary1\bin\Debug\Confused\AsoftLicense.dll</HintPath>
+      <HintPath>..\..\..\updateMachine\AsoftLicense.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper">
       <HintPath>..\..\..\..\..\..\MTPManual_India\Program\MTP Program\MTP_MANUAL\bin\Debug\CsvHelper.dll</HintPath>

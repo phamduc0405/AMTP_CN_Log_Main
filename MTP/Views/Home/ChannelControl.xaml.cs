@@ -42,7 +42,7 @@ namespace MTP.Views.Home
             _eqpIndex = int.Parse(_equipment.EqpConfig.EQPIndex.ToString());
             _channelStatus = _controller.StatusChannel.ChannelStatus.FirstOrDefault(x => x.ZoneNo == (_eqpIndex + 1).ToString() && x.Channnel == channel.ChannelNo);
 
-            if(_channelStatus!=null)
+                if (_channelStatus!=null)
             {
                 if (_channelStatus.Status == "SKIP")
                 {
@@ -51,10 +51,22 @@ namespace MTP.Views.Home
                     brdPopup.Background = Brushes.Gray;
                     txtResult.Foreground = Brushes.Black;
                     brdPopup.Visibility = Visibility.Visible;
+                    txtHeader.Background = Brushes.Gray;
+
                 }
-                _channelStatus.PropertyChannelChanged += _channelStatus_PropertyChannelChanged; ;
+                else if(_channelStatus.Status == "AUTO")
+                {
+                    txtHeader.Background = Brushes.Green;
+                }
+                else if (_channelStatus.Status == "MANUAL")
+                {
+                    txtHeader.Background = Brushes.Yellow;
+                }
+           
+            _channelStatus.PropertyChannelChanged += _channelStatus_PropertyChannelChanged; ;
 
             }
+
             // UpdateUI();
         }
 
@@ -74,12 +86,22 @@ namespace MTP.Views.Home
                             brdPopup.Background = Brushes.Gray;
                             txtResult.Foreground = Brushes.Black;
                             brdPopup.Visibility = Visibility.Visible;
+                            txtHeader.Background = Brushes.Gray;
+
                         }
                         else
                         {
                             _isSkip = false;
                             txtResult.Text = "";
                             brdPopup.Visibility = Visibility.Hidden;
+                            if(channel.Status == "AUTO")
+                            {
+                                txtHeader.Background = Brushes.Green;
+                            }
+                            else if (channel.Status == "MANUAL")
+                            {
+                                txtHeader.Background = Brushes.Yellow;
+                            }
                         }
                         break;
                 }

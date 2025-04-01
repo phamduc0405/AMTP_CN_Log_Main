@@ -171,7 +171,6 @@ namespace MTP.Model
                 string cellIdRbDropTool = "";
                 string channelRbDropTool = "";
                 bool isTimeOut = false;
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[PLC] test before read");
 
                 (cellIdRbDropTool, channelRbDropTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 (cellIdRbDropTool, channelRbDropTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
