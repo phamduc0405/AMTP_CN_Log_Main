@@ -35,14 +35,39 @@ namespace MTP.Views.Home
             _channel = channel;
             _equipment = equipment;
             LoadDataFromController();
+            _controller.GetStatusDataFromPLC();
             _controller.CurrDataEvent -= OnCurrDataUpdated;
             _controller.CurrDataEvent += OnCurrDataUpdated;
             _channel.ResultInsEvent -= _channel_ResultInsEvent;
             _channel.ResultInsEvent += _channel_ResultInsEvent;
             _eqpIndex = int.Parse(_equipment.EqpConfig.EQPIndex.ToString());
             _channelStatus = _controller.StatusChannel.ChannelStatus.FirstOrDefault(x => x.ZoneNo == (_eqpIndex + 1).ToString() && x.Channnel == channel.ChannelNo);
-
-                if (_channelStatus!=null)
+            if (_channelStatus!=null)
+            {
+            _channelStatus.PropertyChannelChanged += _channelStatus_PropertyChannelChanged; 
+            }
+            Initial();
+            CreateEvent();
+        }
+        private void CreateEvent()
+        {
+            btnStage1Config.MouseLeftButtonDown += (s, e) =>
+            {
+                Dispatcher.Invoke(new Action(async () =>
+                {
+                    var result = await _controller.PopupDataCurrentMessageEventHandle(_equipment,_channel);
+                    if (result)
+                    {
+                       
+                    }
+                }));
+            };
+        }
+        private void Initial ()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (_channelStatus != null)
             {
                 if (_channelStatus.Status == "SKIP")
                 {
@@ -51,25 +76,20 @@ namespace MTP.Views.Home
                     brdPopup.Background = Brushes.Gray;
                     txtResult.Foreground = Brushes.Black;
                     brdPopup.Visibility = Visibility.Visible;
-                    txtHeader.Background = Brushes.Gray;
+                    bdrHeader.Background = Brushes.Gray;
 
                 }
-                else if(_channelStatus.Status == "AUTO")
+                else if (_channelStatus.Status == "AUTO")
                 {
-                    txtHeader.Background = Brushes.Green;
+                    bdrHeader.Background = Brushes.Green;
                 }
                 else if (_channelStatus.Status == "MANUAL")
                 {
-                    txtHeader.Background = Brushes.Yellow;
+                    bdrHeader.Background = Brushes.Yellow;
                 }
-           
-            _channelStatus.PropertyChannelChanged += _channelStatus_PropertyChannelChanged; ;
-
             }
-
-            // UpdateUI();
+            });
         }
-
         private void _channelStatus_PropertyChannelChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -96,7 +116,7 @@ namespace MTP.Views.Home
                             brdPopup.Visibility = Visibility.Hidden;
                             if(channel.Status == "AUTO")
                             {
-                                txtHeader.Background = Brushes.Green;
+                                bdrHeader.Background = Brushes.Green;
                             }
                             else if (channel.Status == "MANUAL")
                             {
@@ -214,6 +234,7 @@ namespace MTP.Views.Home
         {
             Dispatcher.Invoke(() =>
             {
+
                 txtHeader.Text = /*"CH"+*/_channel.ChannelNo; 
                 txtCellID.Text = _channel.CellID; 
                 if(_channel.ContactResult == "GOOD"|| _channel.MTPWriteResult == "GOOD"|| !string.IsNullOrEmpty(_channel.DefectCode))

@@ -32,7 +32,6 @@ namespace MTP.Model
             {
                 
                 _action = action;
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}] ");
                 //  LogTxt.Add(LogTxt.Type.FlowRun, $"[{_action}] ");
                 var parts = action.Split('_');
                 // parts[0] = "ZONE1", parts[1] = "CYL", parts[2] = "1", parts[3] = "UP", parts[4] = "START"
@@ -87,14 +86,14 @@ namespace MTP.Model
                         {
                             cellData.CylDWEndTime = DateTime.Now;
                                 LogStorage.Add(_controller.ListCellDatas);
-                                cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalMilliseconds;
+                                cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalSeconds;
                                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
                             }
                         if (_actionStr == "UP")
                         {
                             cellData.CylUpEndTime = DateTime.Now;
                                 LogStorage.Add(_controller.ListCellDatas);
-                                cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalMilliseconds;
+                                cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalSeconds;
                                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
                             }
                         break;

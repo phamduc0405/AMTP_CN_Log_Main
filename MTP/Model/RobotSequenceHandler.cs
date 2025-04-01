@@ -225,12 +225,6 @@ namespace MTP.Model
                     cellData.Unit = unitRbDropTool;
                     cellData.Stage = ScaleValueStage(zone, unitRbDropTool, stageRbDropTool, channelRbDropTool);
                     LogStorage.Add(_controller.ListCellDatas);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]:" +
-                   $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                   $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                   $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                   $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
-                   );
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]: CellData Updated:" + logMessage);
                 }
@@ -297,13 +291,6 @@ namespace MTP.Model
                 //    _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" + $"RECEIVE DATA PLC: " +
-                    $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}"+
-                     $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
-               );
                 // Save To Log
                 CellData cellData = _controller.FindCellInListTemp(cellIdRbDropTool, true);
                 if (cellData != null)
@@ -311,12 +298,6 @@ namespace MTP.Model
                     cellData.RBDropEndTime = DateTime.Now;
                     cellData.RBDropTackTime = (cellData.RBDropEndTime - cellData.RBDropStartTime).TotalSeconds;
                     LogStorage.Add(_controller.ListCellDatas);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]:" +
-                $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
-                );
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]: CellData Updated:" + logMessage);
                 }
@@ -389,10 +370,6 @@ namespace MTP.Model
                 bool isTimeOut = false;
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
                 (cellIdRbPickTool, channelRbPickTool, isTimeOut) =  _controller.WaitForPlcData(_cellIDWord, _channelWord);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" + $"RECEIVE DATA PLC: " +
-                    $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}"
-                    );
                 string channel = "";
                 if (int.Parse(channelRbPickTool) < 10)
                 {
@@ -503,15 +480,6 @@ namespace MTP.Model
                 //    return;
                 //}
                 abRule = _controller.GetWordValueFromPLC(_abRuleWord, true);
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + $"RECEIVE DATA PLC: " +
-                    $"CELL_ID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                    $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
-                      $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
-                    $"RECHECKED:{_controller.GetWordValueFromPLC(_recheckedWord, true)}" +
-                     $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}"
-                    );
                 string channel = "";
                 if (int.Parse(channelRbPickTool) < 10)
                 {

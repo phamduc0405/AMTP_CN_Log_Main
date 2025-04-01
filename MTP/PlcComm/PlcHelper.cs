@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AExcel;
+using System.Reflection;
 
 namespace ACO2_App._0.Plc
 {
@@ -139,37 +140,44 @@ namespace ACO2_App._0.Plc
         #region Private Method
         private void PlcComm_BitChangedEvent(APlc.MelsecIF.BitStatus status)
         {
-
-            BitModel bit = new BitModel(_plc);
-
-            if (_bit.Any(x => x.PLCAddress == status.Address))
+            try
             {
-                bit = _bit.FirstOrDefault(x => x.PLCAddress == status.Address);
-                bit.BitChangeByPlc();
-                if (bit.Type == "Event")
+                BitModel bit = new BitModel(_plc);
+
+                if (_bit.Any(x => x.PLCAddress == status.Address))
                 {
-                    if (!status.IsOn)
+                    bit = _bit.FirstOrDefault(x => x.PLCAddress == status.Address);
+                    bit.BitChangeByPlc();
+                    if (bit.Type == "Event")
                     {
-                        bit.SetPCValue = false;
-                        return;
+                        if (!status.IsOn)
+                        {
+                            bit.SetPCValue = false;
+                            return;
+                        }
+                        MakeLogBit(false, bit, status.IsOn);
+                        BitChangedEventHandle(bit.Item, bit);
                     }
-                    MakeLogBit(false, bit, status.IsOn);
-                    BitChangedEventHandle(bit.Item, bit);
+                    if (!status.IsOn) return;
+                    if (bit.Type == "Command")
+                    {
+                        string name = bit.Item.Trim() + "CONFIRM";
+                        BitChangedEventHandle(name, bit);
+                        MakeLogBit(true, bit, status.IsOn);
+                        bit.SetPCValue = false;
+                    }
+                    if (bit.Item.Contains("REQUESTO"))
+                    {
+                        string name = "CRSTCONFIRM";
+                        BitChangedEventHandle(name, bit);
+                    }
+                    else return;
                 }
-                if (!status.IsOn) return;
-                if (bit.Type == "Command")
-                {
-                    string name = bit.Item.Trim() + "CONFIRM";
-                    BitChangedEventHandle(name, bit);
-                    MakeLogBit(true, bit, status.IsOn);
-                    bit.SetPCValue = false;
-                }
-                if (bit.Item.Contains("REQUESTO"))
-                {
-                    string name = "CRSTCONFIRM";
-                    BitChangedEventHandle(name, bit);
-                }
-                else return;
+            }
+            catch(Exception ex)
+            {
+                string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, ex.Message);
+                LogTxt.Add(LogTxt.Type.Exception, debug);
             }
         }
 

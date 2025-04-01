@@ -96,9 +96,6 @@ namespace MTP.Model
                     //_controller.SetSignalBitFromPC("TIME_OUT", true);
                     //    return;
                     //}
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:"
-                        + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
                     //Convert Data
                     if (resultTrackIn == "G")
                     {
@@ -131,9 +128,6 @@ namespace MTP.Model
                     _controller.ListCell.Add(new ListCell { CellID = cellData.CellID });
                     _controller.ListCellUpdateEventHandle(_controller.ListCell);
                     LogStorage.Add(_controller.ListCellDatas);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
-                            $"ADD DATA TO QUEUEE: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                            $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)}");
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}] New CellData Added:" + logMessage);
 

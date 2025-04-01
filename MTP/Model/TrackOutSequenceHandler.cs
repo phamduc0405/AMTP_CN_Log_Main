@@ -112,9 +112,6 @@ namespace MTP.Model
                 //   _controller.SetSignalBitFromPC("TIME_OUT", true);
                 //    return;
                 //}
-                LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:" 
-                    + $"RECEIVE DATA PLC: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                    $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
 
                 // Convert Data
                 if(resultTrackOut == "G") { resultTrackOut = "GOOD"; }
@@ -128,10 +125,6 @@ namespace MTP.Model
                     cellData.MCEndTime = DateTime.Now;
                     cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
                     LogStorage.Add(_controller.ListCellDatas);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 
-                        $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}" +
-                        $"");
                   await  _controller.SaveDataLog(cellData);
                     LogStorage.Add(_controller.ListCellDatas);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 

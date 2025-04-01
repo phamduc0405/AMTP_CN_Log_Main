@@ -171,7 +171,7 @@ namespace MTP.Views.Config
             }
             else
             {
-                _tempDefectCode = _listDefectCode.Where(x => x.DefectName.ToUpper().Contains(search.ToUpper())).ToList();
+                _tempDefectCode = _listDefectCode.Where(x => x.DefectName.ToUpper().Contains(search.ToUpper()) || x.Msg.ToUpper().Contains(search.ToUpper())).ToList();
             }
             Dispatcher.Invoke(() =>
             {

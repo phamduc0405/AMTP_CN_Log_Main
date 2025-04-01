@@ -42,7 +42,7 @@ namespace ACO2_App._0
         public static Controller Controller;
         private static bool _running = true;
         public static int UserLogin = 1;
-
+        private DataCurrent _displayDataCurrent;
         public static bool Running 
         { get
             {
@@ -80,6 +80,7 @@ namespace ACO2_App._0
             Controller.Equipment[0].ConnectEvent += TCP1_ConnectEvent;
             Controller.Equipment[1].ConnectEvent -= TCP2_ConnectEvent;
             Controller.Equipment[1].ConnectEvent += TCP2_ConnectEvent;
+
             CreateEvent();
             _updateTime = new Thread(UpdateTime)
             {
@@ -96,6 +97,8 @@ namespace ACO2_App._0
             bdrPC2Connect.Background = Controller.Equipment[1].IsConnected ? Brushes.Green : Brushes.IndianRed;
             txtPC2Connect.Text = Controller.Equipment[1].IsConnected ? $"{Controller.ControllerConfig.EqpConfigs[1].EqpName}Connected" : $"{Controller.ControllerConfig.EqpConfigs[1].EqpName} Disconnected";
             LogStorage.Start();
+            Controller.PopupDataCurrentMessageEvent -= Controller_PopupDataCurrentMessageEvent;
+            Controller.PopupDataCurrentMessageEvent += Controller_PopupDataCurrentMessageEvent;
         }
         public void UiHeader()
         {
@@ -187,17 +190,21 @@ namespace ACO2_App._0
                     tgMenu.IsChecked = false;
                 }
             };
-            btnClose.Click += (sender, e) =>
+            btnClose.Click += async (sender, e) =>
             {
-                _running = false;
-                Controller.SaveCellDataBackup();
-                LogStorage.Stop();
-                LogTxt.Stop();
-                Controller.Dispose();
-                memoryUsageThread?.Abort();
-                _updateTime?.Abort();
-                _cpuChart.OnUnloaded();
-                this.Close();
+                var result1 = await Controller.DisplayMessage(true, "DO YOU WANT TO EXIT !!");
+                if (result1)
+                {
+                    _running = false;
+                    Controller.SaveCellDataBackup();
+                    LogStorage.Stop();
+                    LogTxt.Stop();
+                    Controller.Dispose();
+                    memoryUsageThread?.Abort();
+                    _updateTime?.Abort();
+                    _cpuChart.OnUnloaded();
+                    this.Close();
+                }
             };
             btnResize.Click += (sender, e) =>
             {
@@ -333,7 +340,41 @@ namespace ACO2_App._0
 
             };
         }
+        private Task<bool> Controller_PopupDataCurrentMessageEvent(Equipment equipment, Channel channel)
+        {
+            var result = PopupDataCurrentMessage(equipment, channel);
+            return result;
+        }
+        public async Task<bool> PopupDataCurrentMessage(Equipment equipment, Channel channel)
+        {
+            bool result = false;
+            try
+            {
 
+                if (_displayDataCurrent == null)
+                {
+                    Dispatcher.Invoke(() => {
+                        _displayDataCurrent = new DataCurrent(equipment, channel);
+                        result = (bool)_displayDataCurrent.ShowDialog();
+                        // Check the DialogResult
+                        _displayDataCurrent.Closing += (sender, a) =>
+                        {
+                            _displayDataCurrent = null;
+                        };
+                        _displayDataCurrent.Topmost = true;
+                        _displayDataCurrent.Close();
+                        _displayDataCurrent = null;
+                    });
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var debug = string.Format("Class:{0} Method:{1} exception occurred. Message is <{2}>.", this.GetType().Name, MethodBase.GetCurrentMethod().Name, ex.Message);
+                LogTxt.Add(LogTxt.Type.Exception, debug);
+                return false;
+            }
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;

@@ -182,13 +182,13 @@ namespace ACO2_App._0.Model
         public void Clear()
         {
             this.CellID = "";
-            this.TxHostVer = "";
+           // this.TxHostVer = "";
             //this.ChannelNo = "";
-            this.X600 = "";
-            this.T5MACVer = "";
-            this.TMDFile = "";
-            this.PGUi = "";
-            this.T5MacChannel = "";
+           // this.X600 = "";
+          //  this.T5MACVer = "";
+          //  this.TMDFile = "";
+          //  this.PGUi = "";
+          //  this.T5MacChannel = "";
             this.InsStartTime = DateTime.MinValue;
             this.InsEndTime = DateTime.MinValue;
             this.InsTackTime = 0;
@@ -305,7 +305,6 @@ namespace ACO2_App._0.Model
         public int NGContact { get; set; } = 0;
         public int NGIns { get; set; } = 0;
         public int Total { get { return Good + NGContact + NGIns; } }
-     
 
         public void Clear()
         {
@@ -314,6 +313,12 @@ namespace ACO2_App._0.Model
             this.NGIns = 0;
 
         }
+    }
+    public class Defect
+    {
+        public DateTime TimeOccur { get; set; } = DateTime.Now;
+        public string DefectName { get; set; } = string.Empty;
+        public string Defectcode { get; set; } = string.Empty;
     }
     public class ListCell
     {

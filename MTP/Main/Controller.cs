@@ -58,6 +58,8 @@ namespace ACO2_App._0
         private List<CurrentData> _currDatas;
         private List<DefectCode> _defectCodes;
         private List<ListCell> _listCell;
+        private List<Defect> _listDefect = new List<Defect>();
+
         #endregion
         #region Common
         private bool _isTrigging;
@@ -112,6 +114,7 @@ namespace ACO2_App._0
             get { return _listCell; }
             set { _listCell = value; }
         }
+        public List<Defect> ListDefectDatas { get { return _listDefect; } set { _listDefect = value; } }
         #endregion
         #region Common
         public bool IsPlcConnected
@@ -131,6 +134,8 @@ namespace ACO2_App._0
         public event MessageDisplayEventDelegate MessageDisplayEvent;
         public delegate void ListCellUpdateEventDelegate(List<ListCell> listCells);
         public event ListCellUpdateEventDelegate ListCellUpdateEvent;
+        public delegate Task<bool> PopupDataCurrentMessageEventDelegate(Equipment equipment, Channel channel);
+        public event PopupDataCurrentMessageEventDelegate PopupDataCurrentMessageEvent;
         #endregion
         #region Constuctor
         public Controller()
@@ -176,7 +181,7 @@ namespace ACO2_App._0
                     _statusChannel.ChannelStatus.Add(new ChannelStatus
                     {
                         ZoneNo = "1",
-                        Channnel = channel.Comment.Replace("CHANNEL", ""),
+                        Channnel = channel.Comment.Replace("CHANNEL", "CH"),
                         Status = ""
                     });
             }
@@ -186,7 +191,7 @@ namespace ACO2_App._0
                 _statusChannel.ChannelStatus.Add(new ChannelStatus
                 {
                     ZoneNo = "2",
-                    Channnel = channel.Comment.Replace("CHANNEL", ""),
+                    Channnel = channel.Comment.Replace("CHANNEL", "CH"),
                     Status = ""
                 });
             }
@@ -247,7 +252,8 @@ namespace ACO2_App._0
                                           ChannelName = g.Key.ChannelNo,
                                           Good = g.Count(c => c.Channel.MTPWriteResult == "GOOD"),
                                           NGContact = g.Count(c => !string.IsNullOrEmpty(c.Channel.ContactResult) && c.Channel.ContactResult != "GOOD"),
-                                          NGIns = g.Count(c => !string.IsNullOrEmpty(c.Channel.MTPWriteResult) && c.Channel.MTPWriteResult != "GOOD")
+                                          NGIns = g.Count(c => !string.IsNullOrEmpty(c.Channel.MTPWriteResult) && c.Channel.MTPWriteResult != "GOOD"),
+                                         
                                       }).ToList();
 
             _currDatas.AddRange(groupedData);
@@ -256,6 +262,12 @@ namespace ACO2_App._0
             {
                 LogTxt.Add(LogTxt.Type.Status, $"[ZONE {data.Zone} - CH {data.ChannelName}] Good: {data.Good}, NGContact: {data.NGContact}, NGIns: {data.NGIns}");
             }
+            //_listDefect = new List<Defect>();
+            //foreach (var data in tempData.GroupBy(c => new { c.ZoneNo, c.Channel.ChannelNo }))
+            //{
+                
+            //}
+           
         }
 
         #endregion
@@ -1043,13 +1055,26 @@ namespace ACO2_App._0
         }
         private void UpdateCurrData(CellData productData)
         {
+            //_ngDatas = _ngDatas.Where(x => x.TimeOccur.Day == DateTime.Now.Day).ToList();
+            //if (_ngDatas.Count > 100)
+            //{
+            //    _ngDatas.RemoveAt(0);
+            //}
             if (productData == null) return;
 
                 string zone = productData.ZoneNo;
                 string channel = productData.Channel.ChannelNo;
-
-                // Tìm dữ liệu trong _currDatas theo Zone và Channel
-                var existingData = _currDatas.FirstOrDefault(c => c.Zone == zone && c.ChannelName == channel);
+            //if (productData.Channel.LastResult != "GOOD")
+            //{
+            //    _ngDatas.Add(new Defect
+            //    {
+            //       Defectcode = productData.Channel.DefectCode,
+            //       DefectName = productData.Channel.LastResult,
+            //       TimeOccur = productData.Channel.InsEndTime
+            //    });
+            //}
+            // Tìm dữ liệu trong _currDatas theo Zone và Channel
+            var existingData = _currDatas.FirstOrDefault(c => c.Zone == zone && c.ChannelName == channel);
 
                 if (existingData != null)
                 {
@@ -1490,6 +1515,16 @@ namespace ACO2_App._0
             {
                 handle(listCells);
             }
+        }
+        public async Task<bool> PopupDataCurrentMessageEventHandle(Equipment equipment, Channel channel)
+        {
+            var handle = PopupDataCurrentMessageEvent;
+            if (handle != null)
+            {
+                var result = await handle(equipment, channel);
+                return result;
+            }
+            return false;
         }
         #endregion
     }

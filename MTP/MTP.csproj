@@ -278,6 +278,9 @@
     <Compile Include="Views\Popup\ChangeDefectCodeView.xaml.cs">
       <DependentUpon>ChangeDefectCodeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popup\DataCurrent.xaml.cs">
+      <DependentUpon>DataCurrent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popup\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
     </Compile>
@@ -471,6 +474,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popup\ChangeDefectCodeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popup\DataCurrent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

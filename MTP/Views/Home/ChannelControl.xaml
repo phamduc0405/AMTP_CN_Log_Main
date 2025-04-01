@@ -24,6 +24,7 @@
                 <Border
                     Height="30"
                     Margin="2"
+                    x:Name="bdrHeader"
                     Background="AliceBlue"
                     CornerRadius="5"
                     DockPanel.Dock="Top">
