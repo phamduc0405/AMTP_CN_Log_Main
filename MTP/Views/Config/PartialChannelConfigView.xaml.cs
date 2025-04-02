@@ -134,6 +134,12 @@ namespace MTP.Views.Config
                 var textBox = new TextBox { Margin = new Thickness(0, 0, 0, 0), Text = initialValue, Width = 400, Style = (System.Windows.Style)resTextBox["TextBoxStandard"] };
                 textBox.TextChanged += (s, e) => onValueChanged(textBox.Text);
                 fieldPanel.Children.Add(textBox);
+                textBox.IsEnabled = false;
+                if (label.Text == "X600" || label.Text == "T5MACVer")
+                {
+                    textBox.IsEnabled = true;
+                }
+            
             }
 
             stackPanel.Children.Add(fieldPanel);
