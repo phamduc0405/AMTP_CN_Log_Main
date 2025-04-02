@@ -314,11 +314,14 @@ namespace ACO2_App._0.Model
 
         }
     }
-    public class Defect
+    public class DefectInfo
     {
-        public DateTime TimeOccur { get; set; } = DateTime.Now;
-        public string DefectName { get; set; } = string.Empty;
-        public string Defectcode { get; set; } = string.Empty;
+        public string ZoneNo { get; set; }  // Zone của kênh (Zone1, Zone2, ...)
+        public string ChannelNo { get; set; }  // Kênh của sản phẩm (CH01, CH02, ...)
+        public string DefectCode { get; set; }  // Mã lỗi (SF67, SF66, ...)
+        public string LastResult { get; set; }  // Kết quả cuối cùng của sản phẩm (MTP NG, CONTACT NG, ...)
+        public int Count { get; set; }  // Số lượng sản phẩm có defect code và last result này
+        public DateTime LastTime { get; set; }  // Thời gian của con hàng cuối cùng có defect code này
     }
     public class ListCell
     {

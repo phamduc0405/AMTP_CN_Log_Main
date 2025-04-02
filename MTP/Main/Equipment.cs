@@ -595,7 +595,7 @@ namespace ACO2_App._0
             {
                 productData.ContactResult = "NG";
                 productData.DefectCode = GetDefectCode(result);
-                productData.LastResult = "NG";
+                productData.LastResult = $"{result}";
                 productData.ContactEndTime = DateTime.Now;
                 productData.ContactTackTime = (productData.ContactEndTime - productData.ContactStartTime).TotalSeconds;
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip+1}][{productData.ChannelNo}][{productData.CellID}]:" +
@@ -605,6 +605,7 @@ namespace ACO2_App._0
             }
             else if (!string.IsNullOrEmpty(productData.DefectCode))
             {
+
                 return;
             }
             productData.ContactResult = result;
@@ -618,6 +619,7 @@ namespace ACO2_App._0
             }
             
             productData.MTPWriteResult = result;
+            productData.LastResult = result;
             productData.InsEndTime = DateTime.Now;
             productData.InsTackTime = (productData.InsEndTime - productData.InsStartTime).TotalSeconds;
             LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip+1}][{productData.ChannelNo}][{productData.CellID}]:" +

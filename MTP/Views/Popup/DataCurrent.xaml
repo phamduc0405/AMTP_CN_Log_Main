@@ -121,16 +121,21 @@
                         <GridView x:Name="grdView">
                             <GridViewColumn
                                                 Width="50"
-                                                DisplayMemberBinding="{Binding TimeOccur}"
+                                                DisplayMemberBinding="{Binding LastTime}"
                                                 Header="TIME" />
                             <GridViewColumn
                                                 Width="100"
-                                                DisplayMemberBinding="{Binding Defectcode}"
+                                                DisplayMemberBinding="{Binding DefectCode}"
                                                 Header="DEFECT CODE" />
                             <GridViewColumn
                                                 Width="100"
-                                                DisplayMemberBinding="{Binding DefectName}"
+                                                DisplayMemberBinding="{Binding LastResult}"
                                                 Header="DEFECT NAME" />
+                            <GridViewColumn
+                                                Width="100"
+                                                DisplayMemberBinding="{Binding Count}"
+                                                Header="COUNT" />
+                            
                         </GridView>
                     </ListView.View>
                 </ListView>

@@ -58,8 +58,8 @@ namespace ACO2_App._0
         private List<CurrentData> _currDatas;
         private List<DefectCode> _defectCodes;
         private List<ListCell> _listCell;
-        private List<Defect> _listDefect = new List<Defect>();
 
+        private List<DefectInfo> _defectInfos;
         #endregion
         #region Common
         private bool _isTrigging;
@@ -114,7 +114,11 @@ namespace ACO2_App._0
             get { return _listCell; }
             set { _listCell = value; }
         }
-        public List<Defect> ListDefectDatas { get { return _listDefect; } set { _listDefect = value; } }
+        public List<DefectInfo> DefectInfo
+        {
+            get { return _defectInfos; }
+            set { _defectInfos = value; }
+        }
         #endregion
         #region Common
         public bool IsPlcConnected
@@ -124,6 +128,7 @@ namespace ACO2_App._0
         #endregion
         #endregion
         #region Event
+        public event Action<List<DefectInfo>> DefectListUpdated;
         public event Action<CellData> CellLogDataChanged;
         public event Action HeaderStatusChanged;
         public delegate void CurrDataEventDelegate(List<CurrentData> currData);
@@ -144,6 +149,7 @@ namespace ACO2_App._0
             _controllerConfig = new ControllerConfig();
             _listCellDatas = new ListCellDatas();
             _listCell = new List<ListCell>();
+            _defectInfos = new List<DefectInfo>();
             ReadControllerConfig();
             ReadCellDataBackup();
             foreach(var cell in _listCellDatas.CellDatas)
@@ -243,7 +249,7 @@ namespace ACO2_App._0
                 LogTxt.Add(LogTxt.Type.Status, "[DATA] CANNOT GET DATA PRODUCT FROM EXCEL.");
                 return;
             }
-
+            _defectInfos= GetDefectInfoByChannel(tempData);
             var groupedData = tempData.GroupBy(c => new { c.ZoneNo, c.Channel.ChannelNo })
                                       .Select(g => new CurrentData
                                       {
@@ -262,14 +268,54 @@ namespace ACO2_App._0
             {
                 LogTxt.Add(LogTxt.Type.Status, $"[ZONE {data.Zone} - CH {data.ChannelName}] Good: {data.Good}, NGContact: {data.NGContact}, NGIns: {data.NGIns}");
             }
-            //_listDefect = new List<Defect>();
-            //foreach (var data in tempData.GroupBy(c => new { c.ZoneNo, c.Channel.ChannelNo }))
-            //{
-                
-            //}
            
+
+
+        }
+        public List<DefectInfo> GetDefectInfoByChannel(List<CellData> tempData)
+        {
+            var defectInfos = new List<DefectInfo>();
+
+            // Nhóm dữ liệu theo ZoneNo và ChannelNo
+            var groupedData = tempData
+                .GroupBy(c => new { c.ZoneNo, c.Channel.ChannelNo });
+
+            foreach (var group in groupedData)
+            {
+                // Lọc các item có DefectCode khác null và không rỗng
+                var defectCodeGrouped = group
+                    .Where(c => !string.IsNullOrEmpty(c.Channel.DefectCode))
+                    .GroupBy(c => new { c.Channel.DefectCode, c.Channel.LastResult });
+
+                // Lặp qua các nhóm defectCode và LastResult
+                foreach (var defectGroup in defectCodeGrouped)
+                {
+                    // Khởi tạo thông tin defect mới
+                    var defectInfo = new DefectInfo
+                    {
+                        ZoneNo = group.Key.ZoneNo,  // Gán ZoneNo của nhóm
+                        ChannelNo = group.Key.ChannelNo,  // Gán ChannelNo của nhóm
+                        DefectCode = defectGroup.Key.DefectCode,
+                        LastResult = defectGroup.Key.LastResult,
+                        Count = defectGroup.Count(),
+                        LastTime = defectGroup.Max(c => c.Channel.InsEndTime) // Thời gian cuối cùng của item trong nhóm này
+                    };
+
+                    // Thêm defectInfo vào danh sách
+                    defectInfos.Add(defectInfo);
+                }
+            }
+
+            return defectInfos;
         }
 
+        // Phương thức lấy defectInfo của một channel cụ thể
+        public List<DefectInfo> GetDefectsForChannel(List<DefectInfo> defectInfoList, string zoneNo, string channelNo)
+        {
+            return defectInfoList
+                .Where(d => d.ZoneNo == zoneNo && d.ChannelNo == channelNo)
+                .ToList();
+        }
         #endregion
         #region Destructor
         public void Dispose()
@@ -1115,6 +1161,36 @@ namespace ACO2_App._0
                     CurrDataEventHandle(_currDatas);
                 }
                 }
+            if (!string.IsNullOrEmpty(productData.Channel.DefectCode))
+            {
+                // Lọc defectInfoList theo ZoneNo và ChannelNo
+                var defectInfo = _defectInfos.FirstOrDefault(d => d.ZoneNo == zone && d.ChannelNo == channel && d.DefectCode == productData.Channel.DefectCode && d.LastResult == productData.Channel.LastResult);
+
+                if (defectInfo != null)
+                {
+                    // Nếu defect đã tồn tại, cập nhật lại count và last time
+                    defectInfo.Count++;
+                    defectInfo.LastTime = productData.Channel.InsEndTime;
+                }
+                else
+                {
+                    // Nếu defect chưa tồn tại, tạo mới defectInfo
+                    var newDefectInfo = new DefectInfo
+                    {
+                        ZoneNo = zone,
+                        ChannelNo = channel,
+                        DefectCode = productData.Channel.DefectCode,
+                        LastResult = productData.Channel.LastResult,
+                        Count = 1,
+                        LastTime = productData.Channel.InsEndTime
+                    };
+
+                    _defectInfos.Add(newDefectInfo);
+                }
+
+                // Kích hoạt sự kiện khi có defect mới
+                DefectListUpdated?.Invoke(_defectInfos);
+            }
         }
 
         public string CreateLogFollowCellData(CellData cellData)

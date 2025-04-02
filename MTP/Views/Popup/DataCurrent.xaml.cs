@@ -37,14 +37,50 @@ namespace MTP.Views.Popup
             _equipment = equipment;
             _controller.CurrDataEvent -= OnCurrDataUpdated;
             _controller.CurrDataEvent += OnCurrDataUpdated;
+            _controller.DefectListUpdated -= _controller_DefectListUpdated;
+            _controller.DefectListUpdated += _controller_DefectListUpdated;
             CreateEvent();
             LoadDataFromController();
+            LoadDefectListFromController();
         }
+
+        private void _controller_DefectListUpdated(List<DefectInfo> obj)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                LoadDefectListFromController();
+            });
+        }
+
         private void OnCurrDataUpdated(List<CurrentData> currDatas)
         {
             Dispatcher.Invoke(() =>
             {
                 LoadDataFromController();
+            });
+        }
+        private void LoadDefectListFromController()
+        {
+            List<DefectInfo> currDfSnapshot;
+
+            lock (_controller.DefectInfo)
+            {
+                currDfSnapshot = _controller.DefectInfo.ToList();// Shallow copy danh sách
+            }
+
+            Dispatcher.Invoke(() =>
+            {
+               List<DefectInfo> defectlist= _controller.GetDefectsForChannel(currDfSnapshot, (_equipment.EqpConfig.EQPIndex + 1).ToString(), _channel.ChannelNo);
+
+                if (defectlist != null)
+                {
+                    lstCurrData.ItemsSource = null;
+                    lstCurrData.ItemsSource = defectlist;
+                }
+                else
+                {
+                    
+                }
             });
         }
         private void LoadDataFromController()
