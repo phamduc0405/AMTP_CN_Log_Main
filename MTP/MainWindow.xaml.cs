@@ -315,7 +315,7 @@ namespace ACO2_App._0
                     }
                     CellDataQueueAction cellQueue1 = new CellDataQueueAction();
                     cellQueue1.CellData = new CellData();
-                    cellQueue1.Action = ActionType.Delete;
+                    cellQueue1.Action = ActionType.DeleteAll;
                     Controller.AddDataToQueue(cellQueue1);
                     LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                     LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
