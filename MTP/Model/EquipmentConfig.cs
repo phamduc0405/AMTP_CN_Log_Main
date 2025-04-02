@@ -43,7 +43,7 @@ namespace ACO2_App._0.Model
     public class ListCellDatas
     {
         public List<CellData> CellDatas { get; set; } = new List<CellData> ();
-      
+        
     }
 
     public class CellData
@@ -100,7 +100,51 @@ namespace ACO2_App._0.Model
         public string Rechecked { get; set; } = string.Empty; // Rechecked
         public string Temperater {  get; set; } = string.Empty; // Temperater
         public Channel Channel { get; set; } = new Channel ();
-
+        public CellData Copy()
+        {
+            CellData cdtn = new CellData();
+            cdtn.CellID = this.CellID;
+            cdtn.TrackIn = this.TrackIn;
+            cdtn.TrackOut = this.TrackOut;
+            cdtn.Unit = this.Unit;
+            cdtn.Stage = this.Stage;
+            cdtn.MCStartTime = this.MCStartTime;
+            cdtn.MCEndTime = this.MCEndTime;
+            cdtn.MCTackTime = this.MCTackTime;
+            cdtn.InsRobot1ToolNo = this.InsRobot1ToolNo;
+            cdtn.InsRobot2ToolNo = this.InsRobot2ToolNo;
+            cdtn.ABRule = this.ABRule;
+            cdtn.Retry = this.Retry;
+            cdtn.Rechecked = this.Rechecked;
+            cdtn.Temperater = this.Temperater;
+            cdtn.ZoneNo = this.ZoneNo;
+            cdtn.UnitStartTime = this.UnitStartTime;
+            cdtn.UnitEndTime = this.UnitEndTime;
+            cdtn.UnitTackTime = this.UnitTackTime;
+            cdtn.RBDropStartTime = this.RBDropStartTime;
+            cdtn.RBDropEndTime = this.RBDropEndTime;
+            cdtn.RBDropTackTime = this.RBDropTackTime;
+            cdtn.SpareStartTime = this.SpareStartTime;
+            cdtn.SpareEndTime = this.SpareEndTime;
+            cdtn.SpareTackTime = this.SpareTackTime;
+            cdtn.ServoFWStartTime = this.ServoFWStartTime;
+            cdtn.ServoFWEndTime = this.ServoFWEndTime;
+            cdtn.ServoFWTaktTime = this.ServoFWTaktTime;
+            cdtn.CylDWStartTime = this.CylDWStartTime;
+            cdtn.CylDWEndTime = this.CylDWEndTime;
+            cdtn.CylDWTaktTime = this.CylDWTaktTime;
+            cdtn.CylUpStartTime = this.CylUpStartTime;
+            cdtn.CylUpEndTime = this.CylUpEndTime;
+            cdtn.CylUpTaktTime = this.CylUpTaktTime;
+            cdtn.ServoBWStartTime = this.ServoBWStartTime;
+            cdtn.ServoBWEndTime = this.ServoBWEndTime;
+            cdtn.ServoBWTaktTime = this.ServoBWTaktTime;
+            cdtn.RBPickStartTime = this.RBPickStartTime;
+            cdtn.RBPickEndTime = this.RBPickEndTime;
+            cdtn.RBPickTackTime = this.RBPickTackTime;
+            cdtn.Channel = this.Channel.Copy();
+            return cdtn;
+        }
         public void Clear()
         {
             this.CellID = "";
@@ -178,7 +222,37 @@ namespace ACO2_App._0.Model
         public string ICi { get; set; } = string.Empty; // ICi of panel (Receive from PCSignal)
         public string IBat2 { get; set; } = string.Empty; // IBat2 of panel (Receive from PCSignal)
         public string IDd2 { get; set; } = string.Empty; // IDd2 of panel (Receive from PCSignal)
-
+        public Channel Copy()
+        {
+            Channel ch = new Channel();
+            ch.CellID = this.CellID;
+            ch.TxHostVer = this.TxHostVer;
+            ch.ChannelNo = this.ChannelNo;
+            ch.X600 = this.X600;
+            ch.T5MACVer = this.T5MACVer;
+            ch.TMDFile = this.TMDFile;
+            ch.PGUi = this.PGUi;
+            ch.T5MacChannel = this.T5MacChannel;
+            ch.InsStartTime = this.InsStartTime;
+            ch.InsEndTime = this.InsEndTime;
+            ch.InsTackTime = this.InsTackTime;
+            ch.ContactStartTime = this.ContactStartTime;
+            ch.ContactEndTime = this.ContactEndTime;
+            ch.ContactTackTime = this.ContactTackTime;
+            ch.ContactResult = this.ContactResult;
+            ch.MTPStartTime = this.MTPStartTime;
+            ch.MTPEndTime = this.MTPEndTime;
+            ch.MTPTackTime = this.MTPTackTime;
+            ch.MTPWriteResult = this.MTPWriteResult;
+            ch.DefectCode = this.DefectCode;
+            ch.Ibat = this.Ibat;
+            ch.IVss = this.IVss;
+            ch.IDd = this.IDd;
+            ch.ICi = this.ICi;
+            ch.IBat2 = this.IBat2;
+            ch.IDd2 = this.IDd2;
+            return ch;
+        }
         public void Clear()
         {
             this.CellID = "";

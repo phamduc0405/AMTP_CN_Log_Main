@@ -7,12 +7,12 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static MTP.Model.CellDataQueueAction;
 
 namespace MTP.Model
 {
     public class TrackInSequenceHandler
     {
-        private object _cs = new object();
 
         public enum TrackInAction
         {
@@ -25,7 +25,6 @@ namespace MTP.Model
         private TrackInAction _action;
         private string _cellIDWord = "";
         private string _resultTrackInWord = "";
-
         public TrackInSequenceHandler(string action)
         {
             Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
@@ -74,8 +73,7 @@ namespace MTP.Model
         
         private async Task HandleTrackIn(int toolNumber)
         {
-            lock (_cs)
-            {
+
                 switch (toolNumber)
 
                 {
@@ -87,6 +85,7 @@ namespace MTP.Model
                 }
                 try
                 {
+
                     string cellIDTrackIn = "";
                     string resultTrackIn = "";
                     bool isTimeOut = false;
@@ -112,26 +111,29 @@ namespace MTP.Model
                     var checkCheckCellDuplicate = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
                     if (checkCheckCellDuplicate != null)
                     {
-
                         LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
                             $"DULLICATE DATA: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                             $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)} SAVE DATA OLD ");
-                         _controller.SaveDataLog(checkCheckCellDuplicate);
-                        _controller.ListCellDatas.CellDatas.Remove(checkCheckCellDuplicate);
-                        var cell = _controller.ListCell.FirstOrDefault(x => x.CellID == checkCheckCellDuplicate.CellID);
-                        if(cell != null)
-                        {
-                            _controller.ListCell.Remove(cell);
-                        }
-                    }
-                    _controller.ListCellDatas.CellDatas.Add(cellData);
-                    _controller.ListCell.Add(new ListCell { CellID = cellData.CellID });
-                    _controller.ListCellUpdateEventHandle(_controller.ListCell);
-                    LogStorage.Add(_controller.ListCellDatas);
-                    string logMessage = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}] New CellData Added:" + logMessage);
+                        _controller.SaveDataLog(checkCheckCellDuplicate);
 
-                }
+                        CellDataQueueAction cellQueue = new CellDataQueueAction();
+                        cellQueue.CellData = checkCheckCellDuplicate;
+                        cellQueue.Action = ActionType.Delete;
+                        _controller.AddDataToQueue(cellQueue);
+                    }
+                    else
+                    {
+                        CellDataQueueAction cellQueue1 = new CellDataQueueAction();
+                        cellQueue1.CellData = cellData;
+                        cellQueue1.Action = ActionType.Add;
+                        _controller.AddDataToQueue(cellQueue1);
+                      //_controller.ListCell.Add(new ListCell { CellID = cellData.CellID });
+                    //List<ListCell> listCells = _controller.ListCell;
+                    //_controller.ListCellUpdateEventHandle(listCells);
+                    string logMessage = _controller.CreateLogFollowCellData(cellData);
+                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}] New CellData Added:" + logMessage);
+                    }
+            }
                 catch (Exception e)
                 {
                     string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
@@ -140,7 +142,7 @@ namespace MTP.Model
                 }
             }
                
-        }
+        
     }
 
 }

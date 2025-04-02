@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ACO2_App._0.Model;
+using static MTP.Model.CellDataQueueAction;
 
 namespace MTP.Model
 {
@@ -61,49 +62,61 @@ namespace MTP.Model
                 {
                     channel = $"CH{_channel}";
                 }
-                CellData cellData = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.ZoneNo==_zone.ToString()&& x.Channel.ChannelNo == channel.ToString());
-            if (cellData != null)
-            {
-                switch(_state)
-                {
-                    case "START":
-                        if(_actionStr == "DOWN")
+                CellData cellData = new CellData();
+                    cellData = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.ZoneNo == _zone.ToString() && x.Channel.ChannelNo == channel.ToString());
+                    if (cellData != null)
+                    {
+                        switch (_state)
                         {
-                            cellData.CylDWStartTime = DateTime.Now;
-                                LogStorage.Add(_controller.ListCellDatas);
+                            case "START":
+                                if (_actionStr == "DOWN")
+                                {
+                                    cellData.CylDWStartTime = DateTime.Now;
+                                    CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                    cellQueue.CellData = cellData;
+                                    cellQueue.Action = ActionType.Modify;
+                                    _controller.AddDataToQueue(cellQueue);
+                                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
+                                }
+                                if (_actionStr == "UP")
+                                {
+                                    cellData.CylUpStartTime = DateTime.Now;
+                                    CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                    cellQueue.CellData = cellData;
+                                    cellQueue.Action = ActionType.Modify;
+                                    _controller.AddDataToQueue(cellQueue);
+                                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
+                                }
+                                break;
+                            case "END":
+                                if (_actionStr == "DOWN")
+                                {
+                                    cellData.CylDWEndTime = DateTime.Now;
+                                    cellData.CylDWTaktTime = (cellData.CylDWEndTime - cellData.CylDWStartTime).TotalSeconds;
+                                    CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                    cellQueue.CellData = cellData;
+                                    cellQueue.Action = ActionType.Modify;
+                                    _controller.AddDataToQueue(cellQueue);
+                                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
+                                }
+                                if (_actionStr == "UP")
+                                {
+                                    cellData.CylUpEndTime = DateTime.Now;
+                                    cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalSeconds;
+                                    CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                    cellQueue.CellData = cellData;
+                                    cellQueue.Action = ActionType.Modify;
+                                    _controller.AddDataToQueue(cellQueue);
                                 LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
-
-                            }
-                        if (_actionStr == "UP")
-                        {
-                            cellData.CylUpStartTime = DateTime.Now;
-                                LogStorage.Add(_controller.ListCellDatas);
-                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
+                                }
+                                break;
                         }
-                        break;
-                    case "END":
-                        if (_actionStr == "DOWN")
-                        {
-                            cellData.CylDWEndTime = DateTime.Now;
-                                LogStorage.Add(_controller.ListCellDatas);
-                                cellData.CylDWTaktTime = (cellData.CylDWEndTime- cellData.CylDWStartTime).TotalSeconds;
-                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
-                            }
-                        if (_actionStr == "UP")
-                        {
-                            cellData.CylUpEndTime = DateTime.Now;
-                                LogStorage.Add(_controller.ListCellDatas);
-                                cellData.CylUpTaktTime = (cellData.CylUpEndTime - cellData.CylUpStartTime).TotalSeconds;
-                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][{_action}][DONE] ");
-                            }
-                        break;
-                }
-            }
-                else
-                {
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][HANDLER] CANNOT FIND CELL DATA WITH ZONE{_zone} AND CHANNEL{_channel}");
-                    return;
-                }
+                    }
+                    else
+                    {
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ACTUTOR][HANDLER] CANNOT FIND CELL DATA WITH ZONE{_zone} AND CHANNEL{_channel}");
+                        return;
+                    }
             }
             catch (Exception ex)
             {

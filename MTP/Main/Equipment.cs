@@ -259,6 +259,11 @@ namespace ACO2_App._0
                             }
                             if (prefix == Prefix.None)
                             {
+                                if(split.Count() < 3)
+                                {
+                                    Channel product = _channels[channel - 1];
+                                    UpdateDataContactLog(product, "CELL_LOADING NG", true);
+                                }
                                 if (split[3] == "GOOD")
                                 {
                                     Channel product = _channels[channel - 1];

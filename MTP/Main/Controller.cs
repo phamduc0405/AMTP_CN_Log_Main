@@ -28,6 +28,7 @@ using System.Windows.Threading;
 using MTP.Model;
 using AINI;
 using ABOOKFEEDER.INIT;
+using static MTP.Model.CellDataQueueAction;
 
 namespace ACO2_App._0
 {
@@ -58,15 +59,17 @@ namespace ACO2_App._0
         private List<CurrentData> _currDatas;
         private List<DefectCode> _defectCodes;
         private List<ListCell> _listCell;
-
+        private  Queue<CellDataQueueAction> _logQueues ;
         private List<DefectInfo> _defectInfos;
         #endregion
         #region Common
         private bool _isTrigging;
         private Thread _aliveBit;
+        private Thread _updateData;
         private bool _isPlcConnected;
         private Dictionary<string, Func<Task>> _handlers;
         private object _cs = new object();
+        private  SemaphoreSlim _semaphoreSlims;
         #endregion
         #endregion
         #region Property
@@ -119,6 +122,11 @@ namespace ACO2_App._0
             get { return _defectInfos; }
             set { _defectInfos = value; }
         }
+        public Queue<CellDataQueueAction> LogQueues
+        {
+            get { return _logQueues; }
+            set { _logQueues = value; }
+        }
         #endregion
         #region Common
         public bool IsPlcConnected
@@ -150,11 +158,13 @@ namespace ACO2_App._0
             _listCellDatas = new ListCellDatas();
             _listCell = new List<ListCell>();
             _defectInfos = new List<DefectInfo>();
+            _semaphoreSlims = new SemaphoreSlim(1, 1);
+            _logQueues = new Queue<CellDataQueueAction>();
             ReadControllerConfig();
             ReadCellDataBackup();
             foreach(var cell in _listCellDatas.CellDatas)
             {
-                _listCell.Add(new ListCell { CellID = cell.CellID });
+                //_listCell.Add(new ListCell { CellID = cell.CellID });
             }
             _equipment = new List<Equipment>();
             foreach (var eqpc in _controllerConfig.EqpConfigs)
@@ -229,6 +239,11 @@ namespace ACO2_App._0
                     IsBackground = true
                 };
                 _aliveBit.Start();
+                _updateData = new Thread(UpdateData)
+                {
+                    IsBackground = true
+                };
+                _updateData.Start();
                 InitialHandler();
                 _plcH.BitChangedEvent += (name, bit) =>
                 {
@@ -325,6 +340,7 @@ namespace ACO2_App._0
                 eqp?.Close();
             }
             _aliveBit?.Abort();
+            _updateData?.Abort();
             _plc.Close();
             _plcH?.Close();
             _dataLog?.Stop();
@@ -746,14 +762,107 @@ namespace ACO2_App._0
         }
 
         #endregion
+
         #region Method Excute Data
-     
+        public void AddDataToQueue(CellDataQueueAction queueAction)
+        {
+            if(queueAction != null)
+            {
+                var value = Task.Run(async () =>
+                {
+                    await _semaphoreSlims.WaitAsync();
+
+                    try
+                    {
+                        _logQueues.Enqueue(queueAction);
+                    }
+                    catch (Exception exception)
+                    {
+                        string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, exception.Message);
+                        LogTxt.Add(LogTxt.Type.Exception, debug);
+                        LogTxt.Add(LogTxt.Type.FlowRun,  debug);
+                    }
+                    finally
+                    {
+                        _semaphoreSlims.Release();
+                    }
+                });
+            }
+            else
+            {
+                string debug = string.Format($"queueAction = null");
+                LogTxt.Add(LogTxt.Type.Exception, debug);
+                LogTxt.Add(LogTxt.Type.FlowRun, debug);
+            }
+               
+        }
+        public void QueueLogCellData(CellDataQueueAction queueAction)
+        {
+            switch (queueAction.Action)
+            {
+                case ActionType.None:
+                    break;
+                case ActionType.Delete:
+                    _listCellDatas.CellDatas.Remove(queueAction.CellData);
+                    ListCellDatas lstCelll = new ListCellDatas();
+                    foreach (var cl in _listCellDatas.CellDatas)
+                    {
+                        CellData dt = cl.Copy();
+                        lstCelll.CellDatas.Add(dt);
+                    }
+                    LogStorage.Add(lstCelll);
+                    break;
+                case ActionType.Add:
+                    _listCellDatas.CellDatas.Add(queueAction.CellData);
+                    ListCellDatas lstCell = new ListCellDatas();
+                    foreach (var c in _listCellDatas.CellDatas)
+                    {
+                        CellData dt = c.Copy();
+                        lstCell.CellDatas.Add(dt);
+                    }
+                    LogStorage.Add(lstCell);
+                    break;
+                case ActionType.Modify:
+                    CellData cell = _listCellDatas.CellDatas.FirstOrDefault(dt => dt.CellID == queueAction.CellData.CellID);
+                    cell = queueAction.CellData;
+                    ListCellDatas lstCell1 = new ListCellDatas();
+                    foreach (var c in _listCellDatas.CellDatas)
+                    {
+                        CellData dt = c.Copy();
+                        lstCell1.CellDatas.Add(dt);
+                    }
+                    LogStorage.Add(lstCell1);
+                    break;
+                case ActionType.ModifyAndSave:
+                    CellData cellc = _listCellDatas.CellDatas.FirstOrDefault(dt => dt.CellID == queueAction.CellData.CellID);
+                    cellc = queueAction.CellData;
+                    SaveDataLog(cellc);
+                    cellc.Channel.Clear();
+                    ListCellDatas lstCell2 = new ListCellDatas();
+                    foreach (var c in _listCellDatas.CellDatas)
+                    {
+                        CellData dt = c.Copy();
+                        lstCell2.CellDatas.Add(dt);
+                    }
+                    LogStorage.Add(lstCell2);
+                    break;
+                case ActionType.DeleteAll:
+                    foreach (var item in _listCellDatas.CellDatas)
+                    {
+                        item.Clear();
+                    }
+                    _listCellDatas.CellDatas.Clear();
+                    SaveCellDataBackup();
+                    break;
+                default:
+                    break;
+            }
+         
+        }
         public CellData FindCellInListTemp(string cellid, bool isStepStartIns = false, bool isStepInsDone = false, string channel = "", bool isStepStartTrackOut = false)
         {
             try
             {
-                lock (_cs)
-                {
                     if (isStepStartIns)
                     {
                         return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid);
@@ -766,7 +875,6 @@ namespace ACO2_App._0
                     {
                         return _listCellDatas.CellDatas.FirstOrDefault(cell => cell.CellID == cellid);
                     }
-                }
             }
             catch (Exception e)
             {
@@ -778,7 +886,6 @@ namespace ACO2_App._0
         }
         public (string cellId, string channel,bool isTimeOut) WaitForPlcData(string cellIdKey, string data2key)
         {
-
             try
             {
                 int maxTimeoutMs = 10000;
@@ -995,18 +1102,7 @@ namespace ACO2_App._0
             var content = new StringBuilder();
             productData.Time = DateTime.Now;
             productData.MachineName = _controllerConfig.EQPID;
-            if(productData.Channel.ContactResult == "GOOD"&& productData.Channel.MTPWriteResult == "GOOD"&&string.IsNullOrEmpty(productData.Channel.DefectCode))
-            {
-                productData.Channel.LastResult = "GOOD";
-            }
-            else
-            {
-                productData.Channel.LastResult = productData.Channel.DefectCode;
-
-            }
             productData.Temperater = GetWordValueFromPLC("TEMPERATER", true);
-       
-
             content.Append(string.Format("{0:yyyy-MM-dd HH:mm:ss},", productData.Time)); // TIME
             content.Append(string.Format("{0},", productData.CellID)); //CELLID
             content.Append(string.Format("{0},", productData.MachineName)); //MACHINE
@@ -1525,12 +1621,6 @@ namespace ACO2_App._0
                                         SaveDataLog(cell);
                                         LogTxt.Add(LogTxt.Type.FlowRun, $"[TIMEOUT][CELL] ：[{cell.CellID}]. Cell in Machine too long ({tactTimeCell} days) and not trackout. Save Log");
                                         _listCellDatas.CellDatas.Remove(cell);
-                                        ListCell cells = _listCell.FirstOrDefault(x => x.CellID == cell.CellID);
-                                        if (cells != null)
-                                        {
-                                            _listCell.Remove(cells);
-                                            ListCellUpdateEventHandle(_listCell);
-                                        }
                                     }
                                 }
                             }
@@ -1563,7 +1653,19 @@ namespace ACO2_App._0
                 Thread.Sleep(200);
             }
         }
-
+        public void UpdateData()
+        {
+            while (MainWindow.Running)
+            {
+                if (_logQueues.Count > 0)
+                {
+                    CellDataQueueAction queueAction = new CellDataQueueAction();
+                    queueAction = _logQueues.Dequeue();
+                    QueueLogCellData(queueAction);
+                }
+                Thread.Sleep(10);
+            }
+        }
         #endregion
 
         #region EventHandle

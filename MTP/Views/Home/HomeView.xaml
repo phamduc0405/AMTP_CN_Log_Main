@@ -357,9 +357,9 @@
                                         </StackPanel>
                                     </Border>
                                 </Grid>
-                                <Grid Margin="5,4,5,0">
+                                <!--<Grid Margin="5,4,5,0">
                                     <Border
-                                    Height="400"
+                                    Height="200"
                                     Background="AliceBlue"
                                     BorderBrush="#FFC5BFBF"
                                     BorderThickness="1"
@@ -373,18 +373,21 @@
                                             Style="{StaticResource HeaderTextBlockStyle}"
                                             Text="Current Panel Running"
                                             TextAlignment="Center" />
-                                            <ListView x:Name="listView"
+                                            <ScrollViewer Height="150"
+                                  VerticalScrollBarVisibility="Auto">
+                                                <ListView x:Name="listView"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Style="{StaticResource ListViewStyle}">
-                                                <ListView.View>
-                                                    <GridView x:Name="grdView" />
-                                                </ListView.View>
+                                                    <ListView.View>
+                                                        <GridView x:Name="grdView" />
+                                                    </ListView.View>
 
-                                            </ListView>
+                                                </ListView>
+                                            </ScrollViewer>
                                         </StackPanel>
                                     </Border>
-                                </Grid>
+                                </Grid>-->
                             </StackPanel>
                         </Border>
                     </ScrollViewer>

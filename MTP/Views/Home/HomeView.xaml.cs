@@ -12,6 +12,7 @@ using Mitsu3E;
 using System.Collections.Generic;
 using ACO2_App._0.Model;
 using System.Windows.Data;
+using System.Reflection;
 
 namespace ACO2.Views.Home
 {
@@ -45,29 +46,36 @@ namespace ACO2.Views.Home
             };
             _updateTimer.Tick += UpdateEquipmentUI;
             _updateTimer.Start();
-            grdView.Columns.Clear();
-            grdView.Columns.Add(new GridViewColumn
-            {
-                Header = "CELLID",
-                DisplayMemberBinding = new Binding("CellID"),
-                Width = 200
-            });
-            Dispatcher.Invoke(new Action(() =>
-            {
-                listView.ItemsSource = null;
-                listView.ItemsSource = _controller.ListCell;
-            }));
+            //grdView.Columns.Clear();
+            //grdView.Columns.Add(new GridViewColumn
+            //{
+            //    Header = "CELLID",
+            //    DisplayMemberBinding = new Binding("CellID"),
+            //    Width = 200
+            //});
+            //Dispatcher.Invoke(new Action(() =>
+            //{
+            //    listView.ItemsSource = null;
+            //    listView.ItemsSource = _controller.ListCell;
+            //}));
             _controller.ListCellUpdateEvent -= _controller_ListCellUpdateEvent;
             _controller.ListCellUpdateEvent += _controller_ListCellUpdateEvent;
         }
 
         private void _controller_ListCellUpdateEvent(List<ListCell> listCells)
         {
-            Dispatcher.Invoke(new Action(() =>
+            try
             {
-                listView.ItemsSource = null;
-                listView.ItemsSource = listCells;
-            }));
+                //Dispatcher.Invoke(() =>
+                //{
+                //    listView.ItemsSource = listCells;
+                //});
+            }
+       catch(Exception e)
+            {
+                string debug = string.Format("{0} exception occurred. Message is <{1}>.", MethodBase.GetCurrentMethod().Name, e.Message);
+                LogTxt.Add(LogTxt.Type.Exception,   debug);
+            }
         }
         private void Initial()
         {

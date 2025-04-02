@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static MTP.Model.CellDataQueueAction;
 
 namespace MTP.Model
 {
@@ -118,28 +119,25 @@ namespace MTP.Model
                 else if(resultTrackOut == "V") { resultTrackOut= "NG Validation"; }
                 else if(resultTrackOut == "O") { resultTrackOut= "Manual TrackOut"; }
                 // Save To Log
-                CellData cellData = _controller.FindCellInListTemp(cellIDTrackOut, false, false, "", true);
+                CellData cellData = new CellData();
+                cellData = _controller.FindCellInListTemp(cellIDTrackOut, false, false, "", true);
                 if (cellData != null)
                 {
-                    cellData.TrackOut = resultTrackOut;
-                    cellData.MCEndTime = DateTime.Now;
-                    cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
-                    LogStorage.Add(_controller.ListCellDatas);
-                  await  _controller.SaveDataLog(cellData);
-                    LogStorage.Add(_controller.ListCellDatas);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" + 
-                        $"SAVE DATA TO DATALOG: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " + 
-                        $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
-
-                    string logMessage = _controller.CreateLogFollowCellData(cellData);
-                    ListCell cell = _controller.ListCell.FirstOrDefault(x => x.CellID == cellData.CellID);
-                    if (cell != null)
-                    {
-                        _controller.ListCell.Remove(cell);
-                        _controller.ListCellUpdateEventHandle(_controller.ListCell);
-                    }
-                    _controller.ListCellDatas.CellDatas.Remove(cellData);
-                    LogStorage.Add(_controller.ListCellDatas);
+                        cellData.TrackOut = resultTrackOut;
+                        cellData.MCEndTime = DateTime.Now;
+                        cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
+                        CellDataQueueAction cellQueue = new CellDataQueueAction();
+                        cellQueue.CellData = cellData;
+                        cellQueue.Action = ActionType.ModifyAndSave;
+                        _controller.AddDataToQueue(cellQueue);
+                    LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]" +
+                            $"SAVE DATA TO DATALOG: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                            $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackOutWord, true)}");
+                        string logMessage = _controller.CreateLogFollowCellData(cellData);
+                        CellDataQueueAction cellQueue1 = new CellDataQueueAction();
+                        cellQueue1.CellData = cellData;
+                        cellQueue1.Action = ActionType.Delete;
+                        _controller.AddDataToQueue(cellQueue1);
                     LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKOUT][RB{robotNo}][TOOL{toolNumber}]:  CellData Remove from List:" + logMessage);
                 }
                 else

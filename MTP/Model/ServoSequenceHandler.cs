@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static MTP.Model.CellDataQueueAction;
 
 namespace MTP.Model
 {
@@ -75,7 +76,6 @@ namespace MTP.Model
             Zone2Servo6EndBw,
         }
         private Controller _controller;
-
         private Dictionary<ActutorAction, Func<Task>> _handlers;
         private ActutorAction _action;
 
@@ -258,23 +258,27 @@ namespace MTP.Model
 
         private async Task HandleServoStart(int zone, int unit, string action)
         {
-          var cellData = _controller.ListCellDatas.CellDatas.Where(x => x.ZoneNo == zone.ToString() && x.Unit == unit.ToString()).ToList();
+            List<CellData> cellData = new List<CellData>();
+            cellData = _controller.ListCellDatas.CellDatas.Where(x => x.ZoneNo == zone.ToString() && x.Unit == unit.ToString()).ToList();
             switch (action)
             {
                 case "FW":
-                  
+
                     if (cellData.Count > 0)
                     {
-                        foreach(var cell in cellData)
+                        foreach (var cell in cellData)
                         {
                             cell.ServoFWStartTime = DateTime.Now;
-                            LogStorage.Add(_controller.ListCellDatas);
+                            CellDataQueueAction cellQueue = new CellDataQueueAction();
+                            cellQueue.CellData = cell;
+                            cellQueue.Action = ActionType.Modify;
+                            _controller.AddDataToQueue(cellQueue);
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][FW]: CellData Updated");
                         }
                     }
                     else
                     {
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][FW]: CellData Cannot find in List:" );
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][FW]: CellData Cannot find in List:");
                     }
                     break;
                 case "BW":
@@ -283,7 +287,10 @@ namespace MTP.Model
                         foreach (var cell in cellData)
                         {
                             cell.ServoBWStartTime = DateTime.Now;
-                            LogStorage.Add(_controller.ListCellDatas);
+                            CellDataQueueAction cellQueue = new CellDataQueueAction();
+                            cellQueue.CellData = cell;
+                            cellQueue.Action = ActionType.Modify;
+                            _controller.AddDataToQueue(cellQueue);
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][START][BW]: CellData Updated");
                         }
                     }
@@ -293,10 +300,13 @@ namespace MTP.Model
                     }
                     break;
             }
+
+
         }
         private async Task HandleServoEnd(int zone, int unit, string action)
         {
-            var cellData = _controller.ListCellDatas.CellDatas.Where(x => x.ZoneNo == zone.ToString() && x.Unit == unit.ToString()).ToList();
+            List<CellData> cellData = new List<CellData>();
+            cellData = _controller.ListCellDatas.CellDatas.Where(x => x.ZoneNo == zone.ToString() && x.Unit == unit.ToString()).ToList();
             switch (action)
             {
                 case "FW":
@@ -307,7 +317,10 @@ namespace MTP.Model
                         {
                             cell.ServoFWEndTime = DateTime.Now;
                             cell.ServoFWTaktTime = (cell.ServoFWEndTime - cell.ServoFWStartTime).TotalSeconds;
-                            LogStorage.Add(_controller.ListCellDatas);
+                            CellDataQueueAction cellQueue = new CellDataQueueAction();
+                            cellQueue.CellData = cell;
+                            cellQueue.Action = ActionType.Modify;
+                            _controller.AddDataToQueue(cellQueue);
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][FW]: CellData Updated");
                         }
                     }
@@ -323,7 +336,10 @@ namespace MTP.Model
                         {
                             cell.ServoBWEndTime = DateTime.Now;
                             cell.ServoBWTaktTime = (cell.ServoBWEndTime - cell.ServoBWStartTime).TotalSeconds;
-                            LogStorage.Add(_controller.ListCellDatas);
+                            CellDataQueueAction cellQueue = new CellDataQueueAction();
+                            cellQueue.CellData = cell;
+                            cellQueue.Action = ActionType.Modify;
+                            _controller.AddDataToQueue(cellQueue);
                             LogTxt.Add(LogTxt.Type.FlowRun, $"[SERVO{zone}][UNIT{unit}][END][BW]: CellData Updated");
                         }
                     }
@@ -334,5 +350,7 @@ namespace MTP.Model
                     break;
             }
         }
+
+
     }
 }

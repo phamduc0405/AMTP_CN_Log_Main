@@ -8,6 +8,7 @@ using ACO2_App._0.ViewModel;
 using ACO2_App._0.Views;
 using ACO2_App.Views;
 using APlc;
+using MTP.Model;
 using MTP.Views.Popup;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using static MTP.Model.CellDataQueueAction;
 
 namespace ACO2_App._0
 {
@@ -43,6 +45,9 @@ namespace ACO2_App._0
         private static bool _running = true;
         public static int UserLogin = 1;
         private DataCurrent _displayDataCurrent;
+        private readonly object _modify = new object();
+        private readonly object _remove = new object();
+        private readonly object _add = new object();
         public static bool Running 
         { get
             {
@@ -308,14 +313,10 @@ namespace ACO2_App._0
                     {
                         bit.SetPCValue = false;
                     }
-                    foreach (var item in Controller.ListCellDatas.CellDatas)
-                    {
-                        item.Clear();
-                    }
-                    Controller.ListCellDatas.CellDatas.Clear();
-                    Controller.ListCell.Clear();
-                    Controller.ListCellUpdateEventHandle(Controller.ListCell);
-                    Controller.SaveCellDataBackup();
+                    CellDataQueueAction cellQueue1 = new CellDataQueueAction();
+                    cellQueue1.CellData = new CellData();
+                    cellQueue1.Action = ActionType.Delete;
+                    Controller.AddDataToQueue(cellQueue1);
                     LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                     LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                     tblScreen.Text = "ALL DATA INIT BY CLICK INIT BUTTON";

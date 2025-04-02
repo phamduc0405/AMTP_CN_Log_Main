@@ -10,6 +10,7 @@ using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static MTP.Model.CellDataQueueAction;
 
 namespace MTP.Model
 {
@@ -48,7 +49,6 @@ namespace MTP.Model
         private string _recheckedWord = "";
         private string _abRuleWord = "";
         private string _temperatureWord = "";
-
         public RobotSequenceHandler(string action)
         {
             Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
@@ -212,30 +212,33 @@ namespace MTP.Model
                     temperature = String.Format("{0:f}", float.Parse(temperature) / 10);
                 }
                 // Save To Log
-                CellData cellData = _controller.FindCellInListTemp(cellIdRbDropTool, true);
-                if (cellData != null)
-                {
-                    cellData.Temperater = temperature;
-                   cellData.RBDropStartTime = DateTime.Now;
-                    cellData.Channel.ChannelNo = channel;
-                    cellData.UnitStartTime = DateTime.Now;
-                    cellData.ZoneNo = zone.ToString();
-                    if (zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
-                    if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
-                    cellData.Unit = unitRbDropTool;
-                    cellData.Stage = ScaleValueStage(zone, unitRbDropTool, stageRbDropTool, channelRbDropTool);
-                    LogStorage.Add(_controller.ListCellDatas);
-                    string logMessage = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]: CellData Updated:" + logMessage);
-                }
-                else
-                {
-                   
-                    string Message = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
-                }
-               
+                CellData cellData = new CellData();
+                 cellData  = _controller.FindCellInListTemp(cellIdRbDropTool, true);
+                    if (cellData != null)
+                    {
+                        cellData.Temperater = temperature;
+                        cellData.RBDropStartTime = DateTime.Now;
+                        cellData.Channel.ChannelNo = channel;
+                        cellData.UnitStartTime = DateTime.Now;
+                        cellData.ZoneNo = zone.ToString();
+                        if (zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
+                        if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
+                        cellData.Unit = unitRbDropTool;
+                        cellData.Stage = ScaleValueStage(zone, unitRbDropTool, stageRbDropTool, channelRbDropTool);
 
+                        CellDataQueueAction cellQueue = new CellDataQueueAction();
+                        cellQueue.CellData = cellData;
+                        cellQueue.Action = ActionType.Modify;
+                        _controller.AddDataToQueue(cellQueue);        
+                        string logMessage = _controller.CreateLogFollowCellData(cellData);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]: CellData Updated:" + logMessage);
+                    }
+                    else
+                    {
+                        string Message = _controller.CreateLogFollowCellData(cellData);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][PUT]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
+                    }
+                
             }
             catch (Exception e)
             {
@@ -292,31 +295,24 @@ namespace MTP.Model
                 //    return;
                 //}
                 // Save To Log
-                CellData cellData = _controller.FindCellInListTemp(cellIdRbDropTool, true);
-                if (cellData != null)
-                {
-                    cellData.RBDropEndTime = DateTime.Now;
-                    cellData.RBDropTackTime = (cellData.RBDropEndTime - cellData.RBDropStartTime).TotalSeconds;
-                    LogStorage.Add(_controller.ListCellDatas);
+                CellData cellData = new CellData();
+                    cellData = _controller.FindCellInListTemp(cellIdRbDropTool, true);
+                    if (cellData != null)
+                    {
+                        cellData.RBDropEndTime = DateTime.Now;
+                        cellData.RBDropTackTime = (cellData.RBDropEndTime - cellData.RBDropStartTime).TotalSeconds;
+                        CellDataQueueAction cellQueue = new CellDataQueueAction();
+                        cellQueue.CellData = cellData;
+                        cellQueue.Action = ActionType.Modify;
+                        _controller.AddDataToQueue(cellQueue);
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]: CellData Updated:" + logMessage);
-                }
-                else
-                {
-                    //cellData = new CellData
-                    //{
-                    //    CellID = cellIdRb1DropTool1,
-                    //    Channel = new Channel { ChannelNo = channelRb1DropTool1 },
-                    //    UnitStartTime = DateTime.Now,
-                    //    ZoneNo = "1",
-                    //    InsRobotToolNo = "1"
-                    //};
-                    //_listCellDatas.CellDatas.Add(cellData);
-                    string Message = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
-                }
-            
-
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]: CellData Updated:" + logMessage);
+                    }
+                    else
+                    {
+                        string Message = _controller.CreateLogFollowCellData(cellData);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][PUT]::CANNOT FIND CELL IN QUEUE New CellData Added:" + Message);
+                    }
             }
             catch (Exception e)
             {
@@ -379,27 +375,30 @@ namespace MTP.Model
                 {
                     channel = $"CH{channelRbPickTool}";
                 }
-                
                 // Save To Log
-                CellData cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
-                if (cellData != null)
-                {
-                   cellData.RBPickStartTime = DateTime.Now;
-                    LogStorage.Add(_controller.ListCellDatas);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" +
-               $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-               $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-               $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-               $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
-               );
-                    string logMessage = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]: CellData Updated:" + logMessage);
-                }
-                else
-                {
-                    string m = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
-                }
+                    CellData cellData = new CellData();
+                     cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
+                    if (cellData != null)
+                    {
+                        cellData.RBPickStartTime = DateTime.Now;
+                        CellDataQueueAction cellQueue = new CellDataQueueAction();
+                        cellQueue.CellData = cellData;
+                        cellQueue.Action = ActionType.Modify;
+                        _controller.AddDataToQueue(cellQueue);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:" +
+                       $"UPDATE DATA IN LIST: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                       $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
+                       $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
+                       $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}"
+                       );
+                        string logMessage = _controller.CreateLogFollowCellData(cellData);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]: CellData Updated:" + logMessage);
+                    }
+                    else
+                    {
+                        string m = _controller.CreateLogFollowCellData(cellData);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][START][GET]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
+                    }
             }
             catch (Exception e)
             {
@@ -490,65 +489,66 @@ namespace MTP.Model
                     channel = $"CH{channelRbPickTool}";
                 }
                 // Save To Log
-                CellData cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
-              
-                if (cellData != null)
-                {
-                    cellData.RBPickEndTime = DateTime.Now;
-                    cellData.RBPickTackTime = (cellData.RBPickEndTime - cellData.RBPickStartTime).TotalSeconds;
-                    LogStorage.Add(_controller.ListCellDatas);
-                    var cell = _controller.Equipment[zone-1].Channels.FirstOrDefault(ch => ch.ChannelNo == channel);
-                    if (cell != null)
+                CellData cellData = new CellData();
+                     cellData = _controller.FindCellInListTemp(cellIdRbPickTool, false, true, channelRbPickTool);
+                    if (cellData != null)
                     {
-                        if (zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
-                        if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
-                        
-                        cellData.Unit = unitRbPickTool;
-                        cellData.Stage = ScaleValueStage(zone,unitRbPickTool,stageRbPickTool,channelRbPickTool);
-                        cellData.ZoneNo = zone.ToString();
-                        cellData.Channel = cell;
-                        cellData.UnitEndTime = DateTime.Now;
-                        cellData.UnitTackTime = (cellData.UnitEndTime - cellData.UnitStartTime).TotalSeconds;
-                        LogStorage.Add(_controller.ListCellDatas);
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + $"UPDATE DATA IN LIST: " +
-                            $"CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
-                            $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
-                            $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
-                            $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
-                             $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
-                    $"RECHECKED:{_controller.GetWordValueFromPLC(_recheckedWord, true)}" +
-                     $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}");
-                        string logMessage = _controller.CreateLogFollowCellData(cellData);
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:  CellData Updated:" + logMessage);
-
-
-                        if(retry == "0") { cellData.Retry = retry; cellData.Rechecked = rechecked;cellData.ABRule = abRule; } // no need retry
-                        if(retry == "1") // need retry
+                        cellData.RBPickEndTime = DateTime.Now;
+                        cellData.RBPickTackTime = (cellData.RBPickEndTime - cellData.RBPickStartTime).TotalSeconds;
+                        var cell = _controller.Equipment[zone - 1].Channels.FirstOrDefault(ch => ch.ChannelNo == channel);
+                        if (cell != null)
                         {
+                            if (zone == 1) { cellData.InsRobot1ToolNo = toolNumber.ToString(); }
+                            if (zone == 2) { cellData.InsRobot2ToolNo = toolNumber.ToString(); }
+
+                            cellData.Unit = unitRbPickTool;
+                            cellData.Stage = ScaleValueStage(zone, unitRbPickTool, stageRbPickTool, channelRbPickTool);
+                            cellData.ZoneNo = zone.ToString();
+                            cellData.Channel = cell;
+                            cellData.UnitEndTime = DateTime.Now;
+                            cellData.UnitTackTime = (cellData.UnitEndTime - cellData.UnitStartTime).TotalSeconds;
                             cellData.Retry = retry; cellData.Rechecked = rechecked; cellData.ABRule = abRule;
-                            cellData.MCEndTime = DateTime.Now;
-                            cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
-                           await _controller.SaveDataLog(cellData);
-                            cellData.Channel.Clear();
-                            LogStorage.Add(_controller.ListCellDatas);
-                            string log1Message = _controller.CreateLogFollowCellData(cellData);
-                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET][NEED RETRY]:Save Datalog cell need Retry" + logMessage);
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:" + $"UPDATE DATA IN LIST: " +
+                                    $"CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
+                                    $"CHANNEL:{_controller.GetWordValueFromPLC(_channelWord, true)}" +
+                                    $"UNIT:{_controller.GetWordValueFromPLC(_unitWord, true)}" +
+                                    $"STAGE:{_controller.GetWordValueFromPLC(_stageWord, true)}" +
+                                     $"RETRY:{_controller.GetWordValueFromPLC(_retryWord, true)}" +
+                            $"RECHECKED:{_controller.GetWordValueFromPLC(_recheckedWord, true)}" +
+                             $"ABRULE:{_controller.GetWordValueFromPLC(_abRuleWord, true)}");
+                                string logMessage = _controller.CreateLogFollowCellData(cellData);
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:  CellData Updated:" + logMessage);
+                            if (retry == "0") 
+                            {
+                                CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                cellQueue.CellData = cellData;
+                                cellQueue.Action = ActionType.Modify;
+                                _controller.AddDataToQueue(cellQueue);
+                            } // no need retry
+                            if (retry == "1") // need retry
+                            {
+                                cellData.MCEndTime = DateTime.Now;
+                                cellData.MCTackTime = (cellData.MCEndTime - cellData.MCStartTime).TotalSeconds;
+                                CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                cellQueue.CellData = cellData;
+                                cellQueue.Action = ActionType.ModifyAndSave;
+                                _controller.AddDataToQueue(cellQueue);
+                                string log1Message = _controller.CreateLogFollowCellData(cellData);
+                                LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET][NEED RETRY]:Save Datalog cell need Retry" + logMessage);
+                            }
+                        }
+                        else
+                        {
+                            string m = _controller.CreateLogFollowCellData(cellData);
+                            LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:CANNOT FIND IN EQUIP Channel have same cellID&Channel with Queue  CellData:" + m);
                         }
                     }
                     else
                     {
                         string m = _controller.CreateLogFollowCellData(cellData);
-                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:CANNOT FIND IN EQUIP Channel have same cellID&Channel with Queue  CellData:" + m);
+                        LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
                     }
-                }
-                else
-                {
-                    string m = _controller.CreateLogFollowCellData(cellData);
-                    LogTxt.Add(LogTxt.Type.FlowRun, $"[ROBOT{zone}][TOOL{toolNumber}][END][GET]:CANNOT FIND CELL IN QUEUE  CellData:" + m);
-                }
-
-
-
+                
             }
             catch (Exception e)
             {
