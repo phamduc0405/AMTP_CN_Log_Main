@@ -63,6 +63,7 @@ namespace ACO2_App._0.INIT
             TSP_Check,
             TSP_START,
             CONTACT_CURRENT_CHECK_AFTER_MTP,
+            Zone_Fin
         }
 
         public enum Prefix
@@ -338,6 +339,7 @@ namespace ACO2_App._0.INIT
                 case Command.PopupNGJig: commandString = "POPUPNGJIG"; break;
                 case Command.TSP_Check: commandString = "TSP_CHECK"; break;
                 case Command.CONTACT_CURRENT_CHECK_AFTER_MTP: commandString = "CONTACT_CURRENT_CHECK_AFTER_MTP"; break;
+                case Command.Zone_Fin: commandString = "ZONE_FIN"; break;
 
 
             }
@@ -397,6 +399,7 @@ namespace ACO2_App._0.INIT
                 case "WHITE_CURRENT": command = Command.WhiteCurrentCheck; break;
                 case "TESTER_INIT": command = Command.TESTER_INIT; break;
                 case "TSP_Check": command = Command.TSP_Check; break;
+                case "ZONE_FIN": command = Command.Zone_Fin; break;
             }
        
             return command;

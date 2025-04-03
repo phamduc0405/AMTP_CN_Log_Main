@@ -108,14 +108,19 @@ namespace MTP.Model
                     cellData.TrackIn = resultTrackIn;
                     cellData.MCStartTime = DateTime.Now;
                     cellData.TimeStartTrackIn = DateTime.Now;
-                    var checkCheckCellDuplicate = _controller.ListCellDatas.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
+                    ListCellDatas lstCell = new ListCellDatas();
+                    foreach (var c in _controller.ListCellDatas.CellDatas)
+                    {
+                        CellData dt = c.Copy();
+                        lstCell.CellDatas.Add(dt);
+                    }
+                var checkCheckCellDuplicate = lstCell.CellDatas.FirstOrDefault(x => x.CellID == cellData.CellID);
                     if (checkCheckCellDuplicate != null)
                     {
                         LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}]:" +
                             $"DULLICATE DATA: CELLID:{_controller.GetWordValueFromPLC(_cellIDWord, true)} " +
                             $"RESULT:{_controller.GetWordValueFromPLC(_resultTrackInWord, true)} SAVE DATA OLD ");
                         _controller.SaveDataLog(checkCheckCellDuplicate);
-
                         CellDataQueueAction cellQueue = new CellDataQueueAction();
                         cellQueue.CellData = checkCheckCellDuplicate;
                         cellQueue.Action = ActionType.Delete;
@@ -127,9 +132,6 @@ namespace MTP.Model
                         cellQueue1.CellData = cellData;
                         cellQueue1.Action = ActionType.Add;
                         _controller.AddDataToQueue(cellQueue1);
-                      //_controller.ListCell.Add(new ListCell { CellID = cellData.CellID });
-                    //List<ListCell> listCells = _controller.ListCell;
-                    //_controller.ListCellUpdateEventHandle(listCells);
                     string logMessage = _controller.CreateLogFollowCellData(cellData);
                      LogTxt.Add(LogTxt.Type.FlowRun, $"[TRACKIN][TOOL{toolNumber}] New CellData Added:" + logMessage);
                     }

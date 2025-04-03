@@ -225,6 +225,8 @@ namespace ACO2_App._0
                             break;
                         case T5Helper.Command.ReadyZoneC:
                             break;
+                        case T5Helper.Command.Zone_Fin:
+                            break;
                         case T5Helper.Command.MtpWrite:
                             if (prefix == Prefix.Ack)
                             {

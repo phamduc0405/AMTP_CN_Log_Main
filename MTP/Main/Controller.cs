@@ -1669,15 +1669,28 @@ namespace ACO2_App._0
 
                             if (_listCellDatas.CellDatas.Count > 0)
                             {
-                                foreach(var cell in _listCellDatas.CellDatas)
+                                ListCellDatas lstCelll = new ListCellDatas();
+                                foreach (var cl in _listCellDatas.CellDatas)
+                                {
+                                    CellData dt = cl.Copy();
+                                    lstCelll.CellDatas.Add(dt);
+                                }
+                                foreach (var cell in lstCelll.CellDatas)
                                 {
                                     var timenow = DateTime.Now;
-                                    double tactTimeCell = (timenow - cell.TimeStartTrackIn).TotalDays;
-                                    if (tactTimeCell > 1)
+                                    double tactTimeCell = (timenow - cell.TimeStartTrackIn).TotalHours;
+                                    if (tactTimeCell > 23)
                                     {
-                                        SaveDataLog(cell);
+                                        CellDataQueueAction cellQueue = new CellDataQueueAction();
+                                        cellQueue.CellData = cell;
+                                        cellQueue.Action = ActionType.ModifyAndSave;
+                                        AddDataToQueue(cellQueue);
+                                        CellDataQueueAction cellQueuee = new CellDataQueueAction();
+                                        cellQueuee.CellData = cell;
+                                        cellQueuee.Action = ActionType.Delete;
+                                        AddDataToQueue(cellQueuee);
                                         LogTxt.Add(LogTxt.Type.FlowRun, $"[TIMEOUT][CELL] ：[{cell.CellID}]. Cell in Machine too long ({tactTimeCell} days) and not trackout. Save Log");
-                                        _listCellDatas.CellDatas.Remove(cell);
+                                       
                                     }
                                 }
                             }
