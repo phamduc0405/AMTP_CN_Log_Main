@@ -27,22 +27,151 @@
                     Margin="3"
                     Background="#FF7FA6EF"
                     CornerRadius="3">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock
+                    <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="3*" />
+                            </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
                             x:Name="txtHeader"
                             Margin="20,0,20,0"
                             HorizontalAlignment="Center"
                             Foreground="Black"
                             Style="{StaticResource HeaderTextBlockStyle}"
                             Text="EQUIPMENT" />
-                        <TextBlock
-                            x:Name="txtTxHostVer"
-                            Margin="20,0,20,0"
-                            HorizontalAlignment="Center"
-                            Foreground="Green"
-                            Style="{StaticResource HeaderTextBlockStyle}"
-                            Text="" />
-                    </StackPanel>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0"
+                                      Margin="2,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="TOTAL:"
+                                                       FontSize="20" TextAlignment="Center"
+                                                       Style="{StaticResource HeaderTextBlockStyle}"
+                                                       Margin="0">
+                                    </TextBlock>
+                                    <TextBlock Grid.Column="1"
+                                                       Margin="0"
+                                                       Style="{StaticResource HeaderTextBlockStyle}"
+                                                       x:Name="txtCountTotalEquip"
+                                                       Text="0" TextAlignment="Center"
+                                                       FontSize="20"
+                                                       FontWeight="Bold"
+                                                       Foreground="Black"></TextBlock>
+
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                      Margin="0,0,0,0">
+                                <Grid ShowGridLines="true">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock  FontSize="20"
+                                                        Margin="0"
+                                                        Style="{StaticResource HeaderTextBlockStyle}"
+                                                        Text="OK" TextAlignment="Center"
+                                                        FontWeight="Bold"
+                                                        Foreground="Green">
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="0"
+                                                       Grid.Column="1"
+                                                       FontSize="20"
+                                                       Style="{StaticResource HeaderTextBlockStyle}"
+                                                       x:Name="txtCountOKEquip"
+                                                       Text="0" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Green"></TextBlock>
+                                    <TextBlock Grid.Row="0"
+                                                       Grid.Column="2"
+                                                       FontSize="20"
+                                                       Style="{StaticResource HeaderTextBlockStyle}"
+                                                       x:Name="txtOKPercentEquip"
+                                                       Text="(0%)" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Green"></TextBlock>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                      Margin="5,0,5,0">
+                                <Grid ShowGridLines="true">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock FontSize="20"
+                                                       Style="{StaticResource HeaderTextBlockStyle}"
+                                                       Text="NG CNT" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Red">
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="0"
+                                                       Grid.Column="1"
+                                                       FontSize="20"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       x:Name="txtCountNGEquip"
+                                                       Text="0" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Red"></TextBlock>
+                                    <TextBlock Grid.Row="0"
+                                                       Grid.Column="2"
+                                                       FontSize="20"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       x:Name="txtNGPercentEquip"
+                                                       Text="(0%)" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Red"></TextBlock>
+                                </Grid>
+                            </Grid>
+                            <Grid Grid.Column="3"
+                                      Margin="5,0,5,0">
+                                <Grid ShowGridLines="true">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock FontSize="20"
+                                                       Style="{StaticResource HeaderTextBlockStyle}"
+                                                       Text="NG INS" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Red">
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="0"
+                                                       Grid.Column="1"
+                                                       FontSize="20"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       x:Name="txtCountNGInsEquip"
+                                                       Text="0" TextAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="Red"></TextBlock>
+                                    <TextBlock Grid.Row="0"
+                                                       Grid.Column="2"
+                                                       FontSize="20" TextAlignment="Center"
+                                                       Style="{StaticResource BodyTextBlockStyle}"
+                                                       x:Name="txtNGInsPercentEquip"
+                                                       Text="(0%)" 
+                                                       FontWeight="Bold"
+                                                       Foreground="Red"></TextBlock>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        </Grid>
+                        
 
                 </Border>
 

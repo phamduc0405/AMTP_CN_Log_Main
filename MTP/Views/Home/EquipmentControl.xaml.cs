@@ -1,4 +1,5 @@
 ﻿using ACO2_App._0;
+using ACO2_App._0.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,16 +25,73 @@ namespace MTP.Views.Home
     {
         private Equipment _equipment;
         private bool _isPCSignalConnected = true;
-
+        private Controller _controller;
         public EquipmentControl(Equipment equipment)
         {
             InitializeComponent();
+            _controller = MainWindow.Controller;
             _equipment = equipment;
             _equipment.ConnectEvent -= _equipment_ConnectEvent;
             _equipment.ConnectEvent += _equipment_ConnectEvent;
             txtHeader.Text = _equipment.EqpConfig.EqpName;
             LoadChannels();
+            LoadDataFromController();
+            _controller.CurrDataEvent -= OnCurrDataUpdated;
+            _controller.CurrDataEvent += OnCurrDataUpdated;
             DisplayStatus();
+        }
+        private void OnCurrDataUpdated(List<CurrentData> currDatas)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                LoadDataFromController();
+            });
+        }
+        private void LoadDataFromController()
+        {
+            List<CurrentData> currDatasSnapshot;
+
+            lock (_controller.CurrsDatas)
+            {
+                currDatasSnapshot = _controller.CurrsDatas.ToList();// Shallow copy danh sách
+            }
+
+            Dispatcher.Invoke(() =>
+            {
+                var currentData = currDatasSnapshot
+                    .FirstOrDefault(c => c.Zone == (_equipment.EqpConfig.EQPIndex + 1).ToString()
+                                      );
+
+                if (currentData != null)
+                {
+                    int total = currentData.Total;
+                    int good = currentData.Good;
+                    int ngContact = currentData.NGContact;
+                    int ngIns = currentData.NGIns;
+                    int ngtotal = ngIns + ngContact;
+                    double perGood = total > 0 ? (double)good / total * 100 : 0;
+                    double perNGContact = total > 0 ? (double)ngContact / total * 100 : 0;
+                    double perNGIns = total > 0 ? (double)ngIns / total * 100 : 0;
+
+                    txtCountTotalEquip.Text = total.ToString();
+                    txtCountOKEquip.Text = good.ToString();
+                    txtCountNGInsEquip.Text = ngIns.ToString();
+                    txtCountNGEquip.Text = ngContact.ToString();
+                    txtNGPercentEquip.Text = $"({ngContact:F1}%)";
+                    txtOKPercentEquip.Text = $"({perGood:F1}%)";
+                    txtNGInsPercentEquip.Text = $"({perNGIns:F1}%)";
+                }
+                else
+                {
+                    txtCountTotalEquip.Text = "0";
+                    txtCountOKEquip.Text = "0";
+                    txtCountNGInsEquip.Text = "0";
+                    txtCountNGEquip.Text = "0";
+                    txtNGPercentEquip.Text = "(0%)";
+                    txtOKPercentEquip.Text = "(0%)";
+                    txtNGInsPercentEquip.Text = "(0%)";
+                }
+            });
         }
         private void DisplayStatus()
         {
