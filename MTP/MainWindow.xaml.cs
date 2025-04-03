@@ -299,27 +299,34 @@ namespace ACO2_App._0
                 }
 
             };
-            btnInitAll.Click += (sender, e) =>
+            btnInitAll.Click += async (sender, e) =>
             {
                 if (UserLogin == 0 || UserLogin == 2)
                 {
-                    List<WordModel> words = Controller.PlcH.Words.Where(x => x.IsPlc == false).ToList();
-                    foreach (var word in words)
+                    var result1 = await Controller.DisplayMessage(true, "NEED TRACE OUT ALL CELL BEFORE INIT !!");
+                    if (result1)
                     {
-                        word.SetValue = "";
+                        List<WordModel> words = Controller.PlcH.Words.Where(x => x.IsPlc == false).ToList();
+                        foreach (var word in words)
+                        {
+                            word.SetValue = "";
+                        }
+                        List<BitModel> bits = Controller.PlcH.Bits.Where(x => x.Type == "Event" || x.Type == "Command").ToList();
+                        foreach (var bit in bits)
+                        {
+                            bit.SetPCValue = false;
+                        }
+                        CellDataQueueAction cellQueue1 = new CellDataQueueAction();
+                        cellQueue1.CellData = new CellData();
+                        cellQueue1.Action = ActionType.DeleteAll;
+                        Controller.AddDataToQueue(cellQueue1);
+                        Controller.CurrsDatas.Clear();
+                        Controller.CurrsEquipDatas.Clear();
+                        LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
+                        LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
+                        tblScreen.Text = "ALL DATA INIT BY CLICK INIT BUTTON";
                     }
-                    List<BitModel> bits = Controller.PlcH.Bits.Where(x => x.Type == "Event" || x.Type == "Command").ToList();
-                    foreach (var bit in bits)
-                    {
-                        bit.SetPCValue = false;
-                    }
-                    CellDataQueueAction cellQueue1 = new CellDataQueueAction();
-                    cellQueue1.CellData = new CellData();
-                    cellQueue1.Action = ActionType.DeleteAll;
-                    Controller.AddDataToQueue(cellQueue1);
-                    LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
-                    LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
-                    tblScreen.Text = "ALL DATA INIT BY CLICK INIT BUTTON";
+               
                 }
                 else
                 {
