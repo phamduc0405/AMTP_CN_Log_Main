@@ -57,6 +57,7 @@ namespace ACO2_App._0
         private MachineStatus _machineStatus;
         private StatusChannel _statusChannel;
         private List<CurrentData> _currDatas;
+        private List<CurrentData> _currEquipDatas;
         private List<DefectCode> _defectCodes;
         private List<ListCell> _listCell;
         private  Queue<CellDataQueueAction> _logQueues ;
@@ -107,6 +108,7 @@ namespace ACO2_App._0
             set { _statusChannel = value; }
         }
         public List<CurrentData> CurrsDatas { get { return _currDatas; } set { _currDatas = value; } }
+        public List<CurrentData> CurrsEquipDatas { get { return _currEquipDatas; } set { _currEquipDatas = value; } }
         public List<DefectCode> DefectCodes
         {
             get { return _defectCodes; }
@@ -256,7 +258,7 @@ namespace ACO2_App._0
         public void InitialGetDataProduct()
         {
             _currDatas = new List<CurrentData>();
-
+            _currEquipDatas = new List<CurrentData>();
             List<CellData> tempData = LoadDataByDateRange(DateTime.Now, DateTime.Now);
 
             if (tempData == null || tempData.Count == 0)
@@ -283,7 +285,22 @@ namespace ACO2_App._0
             {
                 LogTxt.Add(LogTxt.Type.Status, $"[ZONE {data.Zone} - CH {data.ChannelName}] Good: {data.Good}, NGContact: {data.NGContact}, NGIns: {data.NGIns}");
             }
-           
+            var groupedEquipData = tempData.GroupBy(c => new { c.ZoneNo })
+                                     .Select(g => new CurrentData
+                                     {
+                                         Time = DateTime.Now,
+                                         Zone = g.Key.ZoneNo,
+                                         Good = g.Count(c => c.Channel.MTPWriteResult == "GOOD"),
+                                         NGContact = g.Count(c => !string.IsNullOrEmpty(c.Channel.ContactResult) && c.Channel.ContactResult != "GOOD"),
+                                         NGIns = g.Count(c => !string.IsNullOrEmpty(c.Channel.MTPWriteResult) && c.Channel.MTPWriteResult != "GOOD"),
+                                     }).ToList();
+
+            _currEquipDatas.AddRange(groupedEquipData);
+
+            foreach (var data in _currEquipDatas)
+            {
+                LogTxt.Add(LogTxt.Type.Status, $"[ZONE {data.Zone} Good: {data.Good}, NGContact: {data.NGContact}, NGIns: {data.NGIns}");
+            }
 
 
         }
@@ -1257,6 +1274,46 @@ namespace ACO2_App._0
                     CurrDataEventHandle(_currDatas);
                 }
                 }
+            var existingEquipData = _currEquipDatas.FirstOrDefault(c => c.Zone == zone);
+
+            if (existingEquipData != null)
+            {
+                // Kiểm tra và cập nhật số liệu dựa trên productData
+                if (productData.Channel.MTPWriteResult == "GOOD")
+                {
+                    existingEquipData.Good++;
+                    CurrDataEventHandle(_currEquipDatas);
+                }
+                else if (!string.IsNullOrEmpty(productData.Channel.MTPWriteResult) && productData.Channel.MTPWriteResult != "GOOD")
+                {
+                    existingEquipData.NGIns++;
+                    CurrDataEventHandle(_currEquipDatas);
+                }
+
+                if (!string.IsNullOrEmpty(productData.Channel.ContactResult) && productData.Channel.ContactResult != "GOOD")
+                {
+                    existingEquipData.NGContact++;
+                    CurrDataEventHandle(_currEquipDatas);
+                }
+            }
+            else
+            {
+                // Nếu chưa có dữ liệu, thêm mới vào danh sách
+                if (!string.IsNullOrEmpty(productData.Channel.MTPWriteResult) || !string.IsNullOrEmpty(productData.Channel.ContactResult))
+                {
+                    var newData = new CurrentData
+                    {
+                        Time = DateTime.Now,
+                        Zone = zone,
+                        Good = productData.Channel.MTPWriteResult == "GOOD" ? 1 : 0,
+                        NGIns = (!string.IsNullOrEmpty(productData.Channel.MTPWriteResult) && productData.Channel.MTPWriteResult != "GOOD") ? 1 : 0,
+                        NGContact = (!string.IsNullOrEmpty(productData.Channel.ContactResult) && productData.Channel.ContactResult != "GOOD") ? 1 : 0
+                    };
+
+                    _currEquipDatas.Add(newData);
+                    CurrDataEventHandle(_currEquipDatas);
+                }
+            }
             if (!string.IsNullOrEmpty(productData.Channel.DefectCode))
             {
                 // Lọc defectInfoList theo ZoneNo và ChannelNo

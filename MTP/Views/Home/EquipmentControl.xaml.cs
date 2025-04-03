@@ -51,9 +51,9 @@ namespace MTP.Views.Home
         {
             List<CurrentData> currDatasSnapshot;
 
-            lock (_controller.CurrsDatas)
+            lock (_controller.CurrsEquipDatas)
             {
-                currDatasSnapshot = _controller.CurrsDatas.ToList();// Shallow copy danh sách
+                currDatasSnapshot = _controller.CurrsEquipDatas.ToList();// Shallow copy danh sách
             }
 
             Dispatcher.Invoke(() =>

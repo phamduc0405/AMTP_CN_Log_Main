@@ -583,7 +583,6 @@ namespace ACO2_App._0
         //T:T5 Message Contact Handler
         public void UpdateDataContactLog(Channel productData, string result, bool isCellLoading = false)
         {
-           
             if (result == "GOOD" && isCellLoading)
             {
                 productData.DefectCode = "";
@@ -603,6 +602,8 @@ namespace ACO2_App._0
                 productData.LastResult = $"{result}";
                 productData.ContactEndTime = DateTime.Now;
                 productData.ContactTackTime = (productData.ContactEndTime - productData.ContactStartTime).TotalSeconds;
+                productData.InsEndTime = DateTime.Now;
+                productData.InsTackTime = (productData.InsEndTime - productData.InsStartTime).TotalSeconds;
                 LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip+1}][{productData.ChannelNo}][{productData.CellID}]:" +
                                $"CONTACT RESULT:{productData.ContactResult} ");
                 productData.ResultInsEventHandle(productData.ChannelNo, productData.ContactResult, "", productData.DefectCode);
@@ -622,15 +623,16 @@ namespace ACO2_App._0
             {
                 productData.DefectCode = GetDefectCode(result);
             }
-            
-            productData.MTPWriteResult = result;
-            productData.LastResult = result;
-            productData.InsEndTime = DateTime.Now;
-            productData.InsTackTime = (productData.InsEndTime - productData.InsStartTime).TotalSeconds;
-            LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip+1}][{productData.ChannelNo}][{productData.CellID}]:" +
+            if(productData.ContactResult == "GOOD")
+            {
+                productData.MTPWriteResult = result;
+                productData.LastResult = result;
+                productData.InsEndTime = DateTime.Now;
+                productData.InsTackTime = (productData.InsEndTime - productData.InsStartTime).TotalSeconds;
+                LogTxt.Add(LogTxt.Type.FlowRun, $"[T5][ZONE{_indexEquip + 1}][{productData.ChannelNo}][{productData.CellID}]:" +
                                        $"MTPWRITE RESULT:{productData.MTPWriteResult} ");
-            productData.ResultInsEventHandle(productData.ChannelNo, "", productData.MTPWriteResult, productData.DefectCode);
-            
+                productData.ResultInsEventHandle(productData.ChannelNo, "", productData.MTPWriteResult, productData.DefectCode);
+            }
         }
         #endregion
         #endregion
