@@ -322,6 +322,7 @@ namespace ACO2_App._0
                         Controller.AddDataToQueue(cellQueue1);
                         Controller.CurrsDatas.Clear();
                         Controller.CurrsEquipDatas.Clear();
+                        Controller.ReadConfigChannel();
                         LogTxt.Add(LogTxt.Type.FlowRun, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                         LogTxt.Add(LogTxt.Type.Status, "[DATA]:" + $"ALL DATA INIT BY CLICK INIT BUTTON");
                         tblScreen.Text = "ALL DATA INIT BY CLICK INIT BUTTON";

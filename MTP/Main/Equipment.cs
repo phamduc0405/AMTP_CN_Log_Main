@@ -195,20 +195,6 @@ namespace ACO2_App._0
                     }
 
                     LogT5EventHandle(strLog, channel.ToString());
-                    Channel channelSignal = new Channel();
-
-                    if (channel < 10 && channel != 0)
-                    {
-                        channelSignal.ChannelNo = $"CH0{channel.ToString()}";
-                        PopUpMesEventHandle(channelSignal, str);
-
-                    }
-                    else
-                    {
-                        channelSignal.ChannelNo = $"CH{channel.ToString()}";
-                        PopUpMesEventHandle(channelSignal, str);
-
-                    }
                     switch (command)
                     {
                         case T5Helper.Command.None:

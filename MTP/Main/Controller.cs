@@ -876,6 +876,13 @@ namespace ACO2_App._0
             }
          
         }
+        public void ReadConfigChannel()
+        {
+            foreach(var equip in _equipment)
+            {
+                equip.Channels = equip.EqpConfig.Channels;
+            }
+        }
         public CellData FindCellInListTemp(string cellid, bool isStepStartIns = false, bool isStepInsDone = false, string channel = "", bool isStepStartTrackOut = false)
         {
             try
